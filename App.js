@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, SafeAreaView, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts } from 'expo-font';
+import PersonalScreen from './screens/PersonalScreen';
 
 export default function App() {
 	const [fontsLoaded] = useFonts({
@@ -24,6 +25,7 @@ export default function App() {
 			<StatusBar style="auto" />
 			<SafeAreaView style={ styles.container }>
 				<View style={ styles.header }></View>
+				<PersonalScreen />
 			</SafeAreaView>
 		</LinearGradient>
 	);
