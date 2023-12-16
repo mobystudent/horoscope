@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { StyleSheet, Text, View, Pressable, Image } from 'react-native';
 
-export default function GenderScreen() {
+export default function GenderScreen(props) {
+	const { getData } = props;
 	const [ gender, setGender ] = useState(null);
 	const activeGender = (genderActive) => {
 		setGender(genderActive);
+		getData(genderActive);
 	}
 
 	return (
