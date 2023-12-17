@@ -1,18 +1,32 @@
+import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, SafeAreaView, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+import * as Font from 'expo-font';
 import PersonalScreen from './screens/PersonalScreen';
 
 export default function App() {
-	const [fontsLoaded] = useFonts({
-		'SFBold': require('./assets/fonts/SFProDisplay-Bold.ttf'),
-		'SFMed': require('./assets/fonts/SFProDisplay-Medium.ttf'),
-		'SFReg': require('./assets/fonts/SFProDisplay-Regular.ttf'),
-		'SFSbold': require('./assets/fonts/SFProDisplay-Semibold.ttf')
-	});
+	const [ appIsReady, setAppIsReady ] = useState(false);
 
-	if (!fontsLoaded) {
+	useEffect(() => {
+		const loadFonts = async () => {
+			await SplashScreen.preventAutoHideAsync();
+			await Font.loadAsync({
+				'SFBold': require('./assets/fonts/SFProDisplay-Bold.ttf'),
+				'SFMed': require('./assets/fonts/SFProDisplay-Medium.ttf'),
+				'SFReg': require('./assets/fonts/SFProDisplay-Regular.ttf'),
+				'SFSbold': require('./assets/fonts/SFProDisplay-Semibold.ttf')
+			});
+			setAppIsReady(true);
+			await SplashScreen.hideAsync();
+		};
+
+		loadFonts();
+	}, []);
+
+	if (!appIsReady) {
 		return null;
 	}
 
