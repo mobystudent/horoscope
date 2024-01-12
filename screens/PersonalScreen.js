@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { StyleSheet, Text, Pressable, View } from 'react-native';
+import NameScreen from './personal/NameScreen';
+import CityScreen from './personal/CityScreen';
+import GenderScreen from './personal/GenderScreen';
 
 export default function Personal() {
-	const [ screen, setScreen ] = useState(3);
+	const [ screen, setScreen ] = useState(0);
 	const [ person, setPerson ] = useState({
 		name: '',
 		date: '',
@@ -38,12 +41,29 @@ export default function Personal() {
 			btnText: 'Сохранить'
 		},
 	];
+	const getData = ([ key, value ]) => {
+		// console.log({ ...validValue })
+		// console.warn(key);
+		console.error(value);
+		if (value) {
+			setPerson({
+				...person,
+				[key]: value
+			});
+		}
+
+		setDisabledBtn(!value);
+		// console.warn(person);
+	};
 
 	return (
-		<>
+		<View style={ styles.body }>
 			<Text style={ styles.title }>{ content[screen].title }</Text>
 			<Text style={ styles.text }>{ content[screen].description }</Text>
 			<View style={ styles.wrap }>
+				{ screen === 0 && <NameScreen getData={ (value) => getData(['name', value]) } /> }
+				{ screen === 1 && <CityScreen getData={ (value) => getData(['city', value]) } /> }
+				{ screen === 2 && <GenderScreen getData={ (value) => getData(['gender', value]) } /> }
 			</View>
 			<Pressable
 				style={[ styles.button, disabledBtn && styles.disabledButton ]}
@@ -52,11 +72,14 @@ export default function Personal() {
 			>
 				<Text style={[ styles.buttonText, disabledBtn && styles.disabledText ]}>{ content[screen].btnText }</Text>
 			</Pressable>
-		</>
+		</View>
 	);
 }
 
 const styles = StyleSheet.create({
+	body: {
+		flex: 1
+	},
 	wrap: {
 		flex: 1,
 		marginBottom: 100,
@@ -65,14 +88,14 @@ const styles = StyleSheet.create({
 	title: {
 		color: '#fff',
 		textAlign: 'center',
-		fontFamily: 'SFBold',
+		// fontFamily: 'SFBold',
 		fontSize: 34,
 		marginBottom: 15
 	},
 	text: {
 		color: '#FFF',
 		textAlign: 'center',
-		fontFamily: 'SFReg',
+		// fontFamily: 'SFReg',
 		fontSize: 16,
 		lineHeight: 20,
 		marginBottom: 65
@@ -82,7 +105,7 @@ const styles = StyleSheet.create({
 		backgroundColor: '#F2F2F3',
 	},
 	buttonText: {
-		fontFamily: 'SFSbold',
+		// fontFamily: 'SFSbold',
 		textAlign: 'center',
 		fontSize: 17,
 		color: '#1A1E2C',

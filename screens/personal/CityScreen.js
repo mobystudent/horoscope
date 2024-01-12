@@ -20,6 +20,7 @@ export default function CityScreen(props) {
 		{ title: 'Туркуэн' }
 	];
 	const [ city, setCity ] = useState('');
+	const [ pointer, setPointer ] = useState(0);
 	const [ suggestion, setSuggestion ] = useState([]);
 	const selectItem = (item) => {
 		setCity(item);
@@ -27,34 +28,38 @@ export default function CityScreen(props) {
 		getData(item);
 		Keyboard.dismiss();
 	};
-	const emptyFilter = ({ nativeEvent }) => {
-		const regex = new RegExp('[а-яА-Я\-Backspace]');
-		const check = regex.test(nativeEvent.key);
-		const cityChars = nativeEvent.key === 'Backspace' ? city.slice(0, city.length - 1) : `${ city }${ nativeEvent.key }`;
+	const emptyFilter = ({ nativeEvent: { key } }) => {
+		const regex = new RegExp('[а-яА-Я\-Backspace ]');
+		const check = regex.test(key);
+		const cityChars = key === 'Backspace'
+			? city.slice(0, pointer - 1) + city.slice(pointer)
+			: city.slice(0, pointer) + key + city.slice(pointer);
+		const exceptionLetters = ['k', 'e', 'p', 'c', 'a', 's'];
 
-		if (check) {
-			if (cityChars.length > 2) {
-				const newSugges = data.filter((item) => item.title.startsWith(cityChars));
-				const filteredCity = data.find((item) => item.title.toLowerCase() === cityChars.toLowerCase());
-
-				if (nativeEvent.key !== 'Backspace') {
-					filteredCity && Keyboard.dismiss();
-				}
-
-				setSuggestion(newSugges);
-			} else if (cityChars.length < 3 && nativeEvent.key === 'Backspace') {
-				setSuggestion([]);
-			}
-		} else {
-			Alert.alert('Не корректный символ', 'Название должно содержать только буквенные символы кириллицы или дефис', [{
+		if(!check || exceptionLetters.includes(key)) {
+			Alert.alert('Не корректный символ', 'Город должен содержать только буквенные символы кириллицы или дефис!', [{
 					text: 'OK',
 					onPress: () => setCity(city),
 					style: 'cancel',
 				}]
 			);
-		}
+		} else {
+			if (cityChars.length > 2) {
+				const newSugges = data.filter((item) => item.title.startsWith(cityChars));
+				const filteredCity = data.find((item) => item.title.toLowerCase() === cityChars.toLowerCase());
 
-		getData(false);
+				if (key !== 'Backspace') {
+					filteredCity && Keyboard.dismiss();
+				}
+
+				setSuggestion(newSugges);
+			} else if (cityChars.length < 3 && key === 'Backspace') {
+				setSuggestion([]);
+			}
+		}
+	};
+	const changeSelection = ({ nativeEvent: { selection: { start } } }) => {
+		setPointer(start);
 	};
 	const renderItem = (({ item }) => (
 		<Pressable onPress={ () => selectItem(item.title) }>
@@ -72,6 +77,7 @@ export default function CityScreen(props) {
 					value={ city }
 					onChangeText={ setCity }
 					onKeyPress={ (press) => emptyFilter(press) }
+					onSelectionChange={ changeSelection }
 				/>
 			</Pressable>
 			<FlatList
@@ -96,7 +102,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		paddingVertical: 12,
 		color: '#fff',
-		fontFamily: 'SFReg',
+		// fontFamily: 'SFReg',
 		fontSize: 16,
 		lineHeight: 20,
 		textAlignVertical: 'center',
@@ -107,7 +113,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		paddingVertical: 12,
 		color: '#fff',
-		fontFamily: 'SFReg',
+		// fontFamily: 'SFReg',
 		fontSize: 16,
 		lineHeight: 20,
 		marginVertical: 3,
