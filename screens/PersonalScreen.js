@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { StyleSheet, Text, Pressable, View } from 'react-native';
 import NameScreen from './personal/NameScreen';
+import TimeScreen from './personal/TimeScreen';
 import CityScreen from './personal/CityScreen';
 import GenderScreen from './personal/GenderScreen';
 
 export default function Personal() {
-	const [ screen, setScreen ] = useState(0);
+	const [ screen, setScreen ] = useState(2);
 	const [ person, setPerson ] = useState({
 		name: '',
 		date: '',
@@ -43,7 +44,7 @@ export default function Personal() {
 	];
 	const getData = ([ key, value ]) => {
 		// console.log({ ...validValue })
-		// console.warn(key);
+		console.warn(key);
 		console.error(value);
 		if (value) {
 			setPerson({
@@ -53,8 +54,13 @@ export default function Personal() {
 		}
 
 		setDisabledBtn(!value);
-		// console.warn(person);
 	};
+
+	useEffect(() => {
+	// 	// if (person )
+	// 	// setPerson(person);
+		console.log(person);
+	}, [person]);
 
 	return (
 		<View style={ styles.body }>
@@ -62,8 +68,9 @@ export default function Personal() {
 			<Text style={ styles.text }>{ content[screen].description }</Text>
 			<View style={ styles.wrap }>
 				{ screen === 0 && <NameScreen getData={ (value) => getData(['name', value]) } /> }
-				{ screen === 1 && <CityScreen getData={ (value) => getData(['city', value]) } /> }
-				{ screen === 2 && <GenderScreen getData={ (value) => getData(['gender', value]) } /> }
+				{ screen === 2 && <TimeScreen getData={ (value) => getData(['time', value]) } /> }
+				{ screen === 3 && <CityScreen getData={ (value) => getData(['city', value]) } /> }
+				{ screen === 4 && <GenderScreen getData={ (value) => getData(['gender', value]) } /> }
 			</View>
 			<Pressable
 				style={[ styles.button, disabledBtn && styles.disabledButton ]}
