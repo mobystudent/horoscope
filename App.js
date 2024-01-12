@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Pressable, Keyboard } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as SplashScreen from 'expo-splash-screen';
@@ -36,17 +36,22 @@ export default function App() {
 			locations={ [0, 0.0892, 0.1744, 0.2796, 0.3633, 1] }
 			style={ styles.linearGradient }
 		>
-			<StatusBar style="auto" />
-			<SafeAreaView style={ styles.container }>
-				<View style={ styles.header }></View>
-				<PersonalScreen />
-			</SafeAreaView>
+			<Pressable style={ styles.wrapper } onPress={ () => Keyboard.dismiss() }>
+				<StatusBar style="auto" />
+				<SafeAreaView style={ styles.container } >
+					<View style={ styles.header }></View>
+					<PersonalScreen />
+				</SafeAreaView>
+			</Pressable>
 		</LinearGradient>
 	);
 }
 
 const styles = StyleSheet.create({
 	linearGradient: {
+		flex: 1
+	},
+	wrapper: {
 		flex: 1,
 		paddingLeft: 15,
 		paddingRight: 15,
@@ -54,7 +59,7 @@ const styles = StyleSheet.create({
 		paddingBottom: 45
 	},
 	container: {
-		flex: 1,
+		flex: 1
 	},
 	header: {
 		height: 90
