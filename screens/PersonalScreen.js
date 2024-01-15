@@ -4,8 +4,9 @@ import NameScreen from './personal/NameScreen';
 import TimeScreen from './personal/TimeScreen';
 import CityScreen from './personal/CityScreen';
 import GenderScreen from './personal/GenderScreen';
+import Container from './Container';
 
-export default function Personal() {
+export default function Personal({ navigation }) {
 	const [ screen, setScreen ] = useState(2);
 	const [ person, setPerson ] = useState({
 		name: '',
@@ -59,31 +60,38 @@ export default function Personal() {
 	useEffect(() => {
 	// 	// if (person )
 	// 	// setPerson(person);
-		console.log(person);
-	}, [person]);
+		console.log(screen);
+
+	}, [screen]);
 
 	return (
-		<View style={ styles.body }>
-			<Text style={ styles.title }>{ content[screen].title }</Text>
-			<Text style={ styles.text }>{ content[screen].description }</Text>
-			<View style={ styles.wrap }>
-				{ screen === 0 && <NameScreen getData={ (value) => getData(['name', value]) } /> }
-				{ screen === 2 && <TimeScreen getData={ (value) => getData(['time', value]) } /> }
-				{ screen === 3 && <CityScreen getData={ (value) => getData(['city', value]) } /> }
-				{ screen === 4 && <GenderScreen getData={ (value) => getData(['gender', value]) } /> }
+		<Container>
+			<View style={ styles.header }></View>
+			<View style={ styles.body }>
+				<Text style={ styles.title }>{ content[screen].title }</Text>
+				<Text style={ styles.text }>{ content[screen].description }</Text>
+				<View style={ styles.wrap }>
+					{ screen === 0 && <NameScreen getData={ (value) => getData(['name', value]) } /> }
+					{ screen === 2 && <TimeScreen getData={ (value) => getData(['time', value]) } /> }
+					{ screen === 3 && <CityScreen getData={ (value) => getData(['city', value]) } /> }
+					{ screen === 4 && <GenderScreen getData={ (value) => getData(['gender', value]) } /> }
+				</View>
+				<Pressable
+					style={[ styles.button, disabledBtn && styles.disabledButton ]}
+					onPress={ () => setScreen(screen + 1) }
+					disabled={ disabledBtn }
+				>
+					<Text style={[ styles.buttonText, disabledBtn && styles.disabledText ]}>{ content[screen].btnText }</Text>
+				</Pressable>
 			</View>
-			<Pressable
-				style={[ styles.button, disabledBtn && styles.disabledButton ]}
-				onPress={ () => setScreen(screen + 1) }
-				disabled={ disabledBtn }
-			>
-				<Text style={[ styles.buttonText, disabledBtn && styles.disabledText ]}>{ content[screen].btnText }</Text>
-			</Pressable>
-		</View>
+		</Container>
 	);
 }
 
 const styles = StyleSheet.create({
+	header: {
+		height: 90
+	},
 	body: {
 		flex: 1
 	},

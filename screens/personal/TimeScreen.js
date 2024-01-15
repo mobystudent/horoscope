@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, Pressable, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Pressable, FlatList } from 'react-native';
 // import DateTimePicker from 'react-native-ui-datepicker';
 // import dayjs from 'dayjs';
 
@@ -99,7 +99,6 @@ export default function TimeScreen(props) {
 				/>
 				<View style={ styles.activeLine }></View>
 			</View>
-
 		</View>
 	);
 	// <DateTimePicker
