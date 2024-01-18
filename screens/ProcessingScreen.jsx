@@ -43,13 +43,19 @@ export default function Processing({ navigation }) {
 
 	useEffect(() => {
 		const progressId = setInterval(() => {
-			setProgress((prevProgress) => (prevProgress < 100 ? prevProgress + 1 : 100));
+			setProgress((prevProgress) => {
+				const newProgress = prevProgress < 100 ? prevProgress + 1 : 100;
+
+				if (newProgress === 100) {
+					clearInterval(progressId);
+					navigation.navigate('moon');
+				}
+
+				return newProgress;
+			});
 		}, time);
 
-		if (progress === 100) {
-			clearInterval(progressId);
-			navigation.navigate('moon');
-		}
+		return () => clearInterval(progressId);
 	}, []);
 
 	return (
