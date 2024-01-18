@@ -46,7 +46,10 @@ export default function Processing({ navigation }) {
 			setProgress((prevProgress) => (prevProgress < 100 ? prevProgress + 1 : 100));
 		}, time);
 
-		if (progress === 100) clearInterval(progressId);
+		if (progress === 100) {
+			clearInterval(progressId);
+			navigation.navigate('moon');
+		}
 	}, []);
 
 	return (
