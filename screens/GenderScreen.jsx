@@ -10,7 +10,7 @@ export default function GenderScreen({ navigation }) {
 		setDisabledBtn(false);
 	};
 	const nextStep = () => {
-		if (gender) {
+		if (!disabledBtn) {
 			navigation.navigate('processing');
 		}
 	}

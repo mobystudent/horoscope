@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { StyleSheet, FlatList, TextInput, Pressable, Text, KeyboardAvoidingView, Keyboard, Alert } from 'react-native';
+import PersonalTemplate from '../components/PersonalTemplate';
 
-export default function CityScreen(props) {
-	const { getData } = props;
+export default function CityScreen({ navigation }) {
 	const data = [
 		{ title: 'Париж' },
 		{ title: 'Марсель' },
@@ -22,10 +22,11 @@ export default function CityScreen(props) {
 	const [ city, setCity ] = useState('');
 	const [ pointer, setPointer ] = useState(0);
 	const [ suggestion, setSuggestion ] = useState([]);
+	const [ disabledBtn, setDisabledBtn ] = useState(true);
 	const selectItem = (item) => {
 		setCity(item);
 		setSuggestion([]);
-		getData(item);
+		setDisabledBtn(false);
 		Keyboard.dismiss();
 	};
 	const emptyFilter = ({ nativeEvent: { key } }) => {
@@ -66,27 +67,43 @@ export default function CityScreen(props) {
 			<Text style={ styles.item }>{item.title}</Text>
 		</Pressable>
 	));
+	const nextStep = () => {
+		if (!disabledBtn) {
+			navigation.navigate('gender');
+		}
+	}
+	const title = 'Где вы родились?';
+	const description = 'Укажите место своего рождения, чтобы адаптировать календарь под ваш географический регион и лунные события';
+	const btnText = 'Далее';
 
 	return (
-		<KeyboardAvoidingView style={ styles.wrap } behavior={ Platform.OS === 'ios' ? 'padding' : 'height' } >
-			<Pressable style={ styles.inputWrap }>
-				<TextInput
-					style={ styles.input }
-					placeholder="Ввести город..."
-					placeholderTextColor="rgba(255, 255, 255, 0.5)"
-					value={ city }
-					onChangeText={ setCity }
-					onKeyPress={ (press) => emptyFilter(press) }
-					onSelectionChange={ changeSelection }
+		<PersonalTemplate
+			title={ title }
+			description={ description }
+			btnText={ btnText }
+			disabledBtn={ disabledBtn }
+			nextStep={ nextStep }
+		>
+			<KeyboardAvoidingView style={ styles.wrap } behavior={ Platform.OS === 'ios' ? 'padding' : 'height' } >
+				<Pressable style={ styles.inputWrap }>
+					<TextInput
+						style={ styles.input }
+						placeholder="Ввести город..."
+						placeholderTextColor="rgba(255, 255, 255, 0.5)"
+						value={ city }
+						onChangeText={ setCity }
+						onKeyPress={ (press) => emptyFilter(press) }
+						onSelectionChange={ changeSelection }
+					/>
+				</Pressable>
+				<FlatList
+					data={ suggestion }
+					renderItem={ renderItem }
+					keyExtractor={ item => item.title }
+					style={ styles.list }
 				/>
-			</Pressable>
-			<FlatList
-				data={ suggestion }
-				renderItem={ renderItem }
-				keyExtractor={ item => item.title }
-				style={ styles.list }
-			/>
-		</KeyboardAvoidingView>
+			</KeyboardAvoidingView>
+		</PersonalTemplate>
 	);
 }
 

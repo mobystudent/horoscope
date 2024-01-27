@@ -39,7 +39,7 @@ export default function Edit({ navigation }) {
 				<View style={ styles.block }>
 					<Text style={ styles.title }>Место рождения</Text>
 					<View style={ styles.groupData }>
-						<Pressable style={ styles.button }>
+						<Pressable style={ styles.button } onPress={ () => navigation.navigate('city') }>
 							<Text style={ styles.data }>Город</Text>
 							<Text style={ styles.data }>Париж</Text>
 						</Pressable>
