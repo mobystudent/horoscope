@@ -3,10 +3,22 @@ import { StyleSheet, Text, Pressable, View, Image } from 'react-native';
 import Container from './Container';
 import Header from '../components/Header';
 
+import arrow from '../assets/images/arrow.png';
+
 export default function Edit({ navigation }) {
+	const title = 'Редактировать';
+	const leftButton = {
+		link: 'moon',
+		icon: arrow
+	};
+
 	return (
 		<Container>
-			<Header navigation={ navigation } />
+			<Header
+				navigation={ navigation }
+				title={ title }
+				leftButton={ leftButton }
+			/>
 			<View style={ styles.body }>
 				<Pressable style={ styles.photo }>
 					<Image

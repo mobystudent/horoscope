@@ -14,7 +14,7 @@ export default function Navigation() {
 	return (
 		<NavigationContainer>
 			<Stack.Navigator
-				initialRouteName="city"
+				initialRouteName="moon"
 				screenOptions={{
 					headerShown: false
 				}}

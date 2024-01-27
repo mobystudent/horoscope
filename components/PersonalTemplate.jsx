@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, Text, Pressable, View } from 'react-native';
 import Container from '../screens/Container';
+import Header from './Header';
 
 export default function PersonalTemplate(props) {
 	const {
@@ -14,7 +15,7 @@ export default function PersonalTemplate(props) {
 
 	return (
 		<Container>
-			<View style={ styles.header }></View>
+			<Header />
 			<View style={ styles.body }>
 				<Text style={ styles.title }>{ title }</Text>
 				<Text style={ styles.description }>{ description }</Text>
@@ -34,9 +35,6 @@ export default function PersonalTemplate(props) {
 }
 
 const styles = StyleSheet.create({
-	header: {
-		height: 90
-	},
 	body: {
 		flex: 1
 	},

@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList, Image, Animated } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import Container from './Container';
+import Header from '../components/Header';
 
 export default function Processing({ navigation }) {
 	const [ steps, setSteps ] = useState([
@@ -60,7 +61,7 @@ export default function Processing({ navigation }) {
 
 	return (
 		<Container>
-			<View style={ styles.header }></View>
+			<Header />
 			<View style={ styles.body }>
 				<Text style={ styles.title }>{ title }</Text>
 				<View style={ styles.wrap }>
@@ -97,9 +98,6 @@ export default function Processing({ navigation }) {
 };
 
 const styles = StyleSheet.create({
-	header: {
-		height: 90
-	},
 	body: {
 		flex: 1
 	},

@@ -1,26 +1,45 @@
 import * as React from 'react';
 import { StyleSheet, Text, Pressable, View, Image } from 'react-native';
 
-export default function Header({ navigation }) {
-	console.log(navigation);
+export default function Header(props) {
+	const {
+		navigation = {},
+		title = '',
+		subtitle = '',
+		leftButton: {
+			link: linkLeft = '',
+			icon: iconLeft = ''
+		} = {},
+		rightButton: {
+			link: linkRight = '',
+			icon: iconRight = ''
+		} = {}
+	} = props;
+	const viewRightButton = linkRight ?
+		<Pressable onPress={ () => navigation.navigate(linkRight) } style={ styles.btn }>
+			<Image
+				style={ styles.image }
+				source={ iconRight }
+			/>
+		</Pressable>
+		: <View style={ styles.btn }></View>;
+
 	return (
 		<View style={ styles.header }>
-			<Pressable style={ styles.btn }>
-				<Image
-					style={ styles.image }
-					source={ require('../assets/images/account.png') }
-				/>
-			</Pressable>
-			<View>
-				<Text style={ styles.title }>Растущая луна</Text>
-				<Text style={ styles.subtitle }>I Фаза</Text>
-			</View>
-			<Pressable onPress={ () => navigation.navigate('edit') } style={ styles.btn }>
-				<Image
-					style={ styles.image }
-					source={ require('../assets/images/edit.png') }
-				/>
-			</Pressable>
+			{ Object.keys(props).length !== 0 && <>
+					<Pressable onPress={ () => navigation.navigate(linkLeft) } style={ styles.btn }>
+						<Image
+							style={ styles.image }
+							source={ iconLeft }
+						/>
+					</Pressable>
+					<View>
+						<Text style={ styles.title }>{ title }</Text>
+						{ subtitle && <Text style={ styles.subtitle }>{ subtitle }</Text>}
+					</View>
+					{ viewRightButton}
+				</>
+			}
 		</View>
 	);
 }
@@ -30,6 +49,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
+		height: 50,
 		marginTop: 30,
 		marginBottom: 10
 	},
