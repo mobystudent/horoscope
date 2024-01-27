@@ -46,13 +46,11 @@ export default function Edit({ navigation }) {
 					</View>
 				</View>
 				<View style={ styles.block }>
-					<Text style={ styles.title }>Пол</Text>
+					<Text style={ styles.title }>Личная информация</Text>
 					<View style={ styles.groupData }>
-						<Pressable style={ styles.button }>
+						<Pressable style={ styles.button } onPress={ () => navigation.navigate('gender') }>
+							<Text style={ styles.data }>Пол</Text>
 							<Text style={ styles.data }>Мужской</Text>
-						</Pressable>
-						<Pressable style={ [ styles.button, styles.buttonLine ] }>
-							<Text style={ styles.data }>Женский</Text>
 						</Pressable>
 					</View>
 				</View>
