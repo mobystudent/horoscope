@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
 		borderColor: 'transparent',
 		borderRadius: 17,
 		marginBottom: 10,
-		backgroundColor: 'rgba(255, 255, 255, 0.12)'
+		backgroundColor: 'rgba(255, 255, 255, .12)'
 	},
 	image: {
 		width: 50,

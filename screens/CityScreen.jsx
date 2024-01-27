@@ -84,7 +84,7 @@ export default function CityScreen({ navigation }) {
 			disabledBtn={ disabledBtn }
 			nextStep={ nextStep }
 		>
-			<KeyboardAvoidingView style={ styles.wrap } behavior={ Platform.OS === 'ios' ? 'padding' : 'height' } >
+			<KeyboardAvoidingView style={ styles.content } behavior={ Platform.OS === 'ios' ? 'padding' : 'height' } >
 				<Pressable style={ styles.inputWrap }>
 					<TextInput
 						style={ styles.input }
@@ -108,7 +108,7 @@ export default function CityScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-	wrap: {
+	content: {
 		rowGap: 25
 	},
 	inputWrap: {
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		lineHeight: 20,
 		textAlignVertical: 'center',
-		backgroundColor: 'rgba(255, 255, 255, 0.12)'
+		backgroundColor: 'rgba(255, 255, 255, .12)'
 	},
 	item: {
 		borderRadius: 17,
@@ -134,6 +134,6 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		lineHeight: 20,
 		marginVertical: 3,
-		backgroundColor: 'rgba(255, 255, 255, 0.12)'
+		backgroundColor: 'rgba(255, 255, 255, .12)'
 	}
 });

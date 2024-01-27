@@ -42,7 +42,7 @@ export default function Edit({ navigation }) {
 							<Text style={ styles.data }>Дата</Text>
 							<Text style={ styles.data }>12.05.1987</Text>
 						</Pressable>
-						<Pressable style={ [ styles.button, styles.buttonLine ] }>
+						<Pressable style={ [ styles.button, styles.buttonLine ] } onPress={ () => navigation.navigate('time') }>
 							<Text style={ styles.data }>Время</Text>
 							<Text style={ styles.data }>19:30</Text>
 						</Pressable>
