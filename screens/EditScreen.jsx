@@ -29,7 +29,7 @@ export default function Edit({ navigation }) {
 				<View style={ styles.block }>
 					<Text style={ styles.title }>Как вас зовут</Text>
 					<View style={ styles.groupData }>
-						<Pressable style={ styles.button }>
+						<Pressable style={ styles.button } onPress={ () => navigation.navigate('name') }>
 							<Text style={ styles.data }>Имя</Text>
 							<Text style={ styles.data }>Олег</Text>
 						</Pressable>

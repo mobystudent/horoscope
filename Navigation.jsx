@@ -2,6 +2,7 @@ import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import PersonalScreen from './screens/PersonalScreen';
+import NameScreen from './screens/personal/NameScreen';
 import TimeScreen from './screens/personal/TimeScreen';
 import CityScreen from './screens/CityScreen';
 import GenderScreen from './screens/GenderScreen';
@@ -15,12 +16,13 @@ export default function Navigation() {
 	return (
 		<NavigationContainer>
 			<Stack.Navigator
-				initialRouteName="time"
+				initialRouteName="name"
 				screenOptions={{
 					headerShown: false
 				}}
 			>
 				<Stack.Screen name="registration" component={ PersonalScreen } />
+				<Stack.Screen name="name" component={ NameScreen } />
 				<Stack.Screen name="time" component={ TimeScreen } />
 				<Stack.Screen name="city" component={ CityScreen } />
 				<Stack.Screen name="gender" component={ GenderScreen } />

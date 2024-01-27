@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { StyleSheet, TextInput, View, KeyboardAvoidingView, Alert } from 'react-native';
+import PersonalTemplate from '../../components/PersonalTemplate';
 
-export default function NameScreen(props) {
-	const { getData } = props;
+export default function NameScreen({ navigation }) {
 	const [ name, setName ] = useState('');
 	const [ pointer, setPointer ] = useState(0);
+	const [ disabledBtn, setDisabledBtn ] = useState(true);
 	const checkText = ({ nativeEvent: { key } }) => {
 		const regex = new RegExp('[а-яА-Я\-Backspace ]');
 		const check = regex.test(key);
@@ -20,36 +21,48 @@ export default function NameScreen(props) {
 				style: 'cancel',
 			}]);
 		} else {
-			if (nameChars.length > 1) {
-				getData(nameChars);
-			} else {
-				getData(false);
-			}
+			setDisabledBtn(nameChars.length > 1 ? false : true);
 		}
 	};
 	const changeSelection = ({ nativeEvent: { selection: { start } } }) => {
 		setPointer(start);
 	};
+	const nextStep = () => {
+		if (!disabledBtn) {
+			navigation.navigate('time');
+		}
+	}
+	const title = 'Как вас зовут?';
+	const description = 'Введите своё имя, чтобы создать персональный профиль и получать индивидуальные рекомендации лунного календаря';
+	const btnText = 'Далее';
 
 	return (
-		<KeyboardAvoidingView style={ styles.wrap } behavior={ Platform.OS === 'ios' ? 'padding' : 'height' } >
-			<View style={ styles.inputWrap }>
-				<TextInput
-					style={ styles.input }
-					placeholder="Имя…"
-					placeholderTextColor="rgba(255, 255, 255, 0.5)"
-					value={ name }
-					onChangeText={ setName }
-					onKeyPress={ (press) => checkText(press) }
-					onSelectionChange={ changeSelection }
-				/>
-			</View>
-		</KeyboardAvoidingView>
+		<PersonalTemplate
+			title={ title }
+			description={ description }
+			btnText={ btnText }
+			disabledBtn={ disabledBtn }
+			nextStep={ nextStep }
+		>
+			<KeyboardAvoidingView style={ styles.content } behavior={ Platform.OS === 'ios' ? 'padding' : 'height' } >
+				<View style={ styles.inputWrap }>
+					<TextInput
+						style={ styles.input }
+						placeholder="Имя…"
+						placeholderTextColor="rgba(255, 255, 255, 0.5)"
+						value={ name }
+						onChangeText={ setName }
+						onKeyPress={ (press) => checkText(press) }
+						onSelectionChange={ changeSelection }
+					/>
+				</View>
+			</KeyboardAvoidingView>
+		</PersonalTemplate>
 	);
 }
 
 const styles = StyleSheet.create({
-	wrap: {
+	content: {
 		rowGap: 25
 	},
 	inputWrap: {
