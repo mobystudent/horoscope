@@ -9,6 +9,7 @@ import ProcessingScreen from './screens/ProcessingScreen';
 import MoonScreen from './screens/MoonScreen';
 import EditScreen from './screens/EditScreen';
 import AccountScreen from './screens/AccountScreen';
+import ContentScreen from './screens/ContentScreen';
 
 const Stack = createStackNavigator();
 
@@ -29,6 +30,7 @@ export default function Navigation() {
 				<Stack.Screen name="moon" component={ MoonScreen } />
 				<Stack.Screen name="edit" component={ EditScreen } />
 				<Stack.Screen name="account" component={ AccountScreen } />
+				<Stack.Screen name="content" component={ ContentScreen } />
 			</Stack.Navigator>
 		</NavigationContainer>
 	);
