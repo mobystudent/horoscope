@@ -1,8 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { StyleSheet, Text, View, FlatList, Image, Animated } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Animated } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import Container from '../components/Container';
 import Header from '../components/Header';
+import { checkSvg } from '../components/SvgSprite';
 
 export default function Processing({ navigation }) {
 	const [ steps, setSteps ] = useState([
@@ -16,10 +17,9 @@ export default function Processing({ navigation }) {
 	const title = 'Создаем ваш профиль';
 	const renderItem = (({ item }) => (
 		<View style={ [ styles.item, item.active && styles.active ] }>
-			<Image
-				style={ styles.image }
-				source={ require('../assets/images/check.png') }
-			/>
+			<View style={ styles.svg }>
+				{ checkSvg('#fff') }
+			</View>
 			<Text style={ styles.text }>{ item.title }</Text>
 		</View>
 	));
@@ -140,7 +140,9 @@ const styles = StyleSheet.create({
 		columnGap: 15,
 		opacity: 0.4
 	},
-	image: {
+	svg: {
+		justifyContent: 'center',
+		alignItems: 'center',
 		width: 32,
 		height: 32,
 		borderRadius: 32/2,

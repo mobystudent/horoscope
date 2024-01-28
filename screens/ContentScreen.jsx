@@ -2,8 +2,7 @@ import * as React from 'react';
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import Container from '../components/Container';
 import Header from '../components/Header';
-
-import arrow from '../assets/images/arrow.png';
+import { arrowSvg } from '../components/SvgSprite';
 
 export default function Content(props) {
 	const {
@@ -19,7 +18,7 @@ export default function Content(props) {
 	const titleNote = date ? `Заметка от ${date}` : title;
 	const leftButton = {
 		link: 'account',
-		icon: arrow
+		icon: arrowSvg('#fff', .5)
 	};
 
 	return (

@@ -2,15 +2,15 @@ import * as React from 'react';
 import { StyleSheet, Text, Pressable, View, Image, ScrollView } from 'react-native';
 import Container from '../components/Container';
 import Header from '../components/Header';
+import { arrowSvg } from '../components/SvgSprite';
 
 import edit from '../assets/images/edit.png';
-import arrow from '../assets/images/arrow.png';
 
 export default function Account({ navigation }) {
 	const title = 'Мой профиль';
 	const leftButton = {
 		link: 'moon',
-		icon: arrow
+		icon: arrowSvg('#fff', 1)
 	};
 	const rightButton = {
 		link: 'edit',
@@ -51,6 +51,16 @@ export default function Account({ navigation }) {
 			<Text style={ styles.noteTitle }>{ titleLimit(note.title) }</Text>
 			<Text style={ styles.noteDate }>{ note.date }</Text>
 			<Text style={ styles.noteDesc }>{ descLimit(note.description) }</Text>
+		</Pressable>
+	});
+	const documentsArray = documents.map((document, i) => {
+		const style = !i ? styles.button : [ styles.button, styles.buttonLine ];
+
+		return <Pressable style={ style } key={ i } onPress={ () => navigation.navigate('content', document) }>
+			<Text style={ styles.data }>{ document.title }</Text>
+			<View style={ styles.svg }>
+				{ arrowSvg('#fff', .5) }
+			</View>
 		</Pressable>
 	});
 
@@ -104,10 +114,9 @@ export default function Account({ navigation }) {
 									<Text style={ styles.moonText }>17.07</Text>
 								</View>
 							</View>
-							<Image
-								style={ styles.moonImage }
-								source={ require('../assets/images/arrow.png') }
-							/>
+							<View style={ styles.svg }>
+								{ arrowSvg('#fff', .5) }
+							</View>
 						</Pressable>
 						<Pressable style={ styles.largeButton } onPress={ () => navigation.navigate('moon') }>
 							<View style={ styles.moonDayWrap }>
@@ -135,27 +144,7 @@ export default function Account({ navigation }) {
 				<View style={ styles.block }>
 					<Text style={ styles.title }>Дополнительно</Text>
 					<View style={ styles.groupData }>
-						<Pressable style={ styles.button } onPress={ () => navigation.navigate('content', documents[0]) }>
-							<Text style={ styles.data }>{ documents[0].title }</Text>
-							<Image
-								style={ styles.moonImage }
-								source={ require('../assets/images/arrow.png') }
-							/>
-						</Pressable>
-						<Pressable style={ [ styles.button, styles.buttonLine ] } onPress={ () => navigation.navigate('content', documents[0]) }>
-							<Text style={ styles.data }>{ documents[1].title }</Text>
-							<Image
-								style={ styles.moonImage }
-								source={ require('../assets/images/arrow.png') }
-							/>
-						</Pressable>
-						<Pressable style={ [ styles.button, styles.buttonLine ] } onPress={ () => navigation.navigate('content', documents[0]) }>
-							<Text style={ styles.data }>{ documents[2].title }</Text>
-							<Image
-								style={ styles.moonImage }
-								source={ require('../assets/images/arrow.png') }
-							/>
-						</Pressable>
+						{ documentsArray }
 					</View>
 				</View>
 			</ScrollView>
@@ -307,5 +296,9 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		lineHeight: 20,
 		color: '#fff',
+	},
+	svg: {
+		alignItems: 'center',
+		width: 32
 	}
 });

@@ -2,14 +2,13 @@ import * as React from 'react';
 import { StyleSheet, Text, Pressable, View, Image } from 'react-native';
 import Container from '../components/Container';
 import Header from '../components/Header';
-
-import arrow from '../assets/images/arrow.png';
+import { arrowSvg } from '../components/SvgSprite';
 
 export default function Edit({ navigation }) {
 	const title = 'Редактировать';
 	const leftButton = {
 		link: 'moon',
-		icon: arrow
+		icon: arrowSvg('#fff', .5)
 	};
 
 	return (

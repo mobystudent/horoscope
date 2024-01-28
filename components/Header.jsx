@@ -28,10 +28,9 @@ export default function Header(props) {
 		<View style={ styles.header }>
 			{ Object.keys(props).length !== 0 && <>
 					<Pressable onPress={ () => navigation.navigate(linkLeft) } style={ styles.btn }>
-						<Image
-							style={ styles.image }
-							source={ iconLeft }
-						/>
+						<View style={ styles.arrow }>
+							{ iconLeft }
+						</View>
 					</Pressable>
 					<View>
 						<Text style={ styles.title }>{ title }</Text>
@@ -76,5 +75,8 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		width: 32,
 		height: 32
+	},
+	arrow: {
+		transform: 'rotate(180deg)'
 	}
 });
