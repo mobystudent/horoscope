@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import PersonalScreen from './screens/PersonalScreen';
 import NameScreen from './screens/personal/NameScreen';
 import TimeScreen from './screens/personal/TimeScreen';
 import CityScreen from './screens/personal/CityScreen';
@@ -22,7 +21,6 @@ export default function Navigation() {
 					headerShown: false
 				}}
 			>
-				<Stack.Screen name="registration" component={ PersonalScreen } />
 				<Stack.Screen name="name" component={ NameScreen } />
 				<Stack.Screen name="time" component={ TimeScreen } />
 				<Stack.Screen name="city" component={ CityScreen } />
