@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { StyleSheet, Text, View, Pressable, Image } from 'react-native';
-import PersonalTemplate from '../components/PersonalTemplate';
+import PersonalTemplate from '../../components/PersonalTemplate';
 
 export default function GenderScreen({ navigation }) {
 	const [ gender, setGender ] = useState(null);
@@ -31,7 +31,7 @@ export default function GenderScreen({ navigation }) {
 					<Pressable style={ [styles.square, gender === 'male' && styles.active] } onPress={ () => activeGender('male') }>
 						<Image
 							style={ styles.image }
-							source={ require('../assets/images/male.png') }
+							source={ require('../../assets/images/male.png') }
 						/>
 					</Pressable>
 					<Text style={ styles.text }>Male</Text>
@@ -40,7 +40,7 @@ export default function GenderScreen({ navigation }) {
 					<Pressable style={ [styles.square, gender === 'female' && styles.active] } onPress={ () => activeGender('female') }>
 						<Image
 							style={ styles.image }
-							source={ require('../assets/images/female.png') }
+							source={ require('../../assets/images/female.png') }
 						/>
 					</Pressable>
 					<Text style={ styles.text }>Female</Text>

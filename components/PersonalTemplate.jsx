@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, Text, Pressable, View } from 'react-native';
-import Container from '../screens/Container';
+import Container from './Container';
 import Header from './Header';
 
 export default function PersonalTemplate(props) {

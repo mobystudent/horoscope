@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, Text, Pressable, View, Image } from 'react-native';
-import Container from './Container';
+import Container from '../components/Container';
 import Header from '../components/Header';
 
 import arrow from '../assets/images/arrow.png';

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, Text, Pressable, View, Image, ScrollView } from 'react-native';
-import Container from './Container';
+import Container from '../components/Container';
 import Header from '../components/Header';
 
 import edit from '../assets/images/edit.png';

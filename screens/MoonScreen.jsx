@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import Container from './Container';
+import Container from '../components/Container';
 import Header from '../components/Header';
 
 import account from '../assets/images/account.png';

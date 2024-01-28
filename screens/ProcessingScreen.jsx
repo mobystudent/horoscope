@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList, Image, Animated } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
-import Container from './Container';
+import Container from '../components/Container';
 import Header from '../components/Header';
 
 export default function Processing({ navigation }) {

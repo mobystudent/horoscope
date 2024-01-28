@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { StyleSheet, FlatList, TextInput, Pressable, Text, KeyboardAvoidingView, Keyboard, Alert } from 'react-native';
-import PersonalTemplate from '../components/PersonalTemplate';
+import { StyleSheet, FlatList, TextInput, View, Pressable, Text, KeyboardAvoidingView, Keyboard, Alert } from 'react-native';
+import PersonalTemplate from '../../components/PersonalTemplate';
 
 export default function CityScreen({ navigation }) {
 	const data = [
@@ -85,7 +85,7 @@ export default function CityScreen({ navigation }) {
 			nextStep={ nextStep }
 		>
 			<KeyboardAvoidingView style={ styles.content } behavior={ Platform.OS === 'ios' ? 'padding' : 'height' } >
-				<Pressable style={ styles.inputWrap }>
+				<View style={ styles.inputWrap }>
 					<TextInput
 						style={ styles.input }
 						placeholder="Ввести город..."
@@ -95,7 +95,7 @@ export default function CityScreen({ navigation }) {
 						onKeyPress={ (press) => emptyFilter(press) }
 						onSelectionChange={ changeSelection }
 					/>
-				</Pressable>
+				</View>
 				<FlatList
 					data={ suggestion }
 					renderItem={ renderItem }
