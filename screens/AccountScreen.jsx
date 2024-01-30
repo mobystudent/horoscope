@@ -17,6 +17,36 @@ export default function Account({ navigation }) {
 		link: 'edit',
 		icon: edit
 	};
+	const userData = [
+		{
+			title: 'Дата',
+			value: '15.07.1999'
+		},
+		{
+			title: 'Время',
+			value: '19:30'
+		},
+		{
+			title: 'Город',
+			value: 'Париж'
+		},
+		{
+			title: 'Пол',
+			value: 'Женский'
+		}
+	];
+	const moonDay = {
+		day: 29,
+		title: 'Лунный день',
+		startPeriod: {
+			time: '23:26',
+			day: '15.07'
+		},
+		endPeriod: {
+			time: '00:26',
+			day: '15.07'
+		}
+	};
 	const notes = [
 		{
 			id: 1,
@@ -45,6 +75,14 @@ export default function Account({ navigation }) {
 			description: 'What is Lorem Ipsum? Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Why do we use it? It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for \'lorem ipsum\' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like). Where does it come from? Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32. The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.'
 		}
 	];
+	const userDataArray = userData.map((data, i) => {
+		const style = !i ? styles.button : [ styles.button, styles.buttonLine ];
+
+		return <View style={ style }>
+			<Text style={ styles.text }>{ data.title }</Text>
+			<Text style={ styles.text }>{ data.value }</Text>
+		</View>;
+	});
 	const notesArray = notes.map((note) => {
 		return <Note navigation={ navigation } key={ note.id } note={ note } />
 	});
@@ -52,11 +90,11 @@ export default function Account({ navigation }) {
 		const style = !i ? styles.button : [ styles.button, styles.buttonLine ];
 
 		return <Pressable style={ style } key={ i } onPress={ () => navigation.navigate('content', document) }>
-			<Text style={ styles.data }>{ document.title }</Text>
+			<Text style={ styles.text }>{ document.title }</Text>
 			<View style={ styles.svg }>
 				{ arrowSvg('#fff', .5) }
 			</View>
-		</Pressable>
+		</Pressable>;
 	});
 
 	return (
@@ -80,18 +118,7 @@ export default function Account({ navigation }) {
 				<View style={ styles.block }>
 					<Text style={ styles.title }>День рождения</Text>
 					<View style={ styles.groupData }>
-						<View style={ styles.button }>
-							<Text style={ styles.data }>Дата</Text>
-							<Text style={ styles.data }>15.07.1999</Text>
-						</View>
-						<View style={ [ styles.button, styles.buttonLine ] }>
-							<Text style={ styles.data }>Время</Text>
-							<Text style={ styles.data }>19:30</Text>
-						</View>
-						<View style={ [ styles.button, styles.buttonLine ] }>
-							<Text style={ styles.data }>Место</Text>
-							<Text style={ styles.data }>Париж</Text>
-						</View>
+						{ userDataArray }
 					</View>
 				</View>
 				<View style={ styles.block }>
@@ -99,14 +126,14 @@ export default function Account({ navigation }) {
 					<View style={ styles.moonContent }>
 						<Pressable style={ styles.largeButton } onPress={ () => navigation.navigate('moon') }>
 							<View style={ styles.moonDayWrap }>
-								<Text style={ styles.moonDay }>29</Text>
+								<Text style={ styles.moonDay }>{ moonDay.day }</Text>
 							</View>
 							<View style={ styles.moonWrap }>
-								<Text style={ styles.moonTitle }>Лунный день</Text>
+								<Text style={ styles.moonTitle }>{ moonDay.title }</Text>
 								<View style={ styles.dataMoon }>
-									<Text style={ styles.moonText }>15.07</Text>
-									<Text style={ [ styles.moonText, styles.moonMark ] }>23:26 - 00:18</Text>
-									<Text style={ styles.moonText }>17.07</Text>
+									<Text style={ styles.moonText }>{ moonDay.startPeriod.day }</Text>
+									<Text style={ [ styles.moonText, styles.moonMark ] }>{ `${moonDay.startPeriod.time}-${moonDay.endPeriod.time}` }</Text>
+									<Text style={ styles.moonText }>{ moonDay.endPeriod.day }</Text>
 								</View>
 							</View>
 							<View style={ styles.svg }>
@@ -258,7 +285,7 @@ const styles = StyleSheet.create({
 		borderTopWidth: 1,
 		borderTopColor: 'rgba(255, 255, 255, .1)'
 	},
-	data: {
+	text: {
 		// fontFamily: 'SFReg',
 		fontSize: 16,
 		lineHeight: 20,
