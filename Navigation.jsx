@@ -10,6 +10,7 @@ import MoonScreen from './screens/MoonScreen';
 import EditScreen from './screens/EditScreen';
 import AccountScreen from './screens/AccountScreen';
 import ContentScreen from './screens/ContentScreen';
+import CreateNoteScreen from './screens/CreateNoteScreen';
 
 const Stack = createStackNavigator();
 
@@ -31,6 +32,7 @@ export default function Navigation() {
 				<Stack.Screen name="edit" component={ EditScreen } />
 				<Stack.Screen name="account" component={ AccountScreen } />
 				<Stack.Screen name="content" component={ ContentScreen } />
+				<Stack.Screen name="createNote" component={ CreateNoteScreen } />
 			</Stack.Navigator>
 		</NavigationContainer>
 	);

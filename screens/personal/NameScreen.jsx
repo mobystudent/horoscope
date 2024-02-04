@@ -49,7 +49,7 @@ export default function NameScreen({ navigation }) {
 					<TextInput
 						style={ styles.input }
 						placeholder="Имя…"
-						placeholderTextColor="rgba(255, 255, 255, 0.5)"
+						placeholderTextColor="rgba(255, 255, 255, .5)"
 						value={ name }
 						onChangeText={ setName }
 						onKeyPress={ (press) => checkText(press) }

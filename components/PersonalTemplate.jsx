@@ -27,7 +27,7 @@ export default function PersonalTemplate(props) {
 					onPress={ () => nextStep() }
 					disabled={ disabledBtn }
 				>
-				<Text style={[ styles.buttonText, disabledBtn && styles.disabledText ]}>{ btnText }</Text>
+					<Text style={[ styles.buttonText, disabledBtn && styles.disabledText ]}>{ btnText }</Text>
 				</Pressable>
 			</View>
 		</Container>
