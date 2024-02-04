@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { StyleSheet, TextInput, View, KeyboardAvoidingView, Alert } from 'react-native';
+import { StyleSheet, Text, TextInput, View, KeyboardAvoidingView, Alert } from 'react-native';
 import PersonalTemplate from '../../components/PersonalTemplate';
 
 export default function NameScreen({ navigation }) {
 	const [ name, setName ] = useState('');
 	const [ pointer, setPointer ] = useState(0);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
+	const maxLengthName = 16;
+	const [ countInputWords, setCountInputWords ] = useState(maxLengthName);
 	const checkText = ({ nativeEvent: { key } }) => {
 		const regex = new RegExp('[а-яА-Я\-Backspace ]');
 		const check = regex.test(key);
@@ -23,6 +25,12 @@ export default function NameScreen({ navigation }) {
 		} else {
 			setDisabledBtn(nameChars.length > 1 ? false : true);
 		}
+	};
+	const checkNameLength = (name) => {
+		if (name.length > maxLengthName) return;
+
+		setName(name);
+		setCountInputWords(maxLengthName - name.length);
 	};
 	const changeSelection = ({ nativeEvent: { selection: { start } } }) => {
 		setPointer(start);
@@ -51,10 +59,11 @@ export default function NameScreen({ navigation }) {
 						placeholder="Имя…"
 						placeholderTextColor="rgba(255, 255, 255, .5)"
 						value={ name }
-						onChangeText={ setName }
-						onKeyPress={ (press) => checkText(press) }
+						onChangeText={ (name) => checkNameLength(name) }
+						onKeyPress={ (event) => checkText(event) }
 						onSelectionChange={ changeSelection }
 					/>
+					<Text style={ styles.hint }>Осталось { countInputWords } символов</Text>
 				</View>
 			</KeyboardAvoidingView>
 		</PersonalTemplate>
@@ -77,6 +86,13 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		lineHeight: 20,
 		textAlignVertical: 'center',
-		backgroundColor: 'rgba(255, 255, 255, 0.12)'
+		backgroundColor: 'rgba(255, 255, 255, .12)'
+	},
+	hint: {
+		color: '#fff',
+		// fontFamily: 'SFReg',
+		fontSize: 12,
+		lineHeight: 14,
+		marginTop: 5
 	},
 });
