@@ -3,9 +3,11 @@ import { StyleSheet, Text, Pressable, View, TextInput, KeyboardAvoidingView, Scr
 import Container from '../components/Container';
 import Header from '../components/Header';
 
+import { observer } from 'mobx-react-lite';
+import notesStore from '../stores/notes.store';
 import { arrowSvg } from '../components/SvgSprite';
 
-export default function CreateNote({ navigation }) {
+const CreateNote = observer(({ navigation }) => {
 	const [ notes, setNotes ] = useState({
 		title: '',
 		date: '',
@@ -72,7 +74,7 @@ export default function CreateNote({ navigation }) {
 			date: getDate()
 		});
 
-		console.log(notes);
+		notesStore.add(notes);
 	};
 	const title = 'Новая заметка';
 	const btnText = 'Сохранить';
@@ -122,7 +124,9 @@ export default function CreateNote({ navigation }) {
 			</KeyboardAvoidingView>
 		</Container>
 	);
-}
+});
+
+export default CreateNote;
 
 const styles = StyleSheet.create({
 	content: {
