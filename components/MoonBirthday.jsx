@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { StyleSheet, Text, Pressable, View, Image } from 'react-native';
+import { StyleSheet, Text, Pressable, View } from 'react-native';
 
-import { arrowSvg } from './SvgSprite';
+import * as svg from './SvgSprite';
 
 export default function MoonBirthday({ navigation }) {
 	const moonDay = {
@@ -39,7 +39,7 @@ export default function MoonBirthday({ navigation }) {
 					</View>
 				</View>
 				<View style={ styles.svg }>
-					{ arrowSvg('#fff', .5) }
+					{ svg.arrowSvg('#fff', .5) }
 				</View>
 			</Pressable>
 			<View style={ styles.block }>
@@ -50,10 +50,9 @@ export default function MoonBirthday({ navigation }) {
 					<Text style={ styles.title }>{ moonPhase.title }</Text>
 					<Text style={ styles.text }>{ moonPhase.phase }</Text>
 				</View>
-				<Image
-					style={ styles.image }
-					source={ require('../assets/images/libra.png') }
-				/>
+				<View style={ styles.svg }>
+					{ svg[moonPhase.sign]('#fff', 1) }
+				</View>
 			</View>
 		</View>
 	);
@@ -101,10 +100,6 @@ const styles = StyleSheet.create({
 	moonMark: {
 		color: '#fff'
 	},
-	image: {
-		width: 32,
-		height: 32
-	},
 	block: {
 		flexDirection: 'row',
 		alignItems: 'center',
@@ -116,6 +111,8 @@ const styles = StyleSheet.create({
 	},
 	svg: {
 		alignItems: 'center',
-		width: 32
+		justifyContent: 'center',
+		width: 32,
+		height: 32
 	}
 });
