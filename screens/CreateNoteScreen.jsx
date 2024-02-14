@@ -5,6 +5,7 @@ import Header from '../components/Header';
 
 import { observer } from 'mobx-react-lite';
 import notesStore from '../stores/notes.store';
+
 import { arrowSvg } from '../components/SvgSprite';
 
 const CreateNote = observer(({ navigation }) => {

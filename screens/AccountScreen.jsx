@@ -3,8 +3,11 @@ import { StyleSheet, Text, Pressable, View, Image, ScrollView } from 'react-nati
 import Container from '../components/Container';
 import Header from '../components/Header';
 import Note from '../components/Note';
-import { arrowSvg } from '../components/SvgSprite';
+import MoonBirthday from '../components/MoonBirthday';
 
+import notesStore from '../stores/notes.store';
+
+import { arrowSvg } from '../components/SvgSprite';
 import edit from '../assets/images/edit.png';
 
 export default function Account({ navigation }) {
@@ -33,32 +36,6 @@ export default function Account({ navigation }) {
 		{
 			title: 'Пол',
 			value: 'Женский'
-		}
-	];
-	const moonDay = {
-		day: 29,
-		title: 'Лунный день',
-		startPeriod: {
-			time: '23:26',
-			day: '15.07'
-		},
-		endPeriod: {
-			time: '00:26',
-			day: '15.07'
-		}
-	};
-	const notes = [
-		{
-			id: 1,
-			title: 'Моя заметка',
-			date: '15.07.2023',
-			description: 'Once it smiled a silent dell Where the people did not dwell; They had gone unto the wars, Trusting to the mild-eyed stars, Nightly, from their azure towers, To keep watch above the flowers, In the midst of which all day The red sun-light lazily lay. Now each visiter shall confess The sad valley\'s restlessness. Nothing there is motionless— Nothing save the airs that brood Over the magic solitude. Ah, by no wind are stirred those trees That palpitate like the chill seas Around the misty Hebrides! Ah, by no wind those clouds are driven That rustle through the unquiet Heaven Uneasily, from mom till even, Over the violets there that lie In myriad types of the human eye — Over the lilies there that wave And weep above a nameless grave! They wave:—from out their fragrant tops Eternal dews come down in drops. They weep:—from off their delicate stems Perennial tears descend in gems. Now each visiter shall confess The sad valley\'s restlessness. Nothing there is motionless— Nothing save the airs that brood Over the magic solitude. Ah, by no wind are stirred those trees That palpitate like the chill seas Around the misty Hebrides! Ah, by no wind those clouds are driven That rustle through the unquiet Heaven Uneasily, from mom till even, Over the violets there that lie In myriad types of the human eye — Over the lilies there that wave And weep above a nameless grave! They wave:—from out their fragrant tops Eternal dews come down in drops. They weep:—from off their delicate stems Perennial tears descend in gems.'
-		},
-		{
-			id: 2,
-			title: '5-й лунный день начинается в 07:43',
-			date: '15.07.2023',
-			description: 'В 13 день лунного календаря не следует начинать новые дела. Стоит выполнять текущие задачи. Желательно работать не в одиночку. Шансы на успех в деле повышаются при коллективной работе. День подходит для любого общения, в том числе для серьезного разговора с начальством. Для смены места работы это не лучшее время. В этот период разрешается проводить любые финансовые операции. Не рекомендуется работать по дому. От путешествий лучше воздержаться.'
 		}
 	];
 	const documents = [
@@ -123,45 +100,13 @@ export default function Account({ navigation }) {
 				</View>
 				<View style={ styles.block }>
 					<Text style={ styles.title }>Луна при рождении</Text>
-					<View style={ styles.moonContent }>
-						<Pressable style={ styles.largeButton } onPress={ () => navigation.navigate('moon') }>
-							<View style={ styles.moonDayWrap }>
-								<Text style={ styles.moonDay }>{ moonDay.day }</Text>
-							</View>
-							<View style={ styles.moonWrap }>
-								<Text style={ styles.moonTitle }>{ moonDay.title }</Text>
-								<View style={ styles.dataMoon }>
-									<Text style={ styles.moonText }>{ moonDay.startPeriod.day }</Text>
-									<Text style={ [ styles.moonText, styles.moonMark ] }>{ `${moonDay.startPeriod.time}-${moonDay.endPeriod.time}` }</Text>
-									<Text style={ styles.moonText }>{ moonDay.endPeriod.day }</Text>
-								</View>
-							</View>
-							<View style={ styles.svg }>
-								{ arrowSvg('#fff', .5) }
-							</View>
-						</Pressable>
-						<Pressable style={ styles.largeButton } onPress={ () => navigation.navigate('moon') }>
-							<View style={ styles.moonDayWrap }>
-								<Text style={ styles.moonDay }>29</Text>
-							</View>
-							<View style={ styles.moonWrap }>
-								<Text style={ styles.moonTitle }>Убывающая луна</Text>
-								<Text style={ styles.moonText }>4-фаза</Text>
-							</View>
-							<Image
-								style={ styles.moonImage }
-								source={ require('../assets/images/libra.png') }
-							/>
-						</Pressable>
-					</View>
+					<MoonBirthday />
 				</View>
 				<View style={ styles.block }>
 					<Text style={ styles.title }>Мои заметки</Text>
-					<ScrollView horizontal={ true }>
-						<View style={ styles.noteWrap }>
-							{ notesArray }
-						</View>
-					</ScrollView>
+					<View style={ styles.noteWrap }>
+						{ notesArray }
+					</View>
 				</View>
 				<View style={ styles.block }>
 					<Text style={ styles.title }>Дополнительно</Text>
@@ -215,63 +160,8 @@ const styles = StyleSheet.create({
 		borderRadius: 17,
 		backgroundColor: 'rgba(255, 255, 255, .12)'
 	},
-	moonContent: {
-		rowGap: 10
-	},
-	moonDayWrap: {
-		justifyContent: 'center',
-		alignItems: 'center',
-		width: 40,
-		height: 40,
-		borderRadius: 40/2,
-		backgroundColor: 'rgba(255, 255, 255, .12)'
-	},
-	moonDay: {
-		// fontFamily: 'SFMed',
-		fontSize: 20,
-		lineHeight: 26,
-		color: '#fff',
-	},
-	largeButton: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		columnGap: 15,
-		paddingHorizontal: 15,
-		paddingVertical: 12,
-		borderRadius: 17,
-		backgroundColor: 'rgba(255, 255, 255, .12)'
-	},
-	moonWrap: {
-		flex: 1,
-	},
-	dataMoon: {
-		flexDirection: 'row',
-		flexWrap: 'nowrap',
-		columnGap: 5
-	},
-	moonTitle: {
-		// fontFamily: 'SFReg',
-		fontSize: 16,
-		lineHeight: 20,
-		letterSpacing: -.1,
-		color: 'rgba(255, 255, 255, .5)'
-	},
-	moonText: {
-		// fontFamily: 'SFReg',
-		fontSize: 14,
-		lineHeight: 20,
-		color: 'rgba(255, 255, 255, .5)'
-	},
-	moonMark: {
-		color: '#fff'
-	},
-	moonImage: {
-		width: 32,
-		height: 32
-	},
 	noteWrap: {
-		flexDirection: 'row',
-		columnGap: 10
+		rowGap: 10
 	},
 	button: {
 		flexDirection: 'row',

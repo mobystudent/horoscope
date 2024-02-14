@@ -20,8 +20,6 @@ export default function Note(props) {
 
 const styles = StyleSheet.create({
 	note: {
-		height: 210,
-		width: 210,
 		padding: 15,
 		borderRadius: 17,
 		backgroundColor: 'rgba(255, 255, 255, .12)'
