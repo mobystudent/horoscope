@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, Text, Pressable, View, Image } from 'react-native';
+import { StyleSheet, Text, Pressable } from 'react-native';
 
 export default function Note(props) {
 	const {
@@ -8,9 +8,17 @@ export default function Note(props) {
 	} = props;
 	const titleLimit = (title) => title.length > 45 ? `${title.slice(0, 35)}...` : title;
 	const descLimit = (desc) => desc.length > 60 ? `${desc.slice(0, 50)}...` : desc;
+	const mode = note.date ? 'view' : 'new';
 
 	return (
-		<Pressable style={ styles.note } onPress={ () => navigation.navigate('content', note) }>
+		<Pressable
+			style={ styles.note }
+			onPress={ () => navigation.navigate('createNote', {
+				note,
+				mode: mode,
+				page: 'account'
+			})
+		}>
 			<Text style={ styles.title }>{ titleLimit(note.title) }</Text>
 			<Text style={ styles.date }>{ note.date }</Text>
 			<Text style={ styles.desc }>{ descLimit(note.description) }</Text>

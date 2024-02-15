@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, Text, Pressable, View, Image } from 'react-native';
+import { StyleSheet, Text, Pressable, View } from 'react-native';
 
 export default function Header(props) {
 	const {
@@ -12,31 +12,27 @@ export default function Header(props) {
 		} = {},
 		rightButton: {
 			link: linkRight = '',
-			icon: iconRight = ''
+			icon: iconRight = '',
+			btn: typeBtn = '',
+			params = null
 		} = {}
 	} = props;
-	const viewRightButton = linkRight ?
-		<Pressable onPress={ () => navigation.navigate(linkRight) } style={ styles.btn }>
-			<Image
-				style={ styles.image }
-				source={ iconRight }
-			/>
-		</Pressable>
-		: <View style={ styles.btn }></View>;
+	console.log(params);
+	// const actionBtn = linkRight ? navigation.navigate(linkRight, { ...params }) : navigation.navigate(linkRight, { ...params });
 
 	return (
 		<View style={ styles.header }>
 			{ Object.keys(props).length !== 0 && <>
-					<Pressable onPress={ () => navigation.navigate(linkLeft) } style={ styles.btn }>
-						<View style={ styles.arrow }>
-							{ iconLeft }
-						</View>
+					<Pressable style={ styles.btn } onPress={ () => navigation.navigate(linkLeft) }>
+						{ iconLeft }
 					</Pressable>
 					<View>
 						<Text style={ styles.title }>{ title }</Text>
 						{ subtitle && <Text style={ styles.subtitle }>{ subtitle }</Text>}
 					</View>
-					{ viewRightButton}
+					<Pressable style={ styles.btn } onPress={ () => navigation.navigate(linkRight, { ...params }) }>
+						{ iconRight }
+					</Pressable>
 				</>
 			}
 		</View>
@@ -51,10 +47,6 @@ const styles = StyleSheet.create({
 		height: 50,
 		marginTop: 30,
 		marginBottom: 10
-	},
-	image: {
-		width: 24,
-		height: 24
 	},
 	title: {
 		// fontFamily: 'SFBold',
@@ -75,8 +67,5 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		width: 32,
 		height: 32
-	},
-	arrow: {
-		transform: 'rotate(180deg)'
 	}
 });

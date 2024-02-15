@@ -54,7 +54,7 @@ export default function Account({ navigation }) {
 	const userDataArray = userData.map((data, i) => {
 		const style = !i ? styles.button : [ styles.button, styles.buttonLine ];
 
-		return <Pressable style={ style } onPress={ () => navigation.navigate(data.screen) }>
+		return <Pressable style={ style } key={ i } onPress={ () => navigation.navigate(data.screen) }>
 			<Text style={ styles.text }>{ data.title }</Text>
 			<Text style={ styles.text }>{ data.value }</Text>
 		</Pressable>;

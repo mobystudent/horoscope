@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { StyleSheet, Text, Pressable, View, TextInput, KeyboardAvoidingView, ScrollView, Alert } from 'react-native';
+import moment from 'moment';
 import Container from '../components/Container';
 import Header from '../components/Header';
 
@@ -8,20 +9,46 @@ import notesStore from '../stores/notes.store';
 
 import { arrowSvg } from '../components/SvgSprite';
 
-const CreateNote = observer(({ navigation }) => {
+const CreateNote = observer((props) => {
+	const {
+		navigation,
+		route: {
+			params: {
+				mode = 'edit',
+				page = null,
+				note: {
+					day = null,
+					headerTitle = '',
+					title = '',
+					date = '',
+					description = ''
+				} = {}
+			} = {}
+		} = {}
+	} = props;
 	const [ notes, setNotes ] = useState({
-		title: '',
-		date: '',
-		description: ''
+		title: title,
+		date: date,
+		description: description
 	});
 	const [ pointer, setPointer ] = useState(0);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
 	const maxLengthTitle = 80;
 	const [ countInputWords, setCountInputWords ] = useState(maxLengthTitle);
 	const leftButton = {
-		link: 'moon',
+		link: page,
 		icon: arrowSvg('#fff', 1)
 	};
+	// const rightButton = {
+	// 	btn: 'createNote',
+	// 	icon: arrowSvg('#fff', 1),
+	// 	params: {
+	// 		title: title,
+	// 		description: description,
+	// 		mode: 'edit',
+	// 		page: 'moon'
+	// 	}
+	// };
 	const checkText = ({ nativeEvent: { key } }, field) => {
 		const regex = new RegExp('[а-яА-Я\-Backspace ]');
 		const check = regex.test(key);
@@ -61,30 +88,23 @@ const CreateNote = observer(({ navigation }) => {
 	const changeSelection = ({ nativeEvent: { selection: { start } } }) => {
 		setPointer(start);
 	};
-	const getDate = () => {
-		const date = new Date();
-		const year = date.getFullYear();
-		const month = date.getMonth() + 1;
-		const day = date.getDate();
-
-		return `${day}.${month}.${year}`;
-	};
 	const save = () => {
 		setNotes({
 			...notes,
-			date: getDate()
+			date: moment().format("DD.MM.YYYY")
 		});
 
 		notesStore.add(notes);
 	};
-	const title = 'Новая заметка';
+	const header = mode === 'new' ? 'Новая заметка' : `${headerTitle} ${date}`;
+	const readOnly = mode === 'view' ? true : false;
 	const btnText = 'Сохранить';
 
 	return (
 		<Container>
 			<Header
 				navigation={ navigation }
-				title={ title }
+				title={ header }
 				leftButton={ leftButton }
 			/>
 			<KeyboardAvoidingView style={ styles.content } behavior={ Platform.OS === 'ios' ? 'padding' : 'height' } >
@@ -96,6 +116,7 @@ const CreateNote = observer(({ navigation }) => {
 							placeholder="Здесь может быть заголовок"
 							placeholderTextColor="rgba(255, 255, 255, .5)"
 							value={ notes.title }
+							readOnly={ readOnly }
 							onChangeText={ (title) => checkTitleLength(title) }
 							onKeyPress={ (event) => checkText(event, 'title') }
 							onSelectionChange={ changeSelection }
@@ -109,6 +130,7 @@ const CreateNote = observer(({ navigation }) => {
 							placeholder="Начните свою запись или вставьте текст"
 							placeholderTextColor="rgba(255, 255, 255, .5)"
 							value={ notes.description }
+							readOnly={ readOnly }
 							onChangeText={ (description) => setDescription(description) }
 							onKeyPress={ (event) => checkText(event, 'description') }
 							onSelectionChange={ changeSelection }
