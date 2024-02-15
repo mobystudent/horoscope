@@ -8,7 +8,6 @@ import MoonBirthday from '../components/MoonBirthday';
 import notesStore from '../stores/notes.store';
 
 import { arrowSvg } from '../components/SvgSprite';
-import edit from '../assets/images/edit.png';
 
 export default function Account({ navigation }) {
 	const title = 'Мой профиль';
@@ -16,26 +15,26 @@ export default function Account({ navigation }) {
 		link: 'moon',
 		icon: arrowSvg('#fff', 1)
 	};
-	const rightButton = {
-		link: 'edit',
-		icon: edit
-	};
 	const userData = [
 		{
 			title: 'Дата',
-			value: '15.07.1999'
+			value: '15.07.1999',
+			screen: 'date'
 		},
 		{
 			title: 'Время',
-			value: '19:30'
+			value: '19:30',
+			screen: 'time'
 		},
 		{
 			title: 'Город',
-			value: 'Париж'
+			value: 'Париж',
+			screen: 'city'
 		},
 		{
 			title: 'Пол',
-			value: 'Женский'
+			value: 'Женский',
+			screen: 'gender'
 		}
 	];
 	const documents = [
@@ -55,13 +54,14 @@ export default function Account({ navigation }) {
 	const userDataArray = userData.map((data, i) => {
 		const style = !i ? styles.button : [ styles.button, styles.buttonLine ];
 
-		return <View style={ style }>
+		return <Pressable style={ style } onPress={ () => navigation.navigate(data.screen) }>
 			<Text style={ styles.text }>{ data.title }</Text>
 			<Text style={ styles.text }>{ data.value }</Text>
-		</View>;
+		</Pressable>;
 	});
-	const notesArray = notes.map((note) => {
-		return <Note navigation={ navigation } key={ note.id } note={ note } />
+	console.log(notesStore.notes);
+	const notesArray = notesStore.notes.map((note, i) => {
+		return <Note navigation={ navigation } key={ i } note={ note } />
 	});
 	const documentsArray = documents.map((document, i) => {
 		const style = !i ? styles.button : [ styles.button, styles.buttonLine ];
@@ -80,17 +80,18 @@ export default function Account({ navigation }) {
 				navigation={ navigation }
 				title={ title }
 				leftButton={ leftButton }
-				rightButton={ rightButton }
 			/>
 			<ScrollView contentContainerStyle={ styles.body } showsVerticalScrollIndicator={ false }>
 				<View style={ styles.block }>
-					<View style={ styles.photo }>
+					<Pressable style={ styles.photo }>
 						<Image
 							style={ styles.image }
 							source={ require('../assets/images/photo.png') }
 						/>
-					</View>
-					<Text style={ styles.name }>Valentina, 28</Text>
+					</Pressable>
+					<Pressable onPress={ () => navigation.navigate('name') }>
+						<Text style={ styles.name }>Valentina, 28</Text>
+					</Pressable>
 				</View>
 				<View style={ styles.block }>
 					<Text style={ styles.title }>День рождения</Text>

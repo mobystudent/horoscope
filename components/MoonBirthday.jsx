@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		lineHeight: 20,
 		letterSpacing: -.1,
-		color: 'rgba(255, 255, 255, .5)'
+		color: '#fff'
 	},
 	text: {
 		// fontFamily: 'SFReg',
