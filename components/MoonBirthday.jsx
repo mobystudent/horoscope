@@ -6,15 +6,19 @@ import * as svg from './SvgSprite';
 export default function MoonBirthday({ navigation }) {
 	const moonDay = {
 		day: 29,
-		title: 'Лунный день',
+		headerTitle: 'Лунный день',
 		symbol: 'единорог',
-		startPeriod: {
-			time: '23:26',
-			day: '15.07'
-		},
-		endPeriod: {
-			time: '00:26',
-			day: '15.07'
+		title: 'Хороший день для занятия спорта',
+		description: 'Давно выяснено, что при оценке дизайна и композиции читаемый текст мешает сосредоточиться. Lorem Ipsum используют потому, что тот обеспечивает более или менее стандартное заполнение шаблона, а также реальное распределение букв и пробелов в абзацах, которое не получается при простой дубликации "Здесь ваш текст.. Здесь ваш текст.. Здесь ваш текст.." Многие программы электронной вёрстки и редакторы HTML используют Lorem Ipsum в качестве текста по умолчанию, так что поиск по ключевым словам "lorem ipsum" сразу показывает, как много веб-страниц всё ещё дожидаются своего настоящего рождения. За прошедшие годы текст Lorem Ipsum получил много версий. Некоторые версии появились по ошибке, некоторые - намеренно (например, юмористические варианты).',
+		period: {
+			start: {
+				time: '23:26',
+				day: '15.07'
+			},
+			end: {
+				time: '00:26',
+				day: '15.07'
+			}
 		}
 	};
 	const moonPhase = {
@@ -26,16 +30,16 @@ export default function MoonBirthday({ navigation }) {
 
 	return (
 		<View style={ styles.content }>
-			<Pressable style={ styles.block } onPress={ () => navigation.navigate('createNote', moonDay.symbol) }>
+			<Pressable style={ styles.block } onPress={ () => navigation.navigate('content', moonDay) }>
 				<View style={ styles.dayWrap }>
 					<Text style={ styles.day }>{ moonDay.day }</Text>
 				</View>
 				<View style={ styles.wrap }>
-					<Text style={ styles.title }>{ moonDay.title }</Text>
+					<Text style={ styles.title }>{ moonDay.headerTitle }</Text>
 					<View style={ styles.data }>
-						<Text style={ styles.text }>{ moonDay.startPeriod.day }</Text>
-						<Text style={ [ styles.text, styles.moonMark ] }>{ `${moonDay.startPeriod.time}-${moonDay.endPeriod.time}` }</Text>
-						<Text style={ styles.text }>{ moonDay.endPeriod.day }</Text>
+						<Text style={ styles.text }>{ moonDay.period.start.day }</Text>
+						<Text style={ [ styles.text, styles.moonMark ] }>{ `${moonDay.period.start.time}-${moonDay.period.end.time}` }</Text>
+						<Text style={ styles.text }>{ moonDay.period.end.day }</Text>
 					</View>
 				</View>
 				<View style={ styles.svg }>

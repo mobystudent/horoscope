@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import { StyleSheet, Text, ScrollView } from 'react-native';
 import Container from '../components/Container';
 import Header from '../components/Header';
 import { arrowSvg } from '../components/SvgSprite';
@@ -9,13 +9,15 @@ export default function Content(props) {
 		navigation,
 		route: {
 			params: {
+				day = null,
+				headerTitle = '',
 				title = '',
-				date = '',
+				symbol = '',
 				description = ''
 			} = {}
 		}
 	} = props;
-	const titleNote = date ? `Заметка от ${date}` : title;
+	const header = day ? `${ day }-й ${ headerTitle }` : headerTitle;
 	const leftButton = {
 		link: 'account',
 		icon: arrowSvg('#fff', .5)
@@ -25,11 +27,12 @@ export default function Content(props) {
 		<Container>
 			<Header
 				navigation={ navigation }
-				title={ titleNote }
+				title={ header }
 				leftButton={ leftButton }
 			/>
 			<ScrollView showsVerticalScrollIndicator={ false }>
-				<Text style={ styles.title }>{ title }</Text>
+				{ symbol && <Text style={ styles.symbol }>{ `Символ дня: ${ symbol }` }</Text> }
+				{ title && <Text style={ styles.title }>{ title }</Text> }
 				<Text style={ styles.description }>{ description }</Text>
 			</ScrollView>
 		</Container>
@@ -49,5 +52,11 @@ const styles = StyleSheet.create({
 		// fontFamily: 'SFReg',
 		fontSize: 16,
 		lineHeight: 24
+	},
+	symbol: {
+		color: "rgba(255, 255, 255, .5)",
+		fontSize: 12,
+		marginBottom: 15,
+		textTransform: 'uppercase'
 	}
 });
