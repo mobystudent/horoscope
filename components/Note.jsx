@@ -1,5 +1,6 @@
-import * as React from 'react';
+import { useContext } from 'react';
 import { StyleSheet, Text, Pressable } from 'react-native';
+import { SettingsContext } from '../contexts/settings';
 
 export default function Note(props) {
 	const {
@@ -8,17 +9,24 @@ export default function Note(props) {
 	} = props;
 	const titleLimit = (title) => title.length > 45 ? `${title.slice(0, 35)}...` : title;
 	const descLimit = (desc) => desc.length > 60 ? `${desc.slice(0, 50)}...` : desc;
-	const mode = note.date ? 'view' : 'new';
+	const { settings, setSettings } = useContext(SettingsContext);
+	const checkTypeNote = (item) => {
+		setSettings({
+			...settings,
+			noteMode: item.date ? 'view' : 'new'
+		});
+
+		navigation.navigate('createNote', {
+			note,
+			page: 'account'
+		});
+	}
 
 	return (
 		<Pressable
 			style={ styles.note }
-			onPress={ () => navigation.navigate('createNote', {
-				note,
-				mode: mode,
-				page: 'account'
-			})
-		}>
+			onPress={ () => checkTypeNote(note) }
+		>
 			<Text style={ styles.title }>{ titleLimit(note.title) }</Text>
 			<Text style={ styles.date }>{ note.date }</Text>
 			<Text style={ styles.desc }>{ descLimit(note.description) }</Text>

@@ -1,5 +1,6 @@
-import * as React from 'react';
+import { useContext } from 'react';
 import { StyleSheet, Text, Pressable, View } from 'react-native';
+import { SettingsContext } from '../contexts/settings';
 
 export default function Header(props) {
 	const {
@@ -11,14 +12,26 @@ export default function Header(props) {
 			icon: iconLeft = ''
 		} = {},
 		rightButton: {
+			btn: btnRight = '',
 			link: linkRight = '',
 			icon: iconRight = '',
 			btn: typeBtn = '',
 			params = null
 		} = {}
 	} = props;
+	const { settings, setSettings } = useContext(SettingsContext);
 	console.log(params);
-	// const actionBtn = linkRight ? navigation.navigate(linkRight, { ...params }) : navigation.navigate(linkRight, { ...params });
+
+	const checkTypeRightButton = () => {
+		if (btnRight) {
+			setSettings({
+				...settings,
+				noteMode: 'edit'
+			});
+		}
+
+		navigation.navigate(linkRight, { ...params });
+	}
 
 	return (
 		<View style={ styles.header }>
@@ -30,7 +43,7 @@ export default function Header(props) {
 						<Text style={ styles.title }>{ title }</Text>
 						{ subtitle && <Text style={ styles.subtitle }>{ subtitle }</Text>}
 					</View>
-					<Pressable style={ styles.btn } onPress={ () => navigation.navigate(linkRight, { ...params }) }>
+					<Pressable style={ styles.btn } onPress={ () => checkTypeRightButton() }>
 						{ iconRight }
 					</Pressable>
 				</>

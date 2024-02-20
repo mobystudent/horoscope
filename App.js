@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
 import Navigation from './Navigation';
+import SettingsProvider from './contexts/settings';
 
 export default function App() {
 	const [ appIsReady, setAppIsReady ] = useState(false);
@@ -27,6 +28,8 @@ export default function App() {
 	}
 
 	return (
-		<Navigation />
+		<SettingsProvider>
+			<Navigation />
+		</SettingsProvider>
 	);
 }

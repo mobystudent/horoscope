@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { StyleSheet, Text, Pressable, View, TextInput, KeyboardAvoidingView, ScrollView, Alert } from 'react-native';
 import moment from 'moment';
 import Container from '../components/Container';
 import Header from '../components/Header';
+import { SettingsContext } from '../contexts/settings';
 
 import { observer } from 'mobx-react-lite';
 import notesStore from '../stores/notes.store';
@@ -14,7 +15,6 @@ const CreateNote = observer((props) => {
 		navigation,
 		route: {
 			params: {
-				mode = 'edit',
 				page = null,
 				note: {
 					day = null,
@@ -35,20 +35,20 @@ const CreateNote = observer((props) => {
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
 	const maxLengthTitle = 80;
 	const [ countInputWords, setCountInputWords ] = useState(maxLengthTitle);
+	const { settings } = useContext(SettingsContext);
 	const leftButton = {
 		link: page,
 		icon: arrowSvg('#fff', 1)
 	};
-	// const rightButton = {
-	// 	btn: 'createNote',
-	// 	icon: arrowSvg('#fff', 1),
-	// 	params: {
-	// 		title: title,
-	// 		description: description,
-	// 		mode: 'edit',
-	// 		page: 'moon'
-	// 	}
-	// };
+	console.error(settings);
+	const rightButton = {
+		btn: 'editNote',
+		icon: arrowSvg('#fff', 1),
+		params: {
+			title: title,
+			description: description
+		}
+	};
 	const checkText = ({ nativeEvent: { key } }, field) => {
 		const regex = new RegExp('[а-яА-Я\-Backspace ]');
 		const check = regex.test(key);
@@ -96,8 +96,8 @@ const CreateNote = observer((props) => {
 
 		notesStore.add(notes);
 	};
-	const header = mode === 'new' ? 'Новая заметка' : `${headerTitle} ${date}`;
-	const readOnly = mode === 'view' ? true : false;
+	const header = settings.noteMode === 'new' ? 'Новая заметка' : `${headerTitle} ${date}`;
+	const readOnly = settings.noteMode === 'view' ? true : false;
 	const btnText = 'Сохранить';
 
 	return (
@@ -106,6 +106,7 @@ const CreateNote = observer((props) => {
 				navigation={ navigation }
 				title={ header }
 				leftButton={ leftButton }
+				rightButton={ settings.noteMode === 'view' && rightButton }
 			/>
 			<KeyboardAvoidingView style={ styles.content } behavior={ Platform.OS === 'ios' ? 'padding' : 'height' } >
 				<ScrollView contentContainerStyle={ styles.body } showsVerticalScrollIndicator={ false }>

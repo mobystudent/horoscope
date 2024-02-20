@@ -19,7 +19,7 @@ export default function Moon({ navigation }) {
 	const rightButton = {
 		link: 'createNote',
 		icon: arrowSvg('#fff', 1),
-		params: { noteToday, mode: 'new', page: 'moon' }
+		params: { noteToday, page: 'moon' }
 	};
 
 	return (
