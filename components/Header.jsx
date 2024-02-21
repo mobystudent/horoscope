@@ -15,18 +15,22 @@ export default function Header(props) {
 			btn: btnRight = '',
 			link: linkRight = '',
 			icon: iconRight = '',
-			btn: typeBtn = '',
 			params = null
 		} = {}
 	} = props;
 	const { settings, setSettings } = useContext(SettingsContext);
-	console.log(params);
+	console.log(iconRight);
 
 	const checkTypeRightButton = () => {
-		if (btnRight) {
+		if (btnRight === 'edit') {
 			setSettings({
 				...settings,
 				noteMode: 'edit'
+			});
+		} else if (btnRight === 'filter') {
+			setSettings({
+				...settings,
+				filter: true
 			});
 		}
 
@@ -44,7 +48,9 @@ export default function Header(props) {
 						{ subtitle && <Text style={ styles.subtitle }>{ subtitle }</Text>}
 					</View>
 					<Pressable style={ styles.btn } onPress={ () => checkTypeRightButton() }>
-						{ iconRight }
+						<View style={ styles.icon }>
+							{ iconRight }
+						</View>
 					</Pressable>
 				</>
 			}
@@ -80,5 +86,9 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		width: 32,
 		height: 32
+	},
+	icon: {
+		width: 20,
+		height: 20
 	}
 });
