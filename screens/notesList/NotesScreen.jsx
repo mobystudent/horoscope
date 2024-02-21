@@ -55,22 +55,43 @@ export default function Notes({ navigation }) {
 		);
 	});
 	const sortNotes = (type) => {
+		let createdNotes = [];
+		let emptyNotes = [];
+
 		switch(type) {
 			case 'new':
-				setNotesArr(notesArr.sort((a, b) => {
+				for(const note of notesArr) {
+					if (note.date) {
+						createdNotes.push(note);
+					} else {
+						emptyNotes.push(note);
+					}
+				}
+				createdNotes.sort((a, b) => {
 					const dateA = new Date(`20${a.date.split('.').reverse().join('-')}`);
 					const dateB = new Date(`20${b.date.split('.').reverse().join('-')}`);
 
 					return dateA - dateB;
-				}));
+				});
+				emptyNotes.sort((a, b) => a.day - b.day);
+				setNotesArr(createdNotes.concat(emptyNotes));
 				break;
 			case 'old':
-				setNotesArr(notesArr.sort((a, b) => {
+				for(const note of notesArr) {
+					if (note.date) {
+						createdNotes.push(note);
+					} else {
+						emptyNotes.push(note);
+					}
+				}
+				createdNotes.sort((a, b) => {
 					const dateA = new Date(`20${a.date.split('.').reverse().join('-')}`);
 					const dateB = new Date(`20${b.date.split('.').reverse().join('-')}`);
 
 					return dateB - dateA;
-				}));
+				});
+				emptyNotes.sort((a, b) => b.day - a.day);
+				setNotesArr(createdNotes.concat(emptyNotes));
 				break;
 			case 'asc':
 				setNotesArr(notesArr.sort((a, b) => a.day - b.day));
@@ -153,7 +174,7 @@ const styles = StyleSheet.create({
 	groupData: {
 		borderTopLeftRadius: 17,
 		borderTopRightRadius: 17,
-		backgroundColor: '#100E24'
+		backgroundColor: '#83645C'
 	},
 	button: {
 		flexDirection: 'row',
