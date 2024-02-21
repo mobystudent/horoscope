@@ -9,7 +9,8 @@ import ProcessingScreen from './screens/ProcessingScreen';
 import MoonScreen from './screens/MoonScreen';
 import AccountScreen from './screens/AccountScreen';
 import ContentScreen from './screens/ContentScreen';
-import CreateNoteScreen from './screens/CreateNoteScreen';
+import CreateNoteScreen from './screens/notesList/CreateNoteScreen';
+import NotesScreen from './screens/notesList/NotesScreen';
 
 const Stack = createStackNavigator();
 
@@ -17,7 +18,7 @@ export default function Navigation() {
 	return (
 		<NavigationContainer>
 			<Stack.Navigator
-				initialRouteName="account"
+				initialRouteName="notes"
 				screenOptions={{
 					headerShown: false
 				}}
@@ -31,6 +32,7 @@ export default function Navigation() {
 				<Stack.Screen name="account" component={ AccountScreen } />
 				<Stack.Screen name="content" component={ ContentScreen } />
 				<Stack.Screen name="createNote" component={ CreateNoteScreen } />
+				<Stack.Screen name="notes" component={ NotesScreen } />
 			</Stack.Navigator>
 		</NavigationContainer>
 	);

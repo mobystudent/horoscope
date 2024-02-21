@@ -2,10 +2,7 @@ import * as React from 'react';
 import { StyleSheet, Text, Pressable, View, Image, ScrollView } from 'react-native';
 import Container from '../components/Container';
 import Header from '../components/Header';
-import Note from '../components/Note';
 import MoonBirthday from '../components/MoonBirthday';
-
-import notesStore from '../stores/notes.store';
 
 import { arrowSvg } from '../components/SvgSprite';
 
@@ -59,10 +56,6 @@ export default function Account({ navigation }) {
 			<Text style={ styles.text }>{ data.value }</Text>
 		</Pressable>;
 	});
-	console.log(notesStore.notes);
-	const notesArray = notesStore.notes.map((note, i) => {
-		return <Note navigation={ navigation } key={ i } note={ note } />
-	});
 	const documentsArray = documents.map((document, i) => {
 		const style = !i ? styles.button : [ styles.button, styles.buttonLine ];
 
@@ -104,10 +97,13 @@ export default function Account({ navigation }) {
 					<MoonBirthday navigation={ navigation } />
 				</View>
 				<View style={ styles.block }>
-					<Text style={ styles.title }>Мои заметки</Text>
-					<View style={ styles.noteWrap }>
-						{ notesArray }
+					<View style={ styles.header }>
+						<Text style={ styles.title }>Мои заметки</Text>
+						<Pressable onPress={ () => navigation.navigate('notes') }>
+							<Text style={ [styles.title, styles.titleBtn] }>Смотреть все</Text>
+						</Pressable>
 					</View>
+
 				</View>
 				<View style={ styles.block }>
 					<Text style={ styles.title }>Дополнительно</Text>
@@ -121,6 +117,10 @@ export default function Account({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+	header: {
+		flexDirection: 'row',
+		justifyContent: 'space-between'
+	},
 	body: {
 		flexDirection: 'column',
 		alignItems: 'center',
@@ -157,12 +157,12 @@ const styles = StyleSheet.create({
 		textTransform: 'uppercase',
 		marginBottom: 10
 	},
+	titleBtn: {
+		color: '#fff'
+	},
 	groupData: {
 		borderRadius: 17,
 		backgroundColor: 'rgba(255, 255, 255, .12)'
-	},
-	noteWrap: {
-		rowGap: 10
 	},
 	button: {
 		flexDirection: 'row',

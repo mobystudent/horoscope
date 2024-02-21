@@ -1,14 +1,14 @@
 import { useState, useContext } from 'react';
 import { StyleSheet, Text, Pressable, View, TextInput, KeyboardAvoidingView, ScrollView, Alert } from 'react-native';
 import moment from 'moment';
-import Container from '../components/Container';
-import Header from '../components/Header';
-import { SettingsContext } from '../contexts/settings';
+import Container from '../../components/Container';
+import Header from '../../components/Header';
+import { SettingsContext } from '../../contexts/settings';
 
 import { observer } from 'mobx-react-lite';
-import notesStore from '../stores/notes.store';
+import notesStore from '../../stores/notes.store';
 
-import { arrowSvg } from '../components/SvgSprite';
+import { arrowSvg } from '../../components/SvgSprite';
 
 const CreateNote = observer((props) => {
 	const {
