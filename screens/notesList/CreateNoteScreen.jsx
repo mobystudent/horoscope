@@ -1,8 +1,9 @@
 import { useState, useContext } from 'react';
-import { StyleSheet, Text, Pressable, View, TextInput, KeyboardAvoidingView, ScrollView, Dimensions, Modal, Alert } from 'react-native';
+import { StyleSheet, Text, Pressable, View, TextInput, KeyboardAvoidingView, ScrollView } from 'react-native';
 import moment from 'moment';
 import Container from '../../components/Container';
 import Header from '../../components/Header';
+import ModalSettings from '../../components/ModalSettings';
 import { SettingsContext } from '../../contexts/settings';
 
 import { observer } from 'mobx-react-lite';
@@ -34,10 +35,8 @@ const CreateNote = observer((props) => {
 	});
 	const [ pointer, setPointer ] = useState(0);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
-	const [ heightModal, setHeightModal ] = useState(0);
 	const maxLengthTitle = 80;
 	const [ countInputWords, setCountInputWords ] = useState(maxLengthTitle);
-	const windowHeight = Dimensions.get('window').height;
 	const settingsBtns = [
 		{
 			title: 'Редактировать',
@@ -110,18 +109,6 @@ const CreateNote = observer((props) => {
 	const header = settings.noteMode === 'new' ? 'Новая заметка' : `${headerTitle} ${date}`;
 	const readOnly = settings.noteMode === 'view' ? true : false;
 	const btnText = 'Сохранить';
-	const settingsBtnsArray = settingsBtns.map((button, i) => {
-		const style = !i ? styles.button : [ styles.button, styles.buttonLine ];
-
-		return (
-			<Pressable style={ style } key={ i } onPress={ () => sortNotes(button.type) }>
-				<Text style={ styles.text }>{ button.title }</Text>
-			</Pressable>
-		);
-	});
-	const onLayout = ({ nativeEvent }) => {
-		setHeightModal(windowHeight - nativeEvent.layout.height);
-	};
 
 	return (
 		<Container>
@@ -169,31 +156,12 @@ const CreateNote = observer((props) => {
 					<Text style={[ styles.buttonText, disabledBtn && styles.disabledText ]}>{ btnText }</Text>
 				</Pressable>
 			</KeyboardAvoidingView>
-			{ settings.noteSettings && <Modal
-				animationType="slide"
-				transparent={ true }
-				visible={ true }
-				onRequestClose={ () => {
-					Alert.alert("Модальное окно с настройками будет закрыто");
-					setSettings({
-						...settings,
-						noteSettings: false
-					});
-				} }
-			>
-				<Pressable style={ styles.background } onPress={ () => {
-					setSettings({
-						...settings,
-						noteSettings: false
-					});
-				} }>
-					<View style={{ top: heightModal }} onLayout={ onLayout }>
-						<View style={ styles.groupData }>
-							{ settingsBtnsArray }
-						</View>
-					</View>
-				</Pressable>
-			</Modal> }
+			<ModalSettings
+				buttons={ settingsBtns }
+				settingsFunc={ (type) => sortNotes(type) }
+				settingsProp="noteSettings"
+				alertMess="Модальное окно с настройками будет закрыто"
+			/>
 		</Container>
 	);
 });
@@ -205,16 +173,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		rowGap: 15,
 		paddingVertical: 15
-	},
-	background: {
-		flex: 1,
-		width: '100%',
-		backgroundColor: 'rgba(0, 0, 0, .5)'
-	},
-	groupData: {
-		borderTopLeftRadius: 17,
-		borderTopRightRadius: 17,
-		backgroundColor: '#83645C'
 	},
 	body: {
 		flex: 1,
@@ -263,23 +221,5 @@ const styles = StyleSheet.create({
 	disabledText: {
 		color: "#fff",
 		opacity: .5
-	},
-	button: {
-		flexDirection: 'row',
-		justifyContent: 'center',
-		alignItems: 'center',
-		columnGap: 40,
-		paddingHorizontal: 15,
-		paddingVertical: 12
-	},
-	buttonLine: {
-		borderTopWidth: 1,
-		borderTopColor: 'rgba(255, 255, 255, .1)'
-	},
-	text: {
-		// fontFamily: 'SFReg',
-		fontSize: 16,
-		lineHeight: 20,
-		color: '#fff',
-	},
+	}
 });

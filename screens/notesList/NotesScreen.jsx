@@ -1,8 +1,9 @@
 import { useState, useContext } from 'react';
-import { StyleSheet, View, Text, Pressable, ScrollView, Dimensions, Modal, Alert } from 'react-native';
+import { StyleSheet, View, Text, Pressable, ScrollView } from 'react-native';
 import Container from '../../components/Container';
 import Header from '../../components/Header';
 import Note from '../../components/Note';
+import ModalSettings from '../../components/ModalSettings';
 import { SettingsContext } from '../../contexts/settings';
 
 import notesStore from '../../stores/notes.store';
@@ -12,10 +13,8 @@ import { arrowSvg, filter } from '../../components/SvgSprite';
 export default function Notes({ navigation }) {
 	const { settings, setSettings } = useContext(SettingsContext);
 	const [ notesArr, setNotesArr ] = useState(notesStore.notes);
-	const [ heightModal, setHeightModal ] = useState(0);
 	const title = 'Все заметки';
 	// const todayMoonDay = 2;
-	const windowHeight = Dimensions.get('window').height;
 	const sortBtns = [
 		{
 			title: 'Сначала новые',
@@ -44,15 +43,6 @@ export default function Notes({ navigation }) {
 	};
 	const notesArray = notesArr.map((note, i) => {
 		return <Note navigation={ navigation } key={ i } note={ note } />
-	});
-	const sortBtnsArray = sortBtns.map((button, i) => {
-		const style = !i ? styles.button : [ styles.button, styles.buttonLine ];
-
-		return (
-			<Pressable style={ style } key={ i } onPress={ () => sortNotes(button.type) }>
-				<Text style={ styles.text }>{ button.title }</Text>
-			</Pressable>
-		);
 	});
 	const sortNotes = (type) => {
 		let createdNotes = [];
@@ -106,9 +96,6 @@ export default function Notes({ navigation }) {
 			noteFilter: false
 		});
 	};
-	const onLayout = ({ nativeEvent }) => {
-		setHeightModal(windowHeight - nativeEvent.layout.height);
-	};
 
 	// useEffect(() => {
 	// 	setNotesArr(notesArr.sort((a, b) => {
@@ -133,31 +120,12 @@ export default function Notes({ navigation }) {
 					{ notesArray }
 				</View>
 			</ScrollView>
-			{ settings.noteFilter && <Modal
-				animationType="slide"
-				transparent={ true }
-				visible={ true }
-				onRequestClose={ () => {
-					Alert.alert("Модальное окно с фильтром будет закрыто");
-					setSettings({
-						...settings,
-						noteFilter: false
-					});
-				} }
-			>
-				<Pressable style={ styles.background } onPress={ () => {
-					setSettings({
-						...settings,
-						noteFilter: false
-					});
-				} }>
-					<View style={{ top: heightModal }} onLayout={ onLayout }>
-						<View style={ styles.groupData }>
-							{ sortBtnsArray }
-						</View>
-					</View>
-				</Pressable>
-			</Modal> }
+			<ModalSettings
+				buttons={ sortBtns }
+				settingsFunc={ (type) => sortNotes(type) }
+				settingsProp="noteFilter"
+				alertMess="Модальное окно с фильтром будет закрыто"
+			/>
 		</Container>
 	);
 }
@@ -165,33 +133,5 @@ export default function Notes({ navigation }) {
 const styles = StyleSheet.create({
 	list: {
 		rowGap: 10
-	},
-	background: {
-		flex: 1,
-		width: '100%',
-		backgroundColor: 'rgba(0, 0, 0, .5)'
-	},
-	groupData: {
-		borderTopLeftRadius: 17,
-		borderTopRightRadius: 17,
-		backgroundColor: '#83645C'
-	},
-	button: {
-		flexDirection: 'row',
-		justifyContent: 'center',
-		alignItems: 'center',
-		columnGap: 40,
-		paddingHorizontal: 15,
-		paddingVertical: 12
-	},
-	buttonLine: {
-		borderTopWidth: 1,
-		borderTopColor: 'rgba(255, 255, 255, .1)'
-	},
-	text: {
-		// fontFamily: 'SFReg',
-		fontSize: 16,
-		lineHeight: 20,
-		color: '#fff',
-	},
+	}
 });
