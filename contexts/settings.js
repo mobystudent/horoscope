@@ -5,7 +5,8 @@ export const SettingsContext = createContext();
 export default function SettingsProvider({ children }) {
 	const [ settings, setSettings ] = useState({
 		noteMode: 'new',
-		filter: false
+		noteFilter: false,
+		noteSettings: false
 	});
 
 	return (

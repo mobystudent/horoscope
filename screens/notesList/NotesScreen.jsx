@@ -9,13 +9,13 @@ import notesStore from '../../stores/notes.store';
 
 import { arrowSvg, filter } from '../../components/SvgSprite';
 
-const windowHeight = Dimensions.get('window').height;
-
 export default function Notes({ navigation }) {
 	const { settings, setSettings } = useContext(SettingsContext);
 	const [ notesArr, setNotesArr ] = useState(notesStore.notes);
+	const [ heightModal, setHeightModal ] = useState(0);
 	const title = 'Все заметки';
 	// const todayMoonDay = 2;
+	const windowHeight = Dimensions.get('window').height;
 	const sortBtns = [
 		{
 			title: 'Сначала новые',
@@ -103,8 +103,11 @@ export default function Notes({ navigation }) {
 
 		setSettings({
 			...settings,
-			filter: false
+			noteFilter: false
 		});
+	};
+	const onLayout = ({ nativeEvent }) => {
+		setHeightModal(windowHeight - nativeEvent.layout.height);
 	};
 
 	// useEffect(() => {
@@ -130,31 +133,31 @@ export default function Notes({ navigation }) {
 					{ notesArray }
 				</View>
 			</ScrollView>
-			<Modal
+			{ settings.noteFilter && <Modal
 				animationType="slide"
 				transparent={ true }
-				visible={ settings.filter }
+				visible={ true }
 				onRequestClose={ () => {
-					Alert.alert("Модальное окно с настройками будет закрыто");
+					Alert.alert("Модальное окно с фильтром будет закрыто");
 					setSettings({
 						...settings,
-						filter: false
+						noteFilter: false
 					});
 				} }
 			>
 				<Pressable style={ styles.background } onPress={ () => {
 					setSettings({
 						...settings,
-						filter: false
+						noteFilter: false
 					});
 				} }>
-					<View style={ styles.modal }>
+					<View style={{ top: heightModal }} onLayout={ onLayout }>
 						<View style={ styles.groupData }>
 							{ sortBtnsArray }
 						</View>
 					</View>
 				</Pressable>
-			</Modal>
+			</Modal> }
 		</Container>
 	);
 }
@@ -167,9 +170,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		width: '100%',
 		backgroundColor: 'rgba(0, 0, 0, .5)'
-	},
-	modal: {
-		top: windowHeight - 179,
 	},
 	groupData: {
 		borderTopLeftRadius: 17,

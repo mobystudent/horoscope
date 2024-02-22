@@ -22,38 +22,37 @@ export default function Header(props) {
 	console.log(iconRight);
 
 	const checkTypeRightButton = () => {
-		if (btnRight === 'edit') {
+		if (btnRight === 'more') {
 			setSettings({
 				...settings,
-				noteMode: 'edit'
+				noteSettings: true
 			});
 		} else if (btnRight === 'filter') {
 			setSettings({
 				...settings,
-				filter: true
+				noteFilter: true
 			});
 		}
 
-		navigation.navigate(linkRight, { ...params });
+		// navigation.navigate(linkRight, { ...params });
 	}
 
 	return (
 		<View style={ styles.header }>
 			{ Object.keys(props).length !== 0 && <>
-					<Pressable style={ styles.btn } onPress={ () => navigation.navigate(linkLeft) }>
-						{ iconLeft }
-					</Pressable>
-					<View>
-						<Text style={ styles.title }>{ title }</Text>
-						{ subtitle && <Text style={ styles.subtitle }>{ subtitle }</Text>}
+				<Pressable style={ styles.btn } onPress={ () => navigation.navigate(linkLeft) }>
+					{ iconLeft }
+				</Pressable>
+				<View>
+					<Text style={ styles.title }>{ title }</Text>
+					{ subtitle && <Text style={ styles.subtitle }>{ subtitle }</Text>}
+				</View>
+				<Pressable style={ styles.btn } onPress={ () => checkTypeRightButton() }>
+					<View style={ styles.icon }>
+						{ iconRight }
 					</View>
-					<Pressable style={ styles.btn } onPress={ () => checkTypeRightButton() }>
-						<View style={ styles.icon }>
-							{ iconRight }
-						</View>
-					</Pressable>
-				</>
-			}
+				</Pressable>
+			</> }
 		</View>
 	);
 }
@@ -88,7 +87,7 @@ const styles = StyleSheet.create({
 		height: 32
 	},
 	icon: {
-		width: 20,
-		height: 20
+		width: 26,
+		height: 26
 	}
 });

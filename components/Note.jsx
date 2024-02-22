@@ -18,7 +18,7 @@ export default function Note(props) {
 
 		navigation.navigate('createNote', {
 			note,
-			page: 'account'
+			page: 'notes'
 		});
 	}
 
