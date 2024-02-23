@@ -111,7 +111,7 @@ export default function Account({ navigation }) {
 				<View style={ styles.block }>
 					<Pressable style={ styles.photo }>
 						<View style={ styles.photoIcon }>
-							{ photoIcon('#fff', 1) }
+							{ photoIcon('#fff') }
 						</View>
 					</Pressable>
 					<Pressable onPress={ () => navigation.navigate('name', { value: userName }) }>
@@ -226,7 +226,6 @@ const styles = StyleSheet.create({
 	},
 	iconWrap: {
 		justifyContent: 'center',
-		alignItems: 'center',
 		width: 16
 	},
 	arrowRightIcon: {

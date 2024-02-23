@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { StyleSheet, Text, View, Pressable, Image } from 'react-native';
+import { StyleSheet, Text, View, Pressable } from 'react-native';
 import PersonalTemplate from '../../components/PersonalTemplate';
 import { SettingsContext } from '../../contexts/settings';
 
@@ -17,6 +17,16 @@ export default function GenderScreen(props) {
 	const { settings } = useContext(SettingsContext);
 	const [ gender, setGender ] = useState(value);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
+	const genderBtns = [
+		{
+			title: 'Мужской',
+			icon: maleIcon
+		},
+		{
+			title: 'Женский',
+			icon: femaleIcon
+		}
+	];
 	const activeGender = (genderActive) => {
 		setGender(genderActive);
 		setDisabledBtn(false);
@@ -31,6 +41,18 @@ export default function GenderScreen(props) {
 	const title = 'Ваш пол:';
 	const description = 'Мы настроем персональные рекомендации лунного календаря, учитывая влияние лунных фаз на биоритмы';
 	const btnText = 'Сохранить';
+	const genderBlocks = genderBtns.map(({ title, icon }) => {
+		return (
+			<View style={ styles.block }>
+				<Pressable style={ [styles.square, gender === title && styles.active] } onPress={ () => activeGender(title) }>
+					<View style={ styles[icon] }>
+						{ icon('#fff') }
+					</View>
+				</Pressable>
+				<Text style={ styles.text }>{ title }</Text>
+			</View>
+		);
+	});
 
 	return (
 		<PersonalTemplate
@@ -42,22 +64,7 @@ export default function GenderScreen(props) {
 			nextStep={ nextStep }
 		>
 			<View style={ styles.content }>
-				<View style={ styles.block }>
-					<Pressable style={ [styles.square, gender === 'Мужской' && styles.active] } onPress={ () => activeGender('Мужской') }>
-						<View style={ styles.maleIcon }>
-							{ maleIcon('#fff') }
-						</View>
-					</Pressable>
-					<Text style={ styles.text }>Мужской</Text>
-				</View>
-				<View style={ styles.block }>
-					<Pressable style={ [styles.square, gender === 'Женский' && styles.active] } onPress={ () => activeGender('Женский') }>
-						<View style={ styles.femaleIcon }>
-							{ femaleIcon('#fff') }
-						</View>
-					</Pressable>
-					<Text style={ styles.text }>Женский</Text>
-				</View>
+				{ genderBlocks }
 			</View>
 		</PersonalTemplate>
 	);
