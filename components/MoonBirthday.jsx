@@ -1,11 +1,13 @@
-import * as React from 'react';
+import { useContext } from 'react';
 import { StyleSheet, Text, Pressable, View } from 'react-native';
+import { SettingsContext } from '../contexts/settings';
 
 import * as svg from './SvgSprite';
 
 export default function MoonBirthday({ navigation }) {
+	const { settings } = useContext(SettingsContext);
 	const moonDay = {
-		day: 29,
+		day: settings.currentDayMoon,
 		headerTitle: 'Лунный день',
 		symbol: 'единорог',
 		title: 'Хороший день для занятия спорта',

@@ -18,7 +18,6 @@ const CreateNote = observer((props) => {
 			params: {
 				page = null,
 				note: {
-					day = null,
 					title = '',
 					date = '',
 					description = ''

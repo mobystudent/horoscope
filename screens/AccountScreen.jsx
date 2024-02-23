@@ -76,7 +76,7 @@ export default function Account({ navigation }) {
 		const components = [];
 
 		for (const note of notesStore.notes) {
-			if (note.day === settings.todayDayMoon) {
+			if (note.day === settings.currentDayMoon) {
 				components.push(<Note navigation={ navigation } key={ note.id } note={ note } />);
 			} else if (note.date) {
 				createdArr.push(note);
