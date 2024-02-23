@@ -1,11 +1,21 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { StyleSheet, Text, View, Pressable, FlatList } from 'react-native';
 import PersonalTemplate from '../../components/PersonalTemplate';
+import { SettingsContext } from '../../contexts/settings';
 // import DateTimePicker from 'react-native-ui-datepicker';
 // import dayjs from 'dayjs';
 
-export default function TimeScreen({ navigation }) {
-	const [ time, setTime ] = useState('12h00m');
+export default function TimeScreen(props) {
+	const {
+		navigation,
+		route: {
+			params: {
+				value = '12h00m'
+			} = {}
+		} = {}
+	} = props;
+	const { settings } = useContext(SettingsContext);
+	const [ time, setTime ] = useState(value);
 	// const date = new Date();
 	// const noon = date.setHours(12, 0, 0, 0);
 	// const [value, setValue] = useState(dayjs());
@@ -76,8 +86,10 @@ export default function TimeScreen({ navigation }) {
 		</Pressable>
 	));
 	const nextStep = () => {
-		if (!disabledBtn) {
+		if (!disabledBtn && settings.personalMode === 'edit') {
 			navigation.navigate('city');
+		} else {
+			navigation.navigate('account');
 		}
 	}
 	const title = 'Во сколько вы родились?';
@@ -86,6 +98,7 @@ export default function TimeScreen({ navigation }) {
 
 	return (
 		<PersonalTemplate
+			navigation={ navigation }
 			title={ title }
 			description={ description }
 			btnText={ btnText }

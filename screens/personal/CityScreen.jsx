@@ -1,8 +1,17 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { StyleSheet, FlatList, TextInput, View, Pressable, Text, KeyboardAvoidingView, Keyboard, Alert } from 'react-native';
 import PersonalTemplate from '../../components/PersonalTemplate';
+import { SettingsContext } from '../../contexts/settings';
 
-export default function CityScreen({ navigation }) {
+export default function CityScreen(props) {
+	const {
+		navigation,
+		route: {
+			params: {
+				value = null
+			} = {}
+		} = {}
+	} = props;
 	const data = [
 		{ title: 'Париж' },
 		{ title: 'Марсель' },
@@ -19,7 +28,8 @@ export default function CityScreen({ navigation }) {
 		{ title: 'Рубе' },
 		{ title: 'Туркуэн' }
 	];
-	const [ city, setCity ] = useState('');
+	const { settings } = useContext(SettingsContext);
+	const [ city, setCity ] = useState(value);
 	const [ pointer, setPointer ] = useState(0);
 	const [ suggestion, setSuggestion ] = useState([]);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
@@ -68,8 +78,10 @@ export default function CityScreen({ navigation }) {
 		</Pressable>
 	));
 	const nextStep = () => {
-		if (!disabledBtn) {
+		if (!disabledBtn && settings.personalMode === 'edit') {
 			navigation.navigate('gender');
+		} else {
+			navigation.navigate('account');
 		}
 	}
 	const title = 'Где вы родились?';
@@ -78,6 +90,7 @@ export default function CityScreen({ navigation }) {
 
 	return (
 		<PersonalTemplate
+			navigation={ navigation }
 			title={ title }
 			description={ description }
 			btnText={ btnText }

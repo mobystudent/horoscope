@@ -1,17 +1,29 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { StyleSheet, Text, View, Pressable, Image } from 'react-native';
 import PersonalTemplate from '../../components/PersonalTemplate';
+import { SettingsContext } from '../../contexts/settings';
 
-export default function GenderScreen({ navigation }) {
-	const [ gender, setGender ] = useState(null);
+export default function GenderScreen(props) {
+	const {
+		navigation,
+		route: {
+			params: {
+				value = null
+			} = {}
+		} = {}
+	} = props;
+	const { settings } = useContext(SettingsContext);
+	const [ gender, setGender ] = useState(value);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
 	const activeGender = (genderActive) => {
 		setGender(genderActive);
 		setDisabledBtn(false);
 	};
 	const nextStep = () => {
-		if (!disabledBtn) {
+		if (!disabledBtn && settings.personalMode === 'edit') {
 			navigation.navigate('processing');
+		} else {
+			navigation.navigate('account');
 		}
 	}
 	const title = 'Ваш пол:';
@@ -20,6 +32,7 @@ export default function GenderScreen({ navigation }) {
 
 	return (
 		<PersonalTemplate
+			navigation={ navigation }
 			title={ title }
 			description={ description }
 			btnText={ btnText }
@@ -28,7 +41,7 @@ export default function GenderScreen({ navigation }) {
 		>
 			<View style={ styles.content }>
 				<View style={ styles.block }>
-					<Pressable style={ [styles.square, gender === 'male' && styles.active] } onPress={ () => activeGender('male') }>
+					<Pressable style={ [styles.square, gender === 'Мужской' && styles.active] } onPress={ () => activeGender('Мужской') }>
 						<Image
 							style={ styles.image }
 							source={ require('../../assets/images/male.png') }
@@ -37,7 +50,7 @@ export default function GenderScreen({ navigation }) {
 					<Text style={ styles.text }>Male</Text>
 				</View>
 				<View style={ styles.block }>
-					<Pressable style={ [styles.square, gender === 'female' && styles.active] } onPress={ () => activeGender('female') }>
+					<Pressable style={ [styles.square, gender === 'Женский' && styles.active] } onPress={ () => activeGender('Женский') }>
 						<Image
 							style={ styles.image }
 							source={ require('../../assets/images/female.png') }

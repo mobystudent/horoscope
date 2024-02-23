@@ -3,8 +3,11 @@ import { StyleSheet, Text, Pressable, View } from 'react-native';
 import Container from './Container';
 import Header from './Header';
 
+import { arrowSvg } from '../components/SvgSprite';
+
 export default function PersonalTemplate(props) {
 	const {
+		navigation,
 		children,
 		title,
 		description,
@@ -12,10 +15,17 @@ export default function PersonalTemplate(props) {
 		disabledBtn,
 		nextStep
 	} = props;
+	const leftButton = {
+		link: 'account',
+		icon: arrowSvg('#fff', 1)
+	};
 
 	return (
 		<Container>
-			<Header />
+			<Header
+				navigation={ navigation }
+				leftButton={ leftButton }
+			/>
 			<View style={ styles.body }>
 				<Text style={ styles.title }>{ title }</Text>
 				<Text style={ styles.description }>{ description }</Text>

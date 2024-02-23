@@ -17,6 +17,7 @@ export default function Account({ navigation }) {
 		link: 'moon',
 		icon: arrowSvg('#fff', 1)
 	};
+	const userName = 'Valentina';
 	const userData = [
 		{
 			title: 'Дата',
@@ -56,7 +57,7 @@ export default function Account({ navigation }) {
 	const userDataArray = userData.map((data, i) => {
 		const style = !i ? styles.button : [ styles.button, styles.buttonLine ];
 
-		return <Pressable style={ style } key={ i } onPress={ () => navigation.navigate(data.screen) }>
+		return <Pressable style={ style } key={ i } onPress={ () => navigation.navigate(data.screen, data) }>
 			<Text style={ styles.text }>{ data.title }</Text>
 			<Text style={ styles.text }>{ data.value }</Text>
 		</Pressable>;
@@ -112,8 +113,8 @@ export default function Account({ navigation }) {
 							source={ require('../assets/images/photo.png') }
 						/>
 					</Pressable>
-					<Pressable onPress={ () => navigation.navigate('name') }>
-						<Text style={ styles.name }>Valentina, 28</Text>
+					<Pressable onPress={ () => navigation.navigate('name', { value: userName }) }>
+						<Text style={ styles.name }>{ userName }, 28</Text>
 					</Pressable>
 				</View>
 				<View style={ styles.block }>
@@ -137,7 +138,7 @@ export default function Account({ navigation }) {
 						{ lastNotes() }
 					</View>
 					<View style={ styles.groupData }>
-						<Pressable style={[ styles.button, styles.buttonMore ]} onPress={ () => navigation.navigate('notes') }>
+						<Pressable style={ [styles.button, styles.buttonMore] } onPress={ () => navigation.navigate('notes') }>
 							<Text style={ styles.text }>Смотреть все</Text>
 						</Pressable>
 					</View>

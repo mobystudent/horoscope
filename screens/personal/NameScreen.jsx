@@ -1,9 +1,19 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { StyleSheet, Text, TextInput, View, KeyboardAvoidingView, Alert } from 'react-native';
 import PersonalTemplate from '../../components/PersonalTemplate';
+import { SettingsContext } from '../../contexts/settings';
 
-export default function NameScreen({ navigation }) {
-	const [ name, setName ] = useState('');
+export default function NameScreen(props) {
+	const {
+		navigation,
+		route: {
+			params: {
+				value = null
+			} = {}
+		} = {}
+	} = props;
+	const { settings } = useContext(SettingsContext);
+	const [ name, setName ] = useState(value);
 	const [ pointer, setPointer ] = useState(0);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
 	const maxLengthName = 16;
@@ -36,8 +46,10 @@ export default function NameScreen({ navigation }) {
 		setPointer(start);
 	};
 	const nextStep = () => {
-		if (!disabledBtn) {
+		if (!disabledBtn && settings.personalMode === 'edit') {
 			navigation.navigate('time');
+		} else {
+			navigation.navigate('account');
 		}
 	}
 	const title = 'Как вас зовут?';
@@ -46,6 +58,7 @@ export default function NameScreen({ navigation }) {
 
 	return (
 		<PersonalTemplate
+			navigation={ navigation }
 			title={ title }
 			description={ description }
 			btnText={ btnText }
