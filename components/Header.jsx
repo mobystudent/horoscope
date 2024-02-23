@@ -2,8 +2,7 @@ import { useContext } from 'react';
 import { StyleSheet, Text, Pressable, View } from 'react-native';
 import { SettingsContext } from '../contexts/settings';
 
-import { arrowLeftIcon, filterIcon, moreIcon, accountIcon, noteIcon } from '../icons/elements';
-// import * as svg from './elements';
+import * as svg from '../icons/elements';
 
 export default function Header(props) {
 	const {
@@ -22,43 +21,44 @@ export default function Header(props) {
 		} = {}
 	} = props;
 	const { settings, setSettings } = useContext(SettingsContext);
-	const iconLeftButton = (typeLeft) => {
-		if (typeLeft === 'back') {
-			return (
-				<View style={ styles.arrowLeftIcon }>
-					{ arrowLeftIcon('#fff', 1) }
-				</View>
-			);
-		} else if (typeLeft === 'account') {
-			return (
-				<View style={ styles.accountIcon }>
-					{ accountIcon('#fff') }
-				</View>
-			);
+	const iconTypes = [
+		{
+			type: 'back',
+			icon: svg.arrowLeftIcon,
+			style: 'arrowLeftIcon'
+		},
+		{
+			type: 'account',
+			icon: svg.accountIcon,
+			style: 'accountIcon'
+		},
+		{
+			type: 'filter',
+			icon: svg.filterIcon,
+			style: 'filterIcon'
+		},
+		{
+			type: 'more',
+			icon: svg.moreIcon,
+			style: 'moreIcon'
+		},
+		{
+			type: 'note',
+			icon: svg.noteIcon,
+			style: 'noteIcon'
+		}
+	];
+	const showIcon = (searchType) => {
+		for (const { type, icon, style } of iconTypes) {
+			if (searchType === type) {
+				return (
+					<View style={ styles[style] }>
+						{ icon('#fff', 1) }
+					</View>
+				);
+			}
 		}
 	};
-	const iconRightButton = (typeRight) => {
-		if (typeRight === 'filter') {
-			return (
-				<View style={ styles.filterIcon }>
-					{ filterIcon('#fff') }
-				</View>
-			);
-		} else if (typeRight === 'more') {
-			return (
-				<View style={ styles.moreIcon }>
-					{ moreIcon('#fff') }
-				</View>
-			);
-		} else if (typeRight === 'note') {
-			return (
-				<View style={ styles.noteIcon }>
-					{ noteIcon('#fff') }
-				</View>
-			);
-		}
-	};
-	console.log(iconLeftButton);
 
 	const checkTypeRightButton = () => {
 		if (btnActionRight) {
@@ -82,14 +82,14 @@ export default function Header(props) {
 		<View style={ styles.header }>
 			{ Object.keys(props).length !== 0 && <>
 				<Pressable style={ styles.btn } onPress={ () => navigation.navigate(screenLinkLeft) }>
-					{ iconLeftButton(typeLeft) }
+					{ showIcon(typeLeft) }
 				</Pressable>
 				<View>
 					<Text style={ styles.title }>{ title }</Text>
 					{ subtitle && <Text style={ styles.subtitle }>{ subtitle }</Text>}
 				</View>
 				<Pressable style={ styles.btn } onPress={ () => checkTypeRightButton() }>
-					{ iconRightButton(typeRight) }
+					{ showIcon(typeRight) }
 				</Pressable>
 			</> }
 		</View>
