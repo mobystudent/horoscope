@@ -2,8 +2,8 @@ import { useContext } from 'react';
 import { StyleSheet, Text, Pressable, View } from 'react-native';
 import { SettingsContext } from '../contexts/settings';
 
-import { arrowLeftIcon, filterIcon, moreIcon, accountIcon, noteIcon } from './SvgSprite';
-// import * as svg from './SvgSprite';
+import { arrowLeftIcon, filterIcon, moreIcon, accountIcon, noteIcon } from '../icons/elements';
+// import * as svg from './elements';
 
 export default function Header(props) {
 	const {

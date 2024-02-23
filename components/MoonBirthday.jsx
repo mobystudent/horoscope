@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { StyleSheet, Text, Pressable, View } from 'react-native';
 import { SettingsContext } from '../contexts/settings';
 
-import { arrowRightIcon } from './SvgSprite';
+import { arrowRightIcon } from '../icons/elements';
 
 export default function MoonBirthday({ navigation }) {
 	const { settings } = useContext(SettingsContext);

@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Pressable } from 'react-native';
 import PersonalTemplate from '../../components/PersonalTemplate';
 import { SettingsContext } from '../../contexts/settings';
 
-import { maleIcon, femaleIcon } from '../../components/SvgSprite';
+import { maleIcon, femaleIcon } from '../../icons/elements';
 
 export default function GenderScreen(props) {
 	const {

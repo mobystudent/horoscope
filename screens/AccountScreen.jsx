@@ -8,7 +8,7 @@ import { SettingsContext } from '../contexts/settings';
 
 import notesStore from '../stores/notes.store';
 
-import { arrowRightIcon, photoIcon } from '../components/SvgSprite';
+import { arrowRightIcon, photoIcon } from '../icons/elements';
 
 export default function Account({ navigation }) {
 	const { settings } = useContext(SettingsContext);

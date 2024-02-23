@@ -4,7 +4,7 @@ import Svg, { Circle } from 'react-native-svg';
 import Container from '../components/Container';
 import Header from '../components/Header';
 
-import { checkIcon } from '../components/SvgSprite';
+import { checkIcon } from '../icons/elements';
 
 export default function Processing({ navigation }) {
 	const [ steps, setSteps ] = useState([
