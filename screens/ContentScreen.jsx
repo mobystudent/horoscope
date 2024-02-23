@@ -2,7 +2,6 @@ import * as React from 'react';
 import { StyleSheet, Text, ScrollView } from 'react-native';
 import Container from '../components/Container';
 import Header from '../components/Header';
-import { arrowSvg } from '../components/SvgSprite';
 
 export default function Content(props) {
 	const {
@@ -19,8 +18,8 @@ export default function Content(props) {
 	} = props;
 	const header = day ? `${ day }-й ${ headerTitle }` : headerTitle;
 	const leftButton = {
-		link: 'account',
-		icon: arrowSvg('#fff', .5)
+		screenLink: 'account',
+		type: 'back'
 	};
 
 	return (

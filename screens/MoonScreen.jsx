@@ -6,20 +6,18 @@ import { SettingsContext } from '../contexts/settings';
 
 import notesStore from '../stores/notes.store';
 
-import { arrowSvg } from '../components/SvgSprite';
-
 export default function Moon({ navigation }) {
 	const { settings } = useContext(SettingsContext);
 	const title = 'Растущая луна';
 	const subtitle = 'I Фаза';
 	const noteToday = notesStore.notes.filter((note) => note.day === settings.currentDayMoon);
 	const leftButton = {
-		link: 'account',
-		icon: arrowSvg('#fff', 1)
+		screenLink: 'account',
+		type: 'account'
 	};
 	const rightButton = {
-		link: 'createNote',
-		icon: arrowSvg('#fff', 1),
+		screenLink: 'createNote',
+		type: 'note',
 		params: { noteToday, page: 'moon' }
 	};
 

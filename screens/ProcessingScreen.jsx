@@ -1,9 +1,10 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList, Animated } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import Container from '../components/Container';
 import Header from '../components/Header';
-import { checkSvg } from '../components/SvgSprite';
+
+import { checkIcon } from '../components/SvgSprite';
 
 export default function Processing({ navigation }) {
 	const [ steps, setSteps ] = useState([
@@ -17,8 +18,10 @@ export default function Processing({ navigation }) {
 	const title = 'Создаем ваш профиль';
 	const renderItem = (({ item }) => (
 		<View style={ [ styles.item, item.active && styles.active ] }>
-			<View style={ styles.svg }>
-				{ checkSvg('#fff') }
+			<View style={ styles.iconWrap }>
+				<View style={ styles.checkIcon }>
+					{ checkIcon('#fff') }
+				</View>
 			</View>
 			<Text style={ styles.text }>{ item.title }</Text>
 		</View>
@@ -140,13 +143,17 @@ const styles = StyleSheet.create({
 		columnGap: 15,
 		opacity: 0.4
 	},
-	svg: {
+	iconWrap: {
 		justifyContent: 'center',
 		alignItems: 'center',
 		width: 32,
 		height: 32,
 		borderRadius: 32/2,
-		backgroundColor: 'rgba(255, 255, 255, .12);'
+		backgroundColor: 'rgba(255, 255, 255, .12)'
+	},
+	checkIcon: {
+		width: 14,
+		height: 11
 	},
 	text: {
 		// fontFamily: 'SFReg',

@@ -3,8 +3,6 @@ import { StyleSheet, Text, Pressable, View } from 'react-native';
 import Container from './Container';
 import Header from './Header';
 
-import { arrowSvg } from '../components/SvgSprite';
-
 export default function PersonalTemplate(props) {
 	const {
 		navigation,
@@ -16,8 +14,8 @@ export default function PersonalTemplate(props) {
 		nextStep
 	} = props;
 	const leftButton = {
-		link: 'account',
-		icon: arrowSvg('#fff', 1)
+		screenLink: 'account',
+		type: 'back'
 	};
 
 	return (

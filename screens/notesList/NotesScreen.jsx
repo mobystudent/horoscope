@@ -8,8 +8,6 @@ import { SettingsContext } from '../../contexts/settings';
 
 import notesStore from '../../stores/notes.store';
 
-import { arrowSvg, filter } from '../../components/SvgSprite';
-
 export default function Notes({ navigation }) {
 	const { settings, setSettings } = useContext(SettingsContext);
 	const [ notesArr, setNotesArr ] = useState(notesStore.notes);
@@ -34,12 +32,12 @@ export default function Notes({ navigation }) {
 		},
 	];
 	const leftButton = {
-		link: 'account',
-		icon: arrowSvg('#fff', 1)
+		screenLink: 'account',
+		type: 'back'
 	};
 	const rightButton = {
-		btn: 'filter',
-		icon: filter('#fff', 1)
+		btnAction: 'filter',
+		type: 'filter'
 	};
 	const notesArray = notesArr.map((note, i) => {
 		return <Note navigation={ navigation } key={ i } note={ note } />

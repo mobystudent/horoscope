@@ -9,8 +9,6 @@ import { SettingsContext } from '../../contexts/settings';
 import { observer } from 'mobx-react-lite';
 import notesStore from '../../stores/notes.store';
 
-import { arrowSvg, more } from '../../components/SvgSprite';
-
 const CreateNote = observer((props) => {
 	const {
 		navigation,
@@ -46,12 +44,12 @@ const CreateNote = observer((props) => {
 		}
 	];
 	const leftButton = {
-		link: page,
-		icon: arrowSvg('#fff', 1)
+		screenLink: page,
+		type: 'back'
 	};
 	const rightButton = {
-		btn: 'more',
-		icon: more('#fff', 1),
+		btnAction: 'more',
+		type: 'more',
 		params: {
 			title: title,
 			description: description

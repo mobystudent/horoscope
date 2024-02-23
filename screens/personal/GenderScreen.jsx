@@ -3,6 +3,8 @@ import { StyleSheet, Text, View, Pressable, Image } from 'react-native';
 import PersonalTemplate from '../../components/PersonalTemplate';
 import { SettingsContext } from '../../contexts/settings';
 
+import { maleIcon, femaleIcon } from '../../components/SvgSprite';
+
 export default function GenderScreen(props) {
 	const {
 		navigation,
@@ -42,21 +44,19 @@ export default function GenderScreen(props) {
 			<View style={ styles.content }>
 				<View style={ styles.block }>
 					<Pressable style={ [styles.square, gender === 'Мужской' && styles.active] } onPress={ () => activeGender('Мужской') }>
-						<Image
-							style={ styles.image }
-							source={ require('../../assets/images/male.png') }
-						/>
+						<View style={ styles.maleIcon }>
+							{ maleIcon('#fff') }
+						</View>
 					</Pressable>
-					<Text style={ styles.text }>Male</Text>
+					<Text style={ styles.text }>Мужской</Text>
 				</View>
 				<View style={ styles.block }>
 					<Pressable style={ [styles.square, gender === 'Женский' && styles.active] } onPress={ () => activeGender('Женский') }>
-						<Image
-							style={ styles.image }
-							source={ require('../../assets/images/female.png') }
-						/>
+						<View style={ styles.femaleIcon }>
+							{ femaleIcon('#fff') }
+						</View>
 					</Pressable>
-					<Text style={ styles.text }>Female</Text>
+					<Text style={ styles.text }>Женский</Text>
 				</View>
 			</View>
 		</PersonalTemplate>
@@ -85,9 +85,13 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 		backgroundColor: 'rgba(255, 255, 255, .12)'
 	},
-	image: {
-		width: 50,
-		height: 50
+	maleIcon: {
+		width: 43,
+		height: 42
+	},
+	femaleIcon: {
+		width: 31,
+		height: 49
 	},
 	text: {
 		// fontFamily: 'SFReg',

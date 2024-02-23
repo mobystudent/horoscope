@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { StyleSheet, Text, Pressable, View } from 'react-native';
 import { SettingsContext } from '../contexts/settings';
 
-import * as svg from './SvgSprite';
+import { arrowRightIcon } from './SvgSprite';
 
 export default function MoonBirthday({ navigation }) {
 	const { settings } = useContext(SettingsContext);
@@ -44,8 +44,10 @@ export default function MoonBirthday({ navigation }) {
 						<Text style={ styles.text }>{ moonDay.period.end.day }</Text>
 					</View>
 				</View>
-				<View style={ styles.svg }>
-					{ svg.arrowSvg('#fff', .5) }
+				<View style={ styles.iconWrap }>
+					<View style={ styles.arrowRightIcon }>
+						{ arrowRightIcon('#fff', .5) }
+					</View>
 				</View>
 			</Pressable>
 			<View style={ styles.block }>
@@ -56,13 +58,13 @@ export default function MoonBirthday({ navigation }) {
 					<Text style={ styles.title }>{ moonPhase.title }</Text>
 					<Text style={ styles.text }>{ moonPhase.phase }</Text>
 				</View>
-				<View style={ styles.svg }>
-					{ svg[moonPhase.sign]('#fff', 1) }
+				<View style={ styles.zodiac }>
 				</View>
 			</View>
 		</View>
 	);
 };
+// { svg[moonPhase.sign]('#fff', 1) }
 
 const styles = StyleSheet.create({
 	content: {
@@ -115,10 +117,18 @@ const styles = StyleSheet.create({
 		borderRadius: 17,
 		backgroundColor: 'rgba(255, 255, 255, .12)'
 	},
-	svg: {
+	iconWrap: {
+		justifyContent: 'center',
+		width: 16
+	},
+	arrowRightIcon: {
+		width: 9,
+		height: 14
+	},
+	zodiac: {
 		alignItems: 'center',
 		justifyContent: 'center',
-		width: 32,
-		height: 32
+		width: 40,
+		height: 40
 	}
 });

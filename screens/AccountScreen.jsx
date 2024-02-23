@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { StyleSheet, Text, Pressable, View, Image, ScrollView } from 'react-native';
+import { StyleSheet, Text, Pressable, View, ScrollView } from 'react-native';
 import Container from '../components/Container';
 import Header from '../components/Header';
 import MoonBirthday from '../components/MoonBirthday';
@@ -8,14 +8,14 @@ import { SettingsContext } from '../contexts/settings';
 
 import notesStore from '../stores/notes.store';
 
-import { arrowSvg } from '../components/SvgSprite';
+import { arrowRightIcon, photoIcon } from '../components/SvgSprite';
 
 export default function Account({ navigation }) {
 	const { settings } = useContext(SettingsContext);
 	const title = 'Мой профиль';
 	const leftButton = {
-		link: 'moon',
-		icon: arrowSvg('#fff', 1)
+		screenLink: 'moon',
+		type: 'back'
 	};
 	const userName = 'Valentina';
 	const userData = [
@@ -67,8 +67,10 @@ export default function Account({ navigation }) {
 
 		return <Pressable style={ style } key={ i } onPress={ () => navigation.navigate('content', document) }>
 			<Text style={ styles.text }>{ document.headerTitle }</Text>
-			<View style={ styles.svg }>
-				{ arrowSvg('#fff', .5) }
+			<View style={ styles.iconWrap }>
+				<View style={ styles.arrowRightIcon }>
+					{ arrowRightIcon('#fff', .5) }
+				</View>
 			</View>
 		</Pressable>;
 	});
@@ -108,10 +110,9 @@ export default function Account({ navigation }) {
 			<ScrollView contentContainerStyle={ styles.body } showsVerticalScrollIndicator={ false }>
 				<View style={ styles.block }>
 					<Pressable style={ styles.photo }>
-						<Image
-							style={ styles.image }
-							source={ require('../assets/images/photo.png') }
-						/>
+						<View style={ styles.photoIcon }>
+							{ photoIcon('#fff', 1) }
+						</View>
 					</Pressable>
 					<Pressable onPress={ () => navigation.navigate('name', { value: userName }) }>
 						<Text style={ styles.name }>{ userName }, 28</Text>
@@ -138,7 +139,7 @@ export default function Account({ navigation }) {
 						{ lastNotes() }
 					</View>
 					<View style={ styles.groupData }>
-						<Pressable style={ [styles.button, styles.buttonMore] } onPress={ () => navigation.navigate('notes') }>
+						<Pressable style={ [styles.button, styles.buttonAll] } onPress={ () => navigation.navigate('notes') }>
 							<Text style={ styles.text }>Смотреть все</Text>
 						</Pressable>
 					</View>
@@ -166,16 +167,19 @@ const styles = StyleSheet.create({
 		paddingTop: 30
 	},
 	photo: {
+		justifyContent: 'center',
+		alignItems: 'center',
 		width: 95,
 		height: 95,
 		marginLeft: 'auto',
 		marginRight: 'auto',
 		marginBottom: 10,
-		borderRadius: 95/2
+		borderRadius: 95/2,
+		backgroundColor: 'rgba(255, 255, 255, .12)',
 	},
-	image: {
-		flex: 1,
-		width: 95
+	photoIcon: {
+		width: 35,
+		height: 28
 	},
 	name: {
 		// fontFamily: 'SFBold',
@@ -220,15 +224,20 @@ const styles = StyleSheet.create({
 		lineHeight: 20,
 		color: '#fff',
 	},
-	svg: {
+	iconWrap: {
+		justifyContent: 'center',
 		alignItems: 'center',
-		width: 32
+		width: 16
+	},
+	arrowRightIcon: {
+		width: 9,
+		height: 14
 	},
 	list: {
 		rowGap: 10,
 		marginBottom: 10
 	},
-	buttonMore: {
+	buttonAll: {
 		justifyContent: 'center'
 	}
 });
