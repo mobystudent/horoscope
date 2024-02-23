@@ -28,7 +28,7 @@ const CreateNote = observer((props) => {
 		} = {}
 	} = props;
 	const { settings, setSettings } = useContext(SettingsContext);
-	const [ notes, setNotes ] = useState({
+	const [ note, setNote ] = useState({
 		title: title,
 		date: date,
 		description: description
@@ -63,16 +63,16 @@ const CreateNote = observer((props) => {
 		const regex = new RegExp('[а-яА-Я\-Backspace ]');
 		const check = regex.test(key);
 		const nameChars = key === 'Backspace'
-			? notes[field].slice(0, pointer - 1) + notes[field].slice(pointer)
-			: notes[field].slice(0, pointer) + key + notes[field].slice(pointer);
+			? note[field].slice(0, pointer - 1) + note[field].slice(pointer)
+			: note[field].slice(0, pointer) + key + note[field].slice(pointer);
 		const exceptionLetters = ['k', 'e', 'p', 'c', 'a', 's'];
 
 		if(!check || exceptionLetters.includes(key)) {
 			// Alert.alert('Не корректный символ', 'Заголовок должен содержать только буквенные символы кириллицы или дефис!', [{
 			// 	text: 'OK',
-			// 	onPress: () => setNotes({
-			// 		...notes,
-			// 		[field]: notes[field]
+			// 	onPress: () => setNote({
+			// 		...note,
+			// 		[field]: note[field]
 			// 	}),
 			// 	style: 'cancel',
 			// }]);
@@ -83,15 +83,15 @@ const CreateNote = observer((props) => {
 	const checkTitleLength = (title) => {
 		if (title.length > maxLengthTitle) return;
 
-		setNotes({
-			...notes,
+		setNote({
+			...note,
 			title: title
 		});
 		setCountInputWords(maxLengthTitle - title.length);
 	};
 	const setDescription = (description) => {
-		setNotes({
-			...notes,
+		setNote({
+			...note,
 			description: description
 		});
 	};
@@ -99,16 +99,32 @@ const CreateNote = observer((props) => {
 		setPointer(start);
 	};
 	const save = () => {
-		setNotes({
-			...notes,
+		setNote({
+			...note,
 			date: moment().format("DD.MM.YYYY")
 		});
 
-		notesStore.add(notes);
+		notesStore.add(note);
 	};
-	const header = settings.noteMode === 'new' ? 'Новая заметка' : `${headerTitle} ${date}`;
+	const header = settings.noteMode === 'new' || settings.noteMode === 'clear' ? 'Новая заметка' : `${headerTitle} ${date}`;
 	const readOnly = settings.noteMode === 'view' ? true : false;
 	const btnText = 'Сохранить';
+	const changeNote = (type) => {
+		setSettings({
+			...settings,
+			noteMode: type,
+			noteSettings: false
+		});
+
+		if (type === 'clear') {
+			setNote({
+				...note,
+				title: '',
+				description: ''
+			});
+			setDisabledBtn(false);
+		}
+	};
 
 	return (
 		<Container>
@@ -126,7 +142,7 @@ const CreateNote = observer((props) => {
 							style={ styles.inputTitle }
 							placeholder="Здесь может быть заголовок"
 							placeholderTextColor="rgba(255, 255, 255, .5)"
-							value={ notes.title }
+							value={ note.title }
 							readOnly={ readOnly }
 							onChangeText={ (title) => checkTitleLength(title) }
 							onKeyPress={ (event) => checkText(event, 'title') }
@@ -140,7 +156,7 @@ const CreateNote = observer((props) => {
 							style={ styles.inputDescription }
 							placeholder="Начните свою запись или вставьте текст"
 							placeholderTextColor="rgba(255, 255, 255, .5)"
-							value={ notes.description }
+							value={ note.description }
 							readOnly={ readOnly }
 							onChangeText={ (description) => setDescription(description) }
 							onKeyPress={ (event) => checkText(event, 'description') }
@@ -158,7 +174,7 @@ const CreateNote = observer((props) => {
 			</KeyboardAvoidingView>
 			<ModalSettings
 				buttons={ settingsBtns }
-				settingsFunc={ (type) => sortNotes(type) }
+				settingsFunc={ (type) => changeNote(type) }
 				settingsProp="noteSettings"
 				alertMess="Модальное окно с настройками будет закрыто"
 			/>
