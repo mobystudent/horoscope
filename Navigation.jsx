@@ -18,7 +18,7 @@ export default function Navigation() {
 	return (
 		<NavigationContainer>
 			<Stack.Navigator
-				initialRouteName="notes"
+				initialRouteName="account"
 				screenOptions={{
 					headerShown: false
 				}}

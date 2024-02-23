@@ -1,12 +1,17 @@
-import * as React from 'react';
+import { useContext } from 'react';
 import { StyleSheet, Text, Pressable, View, Image, ScrollView } from 'react-native';
 import Container from '../components/Container';
 import Header from '../components/Header';
 import MoonBirthday from '../components/MoonBirthday';
+import Note from '../components/Note';
+import { SettingsContext } from '../contexts/settings';
+
+import notesStore from '../stores/notes.store';
 
 import { arrowSvg } from '../components/SvgSprite';
 
 export default function Account({ navigation }) {
+	const { settings } = useContext(SettingsContext);
 	const title = 'Мой профиль';
 	const leftButton = {
 		link: 'moon',
@@ -66,6 +71,31 @@ export default function Account({ navigation }) {
 			</View>
 		</Pressable>;
 	});
+	const lastNotes = () => {
+		const createdArr = [];
+		const components = [];
+
+		for (const note of notesStore.notes) {
+			if (note.day === settings.todayDayMoon) {
+				components.push(<Note navigation={ navigation } key={ note.id } note={ note } />);
+			} else if (note.date) {
+				createdArr.push(note);
+			}
+		}
+
+		createdArr.sort((a, b) => {
+			const dateA = new Date(`20${a.date.split('.').reverse().join('-')}`);
+			const dateB = new Date(`20${b.date.split('.').reverse().join('-')}`);
+
+			return dateA - dateB;
+		});
+
+		for (const note of createdArr.slice(0, 2)) {
+			components.push(<Note navigation={ navigation } key={ note.id } note={ note } />);
+		}
+
+		return components;
+	}
 
 	return (
 		<Container>
@@ -100,10 +130,17 @@ export default function Account({ navigation }) {
 					<View style={ styles.header }>
 						<Text style={ styles.title }>Мои заметки</Text>
 						<Pressable onPress={ () => navigation.navigate('notes') }>
-							<Text style={ [styles.title, styles.titleBtn] }>Смотреть все</Text>
+							<Text style={ [styles.title, styles.titleBtn] }>Все</Text>
 						</Pressable>
 					</View>
-
+					<View style={ styles.list }>
+						{ lastNotes() }
+					</View>
+					<View style={ styles.groupData }>
+						<Pressable style={[ styles.button, styles.buttonMore ]} onPress={ () => navigation.navigate('notes') }>
+							<Text style={ styles.text }>Смотреть все</Text>
+						</Pressable>
+					</View>
 				</View>
 				<View style={ styles.block }>
 					<Text style={ styles.title }>Дополнительно</Text>
@@ -185,5 +222,12 @@ const styles = StyleSheet.create({
 	svg: {
 		alignItems: 'center',
 		width: 32
+	},
+	list: {
+		rowGap: 10,
+		marginBottom: 10
+	},
+	buttonMore: {
+		justifyContent: 'center'
 	}
 });

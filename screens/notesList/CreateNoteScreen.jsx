@@ -19,7 +19,6 @@ const CreateNote = observer((props) => {
 				page = null,
 				note: {
 					day = null,
-					headerTitle = '',
 					title = '',
 					date = '',
 					description = ''
@@ -106,7 +105,7 @@ const CreateNote = observer((props) => {
 
 		notesStore.add(note);
 	};
-	const header = settings.noteMode === 'new' || settings.noteMode === 'clear' ? 'Новая заметка' : `${headerTitle} ${date}`;
+	const header = settings.noteMode === 'new' || settings.noteMode === 'clear' ? 'Новая заметка' : `Заметка от ${date}`;
 	const readOnly = settings.noteMode === 'view' ? true : false;
 	const btnText = 'Сохранить';
 	const changeNote = (type) => {

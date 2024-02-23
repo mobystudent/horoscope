@@ -6,7 +6,8 @@ export default function SettingsProvider({ children }) {
 	const [ settings, setSettings ] = useState({
 		noteMode: 'new',
 		noteFilter: false,
-		noteSettings: false
+		noteSettings: false,
+		todayDayMoon: 5
 	});
 
 	return (
