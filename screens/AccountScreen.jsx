@@ -109,7 +109,7 @@ export default function Account({ navigation }) {
 			/>
 			<ScrollView contentContainerStyle={ styles.body } showsVerticalScrollIndicator={ false }>
 				<View style={ styles.block }>
-					<Pressable style={ styles.photo }>
+					<Pressable style={ styles.circle } onPress={ () => navigation.navigate('image') }>
 						<View style={ styles.photoIcon }>
 							{ photoIcon('#fff') }
 						</View>
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
 		rowGap: 30,
 		paddingTop: 30
 	},
-	photo: {
+	circle: {
 		justifyContent: 'center',
 		alignItems: 'center',
 		width: 95,
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
 		marginRight: 'auto',
 		marginBottom: 10,
 		borderRadius: 95/2,
-		backgroundColor: 'rgba(255, 255, 255, .12)',
+		backgroundColor: 'rgba(255, 255, 255, .12)'
 	},
 	photoIcon: {
 		width: 35,

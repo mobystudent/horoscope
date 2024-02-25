@@ -8,7 +8,8 @@ export default function SettingsProvider({ children }) {
 		noteFilter: false, // показывание модального окна с фильтрами на странице всех заметок NotesScreen
 		noteSettings: false, // показывание модального окна с настройками на странице выбранной заметки CreateNoteScreen
 		currentDayMoon: 5, // сегодняшний лунный день
-		personalMode: 'new' // new, edit
+		personalMode: 'new', // new, edit
+		photoSettings: false // показывание модального окна с настройками на странице загрузки аватара пользователя
 	});
 
 	return (

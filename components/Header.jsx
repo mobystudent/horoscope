@@ -72,6 +72,11 @@ export default function Header(props) {
 					...settings,
 					noteFilter: true
 				});
+			} else if (btnActionRight === 'photo') {
+				setSettings({
+					...settings,
+					photoSettings: true
+				});
 			}
 		} else {
 			return navigation.navigate(screenLinkRight, { ...params });

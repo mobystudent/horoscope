@@ -5,6 +5,7 @@ import NameScreen from './screens/personal/NameScreen';
 import TimeScreen from './screens/personal/TimeScreen';
 import CityScreen from './screens/personal/CityScreen';
 import GenderScreen from './screens/personal/GenderScreen';
+import ImageScreen from './screens/personal/ImageScreen';
 import ProcessingScreen from './screens/ProcessingScreen';
 import MoonScreen from './screens/MoonScreen';
 import AccountScreen from './screens/AccountScreen';
@@ -33,6 +34,7 @@ export default function Navigation() {
 				<Stack.Screen name="content" component={ ContentScreen } />
 				<Stack.Screen name="createNote" component={ CreateNoteScreen } />
 				<Stack.Screen name="notes" component={ NotesScreen } />
+				<Stack.Screen name="image" component={ ImageScreen } />
 			</Stack.Navigator>
 		</NavigationContainer>
 	);

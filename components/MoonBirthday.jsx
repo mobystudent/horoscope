@@ -3,6 +3,7 @@ import { StyleSheet, Text, Pressable, View } from 'react-native';
 import { SettingsContext } from '../contexts/settings';
 
 import { arrowRightIcon } from '../icons/elements';
+import * as zodiac from '../icons/zodiac';
 
 export default function MoonBirthday({ navigation }) {
 	const { settings } = useContext(SettingsContext);
@@ -59,12 +60,12 @@ export default function MoonBirthday({ navigation }) {
 					<Text style={ styles.text }>{ moonPhase.phase }</Text>
 				</View>
 				<View style={ styles.zodiac }>
+					{ zodiac[moonPhase.sign]('#fff') }
 				</View>
 			</View>
 		</View>
 	);
 };
-// { svg[moonPhase.sign]('#fff', 1) }
 
 const styles = StyleSheet.create({
 	content: {

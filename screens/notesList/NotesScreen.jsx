@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { StyleSheet, View, Text, Pressable, ScrollView } from 'react-native';
+import { StyleSheet, View, ScrollView } from 'react-native';
 import Container from '../../components/Container';
 import Header from '../../components/Header';
 import Note from '../../components/Note';
