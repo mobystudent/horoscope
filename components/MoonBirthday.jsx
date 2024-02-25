@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import { StyleSheet, Text, Pressable, View } from 'react-native';
+import Svg, { Circle } from 'react-native-svg';
 import { SettingsContext } from '../contexts/settings';
 
 import { arrowRightIcon } from '../icons/elements';
@@ -30,6 +31,11 @@ export default function MoonBirthday({ navigation }) {
 		phase: '4-фаза',
 		sign: 'libra'
 	}
+	const width = 40;
+	const strokeWidth = 2;
+	const radius = (width - strokeWidth) / 2;
+	const circumference = 2 * Math.PI * radius;
+	const strokeDashoffset = circumference - moonPhase.percent / 100 * circumference;
 
 	return (
 		<View style={ styles.content }>
@@ -53,7 +59,18 @@ export default function MoonBirthday({ navigation }) {
 			</Pressable>
 			<View style={ styles.block }>
 				<View style={ styles.dayWrap }>
-					<Text style={ styles.day }>{ moonPhase.percent }</Text>
+					<Svg width={ width } height={ width } style={ styles.progress }>
+						<Circle
+							cx={ width/2 }
+							cy={ width/2 }
+							r={ radius }
+							strokeWidth={ strokeWidth }
+							strokeDasharray={ `${circumference} ${circumference}` }
+							strokeDashoffset={ strokeDashoffset }
+							style={ styles.circleFill }
+						/>
+					</Svg>
+					<Text style={ styles.counter }>{ `${ moonPhase.percent }%` }</Text>
 				</View>
 				<View style={ styles.wrap }>
 					<Text style={ styles.title }>{ moonPhase.title }</Text>
@@ -131,5 +148,21 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		width: 40,
 		height: 40
+	},
+	progress: {
+		marginLeft: 'auto',
+		marginRight: 'auto',
+		transform: [{ rotate: '-90deg' }],
+	},
+	circleFill: {
+		stroke: '#fff',
+		fill: 'none'
+	},
+	counter: {
+		position: 'absolute',
+		// fontFamily: 'SFMed',
+		fontSize: 12,
+		lineHeight: 14,
+		color: '#fff'
 	}
 });
