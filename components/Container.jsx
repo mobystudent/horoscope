@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Pressable, Keyboard } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -11,12 +11,12 @@ export default function Container({ children }) {
 			locations={ [0, 0.0892, 0.1744, 0.2796, 0.3633, 1] }
 			style={ styles.linearGradient }
 		>
-			<Pressable style={ styles.wrapper } onPress={ () => Keyboard.dismiss() }>
+			<View style={ styles.wrapper }>
 				<StatusBar style="auto" />
 				<SafeAreaView style={ styles.container } >
 					{ children }
 				</SafeAreaView>
-			</Pressable>
+			</View>
 		</LinearGradient>
 	);
 };

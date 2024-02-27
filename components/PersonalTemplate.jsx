@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, Text, Pressable, View } from 'react-native';
+import { StyleSheet, Text, Pressable, View, Keyboard } from 'react-native';
 import Container from './Container';
 import Header from './Header';
 
@@ -24,7 +24,7 @@ export default function PersonalTemplate(props) {
 				navigation={ navigation }
 				leftButton={ leftButton }
 			/>
-			<View style={ styles.body }>
+			<Pressable style={ styles.body } onPress={ () => Keyboard.dismiss() }>
 				<Text style={ styles.title }>{ title }</Text>
 				<Text style={ styles.description }>{ description }</Text>
 				<View style={ styles.wrap }>
@@ -37,7 +37,7 @@ export default function PersonalTemplate(props) {
 				>
 					<Text style={[ styles.buttonText, disabledBtn && styles.disabledText ]}>{ btnText }</Text>
 				</Pressable>
-			</View>
+			</Pressable>
 		</Container>
 	);
 }
