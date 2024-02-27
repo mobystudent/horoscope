@@ -20,11 +20,13 @@ export default function GenderScreen(props) {
 	const genderBtns = [
 		{
 			title: 'Мужской',
-			icon: maleIcon
+			icon: maleIcon,
+			style: 'maleIcon'
 		},
 		{
 			title: 'Женский',
-			icon: femaleIcon
+			icon: femaleIcon,
+			style: 'femaleIcon'
 		}
 	];
 	const activeGender = (genderActive) => {
@@ -41,11 +43,11 @@ export default function GenderScreen(props) {
 	const title = 'Ваш пол:';
 	const description = 'Мы настроем персональные рекомендации лунного календаря, учитывая влияние лунных фаз на биоритмы';
 	const btnText = 'Сохранить';
-	const genderBlocks = genderBtns.map(({ title, icon }) => {
+	const genderBlocks = genderBtns.map(({ title, icon, style }) => {
 		return (
-			<View style={ styles.block }>
+			<View style={ styles.block } key={ title }>
 				<Pressable style={ [styles.square, gender === title && styles.active] } onPress={ () => activeGender(title) }>
-					<View style={ styles[icon] }>
+					<View style={ styles[style] }>
 						{ icon('#fff') }
 					</View>
 				</Pressable>

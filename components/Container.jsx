@@ -27,10 +27,7 @@ const styles = StyleSheet.create({
 	},
 	wrapper: {
 		flex: 1,
-		paddingLeft: 15,
-		paddingRight: 15,
-		paddingTop: 10,
-		paddingBottom: 45
+		paddingHorizontal: 15
 	},
 	container: {
 		flex: 1

@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, ScrollView } from 'react-native';
 import Container from '../components/Container';
 import Header from '../components/Header';
 import { SettingsContext } from '../contexts/settings';
@@ -30,10 +30,15 @@ export default function Moon({ navigation }) {
 				leftButton={ leftButton }
 				rightButton={ rightButton }
 			/>
+			<ScrollView contentContainerStyle={ styles.body } showsVerticalScrollIndicator={ false }>
+			</ScrollView>
 		</Container>
 	);
 }
 
 const styles = StyleSheet.create({
-
+	body: {
+		paddingTop: 15,
+		paddingBottom: 45
+	},
 });

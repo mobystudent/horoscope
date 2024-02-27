@@ -113,7 +113,7 @@ export default function Notes({ navigation }) {
 				leftButton={ leftButton }
 				rightButton={ rightButton }
 			/>
-			<ScrollView showsVerticalScrollIndicator={ false }>
+			<ScrollView contentContainerStyle={ styles.body } showsVerticalScrollIndicator={ false }>
 				<View style={ styles.list }>
 					{ notesArray }
 				</View>
@@ -129,6 +129,10 @@ export default function Notes({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+	body: {
+		paddingTop: 15,
+		paddingBottom: 45
+	},
 	list: {
 		rowGap: 10
 	}

@@ -29,7 +29,7 @@ export default function Content(props) {
 				title={ header }
 				leftButton={ leftButton }
 			/>
-			<ScrollView showsVerticalScrollIndicator={ false }>
+			<ScrollView contentContainerStyle={ styles.body } showsVerticalScrollIndicator={ false }>
 				{ symbol && <Text style={ styles.symbol }>{ `Символ дня: ${ symbol }` }</Text> }
 				{ title && <Text style={ styles.title }>{ title }</Text> }
 				<Text style={ styles.description }>{ description }</Text>
@@ -39,6 +39,10 @@ export default function Content(props) {
 }
 
 const styles = StyleSheet.create({
+	body: {
+		paddingTop: 15,
+		paddingBottom: 45
+	},
 	title: {
 		color: '#fff',
 		// fontFamily: 'SFBold',

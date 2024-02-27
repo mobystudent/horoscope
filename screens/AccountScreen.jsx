@@ -164,7 +164,8 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		alignItems: 'center',
 		rowGap: 30,
-		paddingTop: 30
+		paddingTop: 30,
+		paddingBottom: 45
 	},
 	circle: {
 		justifyContent: 'center',

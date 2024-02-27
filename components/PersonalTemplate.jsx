@@ -44,7 +44,9 @@ export default function PersonalTemplate(props) {
 
 const styles = StyleSheet.create({
 	body: {
-		flex: 1
+		flex: 1,
+		paddingTop: 15,
+		paddingBottom: 45
 	},
 	wrap: {
 		flex: 1,

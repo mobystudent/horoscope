@@ -1,5 +1,5 @@
-import { useState, useContext } from 'react';
-import { StyleSheet, Text, Pressable, View, TextInput, KeyboardAvoidingView, ScrollView } from 'react-native';
+import { useState, useEffect, useRef, useContext } from 'react';
+import { StyleSheet, Text, Pressable, View, TextInput, KeyboardAvoidingView, ScrollView, Keyboard } from 'react-native';
 import moment from 'moment';
 import Container from '../../components/Container';
 import Header from '../../components/Header';
@@ -31,8 +31,10 @@ const CreateNote = observer((props) => {
 	});
 	const [ pointer, setPointer ] = useState(0);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
+	const [ contentActive, setContentActive ] = useState('');
 	const maxLengthTitle = 80;
 	const [ countInputWords, setCountInputWords ] = useState(maxLengthTitle);
+	const descriptionRef = useRef(null);
 	const settingsBtns = [
 		{
 			title: 'Редактировать',
@@ -94,6 +96,8 @@ const CreateNote = observer((props) => {
 	const changeSelection = ({ nativeEvent: { selection: { start } } }) => {
 		setPointer(start);
 	};
+	const checkFocus = () => setContentActive(styles.contentActive);
+	const checkBlur = () => setContentActive('');
 	const save = () => {
 		setNote({
 			...note,
@@ -122,6 +126,12 @@ const CreateNote = observer((props) => {
 		}
 	};
 
+	useEffect(() => {
+		if (settings.noteMode === 'edit') {
+			descriptionRef.current.focus();
+		}
+	}, [settings.noteMode]);
+
 	return (
 		<Container>
 			<Header
@@ -130,7 +140,7 @@ const CreateNote = observer((props) => {
 				leftButton={ leftButton }
 				rightButton={ settings.noteMode === 'view' && rightButton }
 			/>
-			<KeyboardAvoidingView style={ styles.content } behavior={ Platform.OS === 'ios' ? 'padding' : 'height' } >
+			<KeyboardAvoidingView style={[ styles.content, contentActive ]} behavior={ Platform.OS === 'ios' ? 'padding' : 'height' } >
 				<ScrollView contentContainerStyle={ styles.body } showsVerticalScrollIndicator={ false }>
 					<View style={ styles.inputWrap }>
 						<TextInput
@@ -143,6 +153,8 @@ const CreateNote = observer((props) => {
 							onChangeText={ (title) => checkTitleLength(title) }
 							onKeyPress={ (event) => checkText(event, 'title') }
 							onSelectionChange={ changeSelection }
+							onFocus={ checkFocus }
+							onBlur={ checkBlur }
 						/>
 						<Text style={ styles.hint }>Осталось { countInputWords } символов</Text>
 					</View>
@@ -157,6 +169,9 @@ const CreateNote = observer((props) => {
 							onChangeText={ (description) => setDescription(description) }
 							onKeyPress={ (event) => checkText(event, 'description') }
 							onSelectionChange={ changeSelection }
+							onFocus={ checkFocus }
+							onBlur={ checkBlur }
+							ref={ descriptionRef }
 						/>
 					</View>
 				</ScrollView>
@@ -184,10 +199,14 @@ const styles = StyleSheet.create({
 	content: {
 		flex: 1,
 		rowGap: 15,
-		paddingVertical: 15
+		paddingTop: 15,
+		paddingBottom: 45
+	},
+	contentActive: {
+		paddingBottom: 15
 	},
 	body: {
-		flex: 1,
+		flex: 1
 	},
 	inputWrap: {
 		flexShrink: 0,
