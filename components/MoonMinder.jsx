@@ -3,16 +3,17 @@ import { StyleSheet, Text, Pressable, View, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SettingsContext } from '../contexts/settings';
 
-import newMoon from '../assets/images/lastQuarter.png';
-// import { checkIcon } from '../icons/moon';
+import newMoonLight from '../assets/images/newMoonLight.png';
+import fullMoon from '../assets/images/fullMoon.png';
 
 export default function MoonMinder() {
 	const { settings } = useContext(SettingsContext);
 	const description = settings.premium ? 'Вам доступны все приемущества' : 'Откройте для себя все приемущества Moonty';
+	const imageMoon = settings.premium ? fullMoon : newMoonLight;
+	const moonStyle = settings.premium ? styles.activeMoonIcon : styles.moonIcon;
 	const Wrapper = ({ children }) => {
-		if (settings.premium) {
-			console.log('PREMIUN');
-			return (
+		return (
+			settings.premium ?
 				<LinearGradient
 					colors={ ['#695EAB', '#cd9290'] }
 					locations={ [0.0992, 1] }
@@ -22,18 +23,13 @@ export default function MoonMinder() {
 				>
 					{ children }
 				</LinearGradient>
-			);
-		} else {
-			console.log('DEFAULT');
-			return (
+			:
 				<View style={ styles.block }>
 					{ children }
 				</View>
-			);
-		}
+		);
 	};
-	console.log(newMoon);
-	// premium
+
 	return (
 		<Wrapper>
 			<Text style={ styles.title }>MoonMinder +</Text>
@@ -41,15 +37,12 @@ export default function MoonMinder() {
 			{ settings.premium || <Pressable style={ styles.btn }>
 				<Text style={ styles.btnText }>Начать</Text>
 			</Pressable> }
-			<View style={ settings.premium ? styles.activeMoonIcon : styles.moonIcon }>
-				<Image style={{ width: '100%', height: '100%' }} source={ newMoon } />
+			<View style={ moonStyle }>
+				<Image style={ styles.imageMoon } source={ imageMoon } />
 			</View>
 		</Wrapper>
 	);
 };
-// background: linear-gradient(180deg, rgba(16, 14, 36, 0.70) 0%, rgba(26, 22, 42, 0.80) 19.31%, rgba(35, 29, 48, 0.90) 37.77%, #2C2436 60.55%, #3A2F3E 78.66%, #83645C 216.54%);
-// background: linear-gradient(20deg, #695EAB 9.92%, #E19C8B 115.38%);
-// { fullMoonIcon() }
 
 const styles = StyleSheet.create({
 	block: {
@@ -103,5 +96,9 @@ const styles = StyleSheet.create({
 		right: -15,
 		width: 135,
 		height: 135
+	},
+	imageMoon: {
+		width: '100%',
+		height: '100%'
 	}
 });
