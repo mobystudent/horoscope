@@ -4,6 +4,7 @@ import Container from '../components/Container';
 import Header from '../components/Header';
 import MoonBirthday from '../components/MoonBirthday';
 import Note from '../components/Note';
+import MoonMinder from '../components/MoonMinder';
 import { SettingsContext } from '../contexts/settings';
 
 import notesStore from '../stores/notes.store';
@@ -118,6 +119,7 @@ export default function Account({ navigation }) {
 						<Text style={ styles.name }>{ userName }, 28</Text>
 					</Pressable>
 				</View>
+				<MoonMinder />
 				<View style={ styles.block }>
 					<Text style={ styles.title }>День рождения</Text>
 					<View style={ styles.groupData }>

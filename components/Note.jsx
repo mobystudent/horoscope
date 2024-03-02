@@ -49,8 +49,8 @@ const styles = StyleSheet.create({
 	},
 	date: {
 		// fontFamily: 'SFReg',
-		fontSize: 13,
-		lineHeight: 16,
+		fontSize: 14,
+		lineHeight: 18,
 		color: 'rgba(255, 255, 255, .5)',
 		marginBottom: 15
 	},
