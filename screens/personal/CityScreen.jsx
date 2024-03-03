@@ -1,5 +1,6 @@
 import { useState, useContext } from 'react';
 import { StyleSheet, FlatList, TextInput, View, Pressable, Text, KeyboardAvoidingView, Keyboard, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import PersonalTemplate from '../../components/PersonalTemplate';
 import { SettingsContext } from '../../contexts/settings';
 
@@ -77,11 +78,17 @@ export default function CityScreen(props) {
 			<Text style={ styles.item }>{item.title}</Text>
 		</Pressable>
 	));
-	const nextStep = () => {
+	const nextStep = async () => {
 		if (!disabledBtn && settings.personalMode === 'edit') {
 			navigation.navigate('gender');
 		} else {
 			navigation.navigate('account');
+		}
+
+		try {
+			await AsyncStorage.setItem('city', city);
+		} catch (e) {
+			console.error(e);
 		}
 	}
 	const title = 'Где вы родились?';

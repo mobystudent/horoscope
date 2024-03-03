@@ -1,5 +1,6 @@
 import { useState, useContext } from 'react';
 import { StyleSheet, Text, View, Pressable } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import PersonalTemplate from '../../components/PersonalTemplate';
 import { SettingsContext } from '../../contexts/settings';
 
@@ -33,11 +34,17 @@ export default function GenderScreen(props) {
 		setGender(genderActive);
 		setDisabledBtn(false);
 	};
-	const nextStep = () => {
+	const nextStep = async () => {
 		if (!disabledBtn && settings.personalMode === 'edit') {
 			navigation.navigate('processing');
 		} else {
 			navigation.navigate('account');
+		}
+
+		try {
+			await AsyncStorage.setItem('gender', gender);
+		} catch (e) {
+			console.error(e);
 		}
 	}
 	const title = 'Ваш пол:';

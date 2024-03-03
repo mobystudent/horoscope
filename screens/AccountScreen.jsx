@@ -1,5 +1,6 @@
-import { useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { StyleSheet, Text, Pressable, View, ScrollView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Container from '../components/Container';
 import Header from '../components/Header';
 import MoonBirthday from '../components/MoonBirthday';
@@ -12,13 +13,13 @@ import notesStore from '../stores/notes.store';
 import { arrowRightIcon, photoIcon } from '../icons/elements';
 
 export default function Account({ navigation }) {
+	const [ person, setPerson ] = useState({});
 	const { settings } = useContext(SettingsContext);
 	const title = 'Мой профиль';
 	const leftButton = {
 		screenLink: 'moon',
 		type: 'back'
 	};
-	const userName = 'Valentina';
 	const userData = [
 		{
 			title: 'Дата',
@@ -32,12 +33,10 @@ export default function Account({ navigation }) {
 		},
 		{
 			title: 'Город',
-			value: 'Париж',
 			screen: 'city'
 		},
 		{
 			title: 'Пол',
-			value: 'Женский',
 			screen: 'gender'
 		}
 	];
@@ -60,7 +59,7 @@ export default function Account({ navigation }) {
 
 		return <Pressable style={ style } key={ i } onPress={ () => navigation.navigate(data.screen, data) }>
 			<Text style={ styles.text }>{ data.title }</Text>
-			<Text style={ styles.text }>{ data.value }</Text>
+			<Text style={ styles.text }>{ person[data.screen] || data.value }</Text>
 		</Pressable>;
 	});
 	const documentsArray = documents.map((document, i) => {
@@ -101,6 +100,27 @@ export default function Account({ navigation }) {
 		return components;
 	};
 
+	useEffect(() => {
+		const getPersonalData = async () => {
+			try {
+				const personName = await AsyncStorage.getItem('name');
+				const personCity = await AsyncStorage.getItem('city');
+				const personGender = await AsyncStorage.getItem('gender');
+
+				setPerson({
+					name: personName,
+					city: personCity,
+					gender: personGender
+				});
+				console.log(person);
+			} catch (e) {
+				console.error(e);
+			}
+		};
+
+		getPersonalData();
+	});
+
 	return (
 		<Container>
 			<Header
@@ -115,8 +135,8 @@ export default function Account({ navigation }) {
 							{ photoIcon('#fff') }
 						</View>
 					</Pressable>
-					<Pressable onPress={ () => navigation.navigate('name', { value: userName }) }>
-						<Text style={ styles.name }>{ userName }, 28</Text>
+					<Pressable onPress={ () => navigation.navigate('name', { value: person.name }) }>
+						<Text style={ styles.name }>{ person.name }, 28</Text>
 					</Pressable>
 				</View>
 				<MoonMinder navigation={ navigation } />

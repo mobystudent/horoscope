@@ -1,5 +1,6 @@
 import { useState, useContext } from 'react';
 import { StyleSheet, Text, TextInput, View, KeyboardAvoidingView, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import PersonalTemplate from '../../components/PersonalTemplate';
 import { SettingsContext } from '../../contexts/settings';
 
@@ -45,11 +46,17 @@ export default function NameScreen(props) {
 	const changeSelection = ({ nativeEvent: { selection: { start } } }) => {
 		setPointer(start);
 	};
-	const nextStep = () => {
+	const nextStep = async () => {
 		if (!disabledBtn && settings.personalMode === 'edit') {
 			navigation.navigate('time');
 		} else {
 			navigation.navigate('account');
+		}
+
+		try {
+			await AsyncStorage.setItem('name', name);
+		} catch (e) {
+			console.error(e);
 		}
 	}
 	const title = 'Как вас зовут?';
