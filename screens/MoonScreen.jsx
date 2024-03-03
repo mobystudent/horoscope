@@ -4,13 +4,11 @@ import Container from '../components/Container';
 import Header from '../components/Header';
 import { SettingsContext } from '../contexts/settings';
 
-import notesStore from '../stores/notes.store';
-
 export default function Moon({ navigation }) {
 	const { settings } = useContext(SettingsContext);
 	const title = 'Растущая луна';
 	const subtitle = 'I Фаза';
-	const noteToday = notesStore.notes.filter((note) => note.day === settings.currentDayMoon);
+	const noteToday = settings.notesList.filter((note) => note.day === settings.currentDayMoon);
 	const leftButton = {
 		screenLink: 'account',
 		type: 'account'
