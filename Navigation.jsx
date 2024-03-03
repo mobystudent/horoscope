@@ -12,6 +12,7 @@ import AccountScreen from './screens/AccountScreen';
 import ContentScreen from './screens/ContentScreen';
 import CreateNoteScreen from './screens/notesList/CreateNoteScreen';
 import NotesScreen from './screens/notesList/NotesScreen';
+import PremiumScreen from './screens/PremiumScreen';
 
 const Stack = createStackNavigator();
 
@@ -35,6 +36,7 @@ export default function Navigation() {
 				<Stack.Screen name="createNote" component={ CreateNoteScreen } />
 				<Stack.Screen name="notes" component={ NotesScreen } />
 				<Stack.Screen name="image" component={ ImageScreen } />
+				<Stack.Screen name="premium" component={ PremiumScreen } />
 			</Stack.Navigator>
 		</NavigationContainer>
 	);

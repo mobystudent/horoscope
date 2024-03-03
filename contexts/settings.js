@@ -10,7 +10,8 @@ export default function SettingsProvider({ children }) {
 		currentDayMoon: 5, // сегодняшний лунный день
 		personalMode: 'new', // new, edit
 		photoSettings: false, // показывание модального окна с настройками на странице загрузки аватара пользователя
-		premium: false // показывает активным/неактивным блок MoonMinder+
+		premium: false, // показывает активным/неактивным блок MoonMinder+
+		background: 'main'
 	});
 
 	return (

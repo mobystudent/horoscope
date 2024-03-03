@@ -6,8 +6,8 @@ import { SettingsContext } from '../contexts/settings';
 import newMoonLight from '../assets/images/newMoonLight.png';
 import fullMoon from '../assets/images/fullMoon.png';
 
-export default function MoonMinder() {
-	const { settings } = useContext(SettingsContext);
+export default function MoonMinder({ navigation }) {
+	const { settings, setSettings } = useContext(SettingsContext);
 	const description = settings.premium ? 'Вам доступны все приемущества' : 'Откройте для себя все приемущества Moonty';
 	const imageMoon = settings.premium ? fullMoon : newMoonLight;
 	const moonStyle = settings.premium ? styles.activeMoonIcon : styles.moonIcon;
@@ -15,8 +15,8 @@ export default function MoonMinder() {
 		return (
 			settings.premium ?
 				<LinearGradient
-					colors={ ['#695EAB', '#cd9290'] }
-					locations={ [0.0992, 1] }
+					colors={ ['#695EAB', '#E19C8B'] }
+					locations={ [0.09, 1] }
 					start={ {x: 0, y: 1} }
 					end={ {x: 0.05, y: -0.9} }
 					style={ styles.block }
@@ -29,12 +29,19 @@ export default function MoonMinder() {
 				</View>
 		);
 	};
+	const openPremiumScreen = () => {
+		navigation.navigate('premium');
+		setSettings({
+			...settings,
+			background: 'premium'
+		});
+	};
 
 	return (
 		<Wrapper>
 			<Text style={ styles.title }>MoonMinder +</Text>
 			<Text style={ [ styles.desc, settings.premium || styles.descIndent ] }>{ description }</Text>
-			{ settings.premium || <Pressable style={ styles.btn }>
+			{ settings.premium || <Pressable style={ styles.btn } onPress={ () => openPremiumScreen() }>
 				<Text style={ styles.btnText }>Начать</Text>
 			</Pressable> }
 			<View style={ moonStyle }>

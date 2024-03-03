@@ -99,7 +99,7 @@ export default function Account({ navigation }) {
 		}
 
 		return components;
-	}
+	};
 
 	return (
 		<Container>
@@ -119,7 +119,7 @@ export default function Account({ navigation }) {
 						<Text style={ styles.name }>{ userName }, 28</Text>
 					</Pressable>
 				</View>
-				<MoonMinder />
+				<MoonMinder navigation={ navigation } />
 				<View style={ styles.block }>
 					<Text style={ styles.title }>День рождения</Text>
 					<View style={ styles.groupData }>
