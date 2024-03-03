@@ -131,12 +131,7 @@ export default function Account({ navigation }) {
 					<MoonBirthday navigation={ navigation } />
 				</View>
 				<View style={ styles.block }>
-					<View style={ styles.header }>
-						<Text style={ styles.title }>Мои заметки</Text>
-						<Pressable onPress={ () => navigation.navigate('notes') }>
-							<Text style={ [styles.title, styles.titleBtn] }>Все</Text>
-						</Pressable>
-					</View>
+					<Text style={ styles.title }>Мои заметки</Text>
 					<View style={ styles.list }>
 						{ lastNotes() }
 					</View>
@@ -158,10 +153,6 @@ export default function Account({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-	header: {
-		flexDirection: 'row',
-		justifyContent: 'space-between'
-	},
 	body: {
 		flexDirection: 'column',
 		alignItems: 'center',
@@ -201,9 +192,6 @@ const styles = StyleSheet.create({
 		color: 'rgba(255, 255, 255, .5)',
 		textTransform: 'uppercase',
 		marginBottom: 10
-	},
-	titleBtn: {
-		color: '#fff'
 	},
 	groupData: {
 		borderRadius: 17,

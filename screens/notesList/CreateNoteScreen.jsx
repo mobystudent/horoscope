@@ -16,7 +16,7 @@ const CreateNote = observer((props) => {
 			params: {
 				page = null,
 				note: {
-					title = '',
+					day,
 					date = '',
 					description = ''
 				} = {}
@@ -24,16 +24,13 @@ const CreateNote = observer((props) => {
 		} = {}
 	} = props;
 	const { settings, setSettings } = useContext(SettingsContext);
-	const [ note, setNote ] = useState({
-		title: title,
+	const [ noteElem, setNoteElem ] = useState({
 		date: date,
 		description: description
 	});
 	const [ pointer, setPointer ] = useState(0);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
 	const [ contentActive, setContentActive ] = useState('');
-	const maxLengthTitle = 80;
-	const [ countInputWords, setCountInputWords ] = useState(maxLengthTitle);
 	const descriptionRef = useRef(null);
 	const settingsBtns = [
 		{
@@ -53,24 +50,23 @@ const CreateNote = observer((props) => {
 		btnAction: 'more',
 		type: 'more',
 		params: {
-			title: title,
 			description: description
 		}
 	};
-	const checkText = ({ nativeEvent: { key } }, field) => {
+	const checkText = ({ nativeEvent: { key } }) => {
 		const regex = new RegExp('[а-яА-Я\-Backspace ]');
 		const check = regex.test(key);
 		const nameChars = key === 'Backspace'
-			? note[field].slice(0, pointer - 1) + note[field].slice(pointer)
-			: note[field].slice(0, pointer) + key + note[field].slice(pointer);
+			? noteElem.description.slice(0, pointer - 1) + noteElem.description.slice(pointer)
+			: noteElem.description.slice(0, pointer) + key + noteElem.description.slice(pointer);
 		const exceptionLetters = ['k', 'e', 'p', 'c', 'a', 's'];
 
 		if(!check || exceptionLetters.includes(key)) {
 			// Alert.alert('Не корректный символ', 'Заголовок должен содержать только буквенные символы кириллицы или дефис!', [{
 			// 	text: 'OK',
-			// 	onPress: () => setNote({
-			// 		...note,
-			// 		[field]: note[field]
+			// 	onPress: () => setNoteElem({
+			// 		...noteElem,
+			// 		[field]: noteElem[field]
 			// 	}),
 			// 	style: 'cancel',
 			// }]);
@@ -78,18 +74,9 @@ const CreateNote = observer((props) => {
 			setDisabledBtn(nameChars.length > 1 ? false : true);
 		}
 	};
-	const checkTitleLength = (title) => {
-		if (title.length > maxLengthTitle) return;
-
-		setNote({
-			...note,
-			title: title
-		});
-		setCountInputWords(maxLengthTitle - title.length);
-	};
 	const setDescription = (description) => {
-		setNote({
-			...note,
+		setNoteElem({
+			...noteElem,
 			description: description
 		});
 	};
@@ -99,15 +86,14 @@ const CreateNote = observer((props) => {
 	const checkFocus = () => setContentActive(styles.contentActive);
 	const checkBlur = () => setContentActive('');
 	const save = () => {
-		setNote({
-			...note,
+		setNoteElem({
+			...noteElem,
 			date: moment().format("DD.MM.YYYY")
 		});
 
-		notesStore.add(note);
+		notesStore.add(noteElem);
 	};
 	const header = settings.noteMode === 'new' || settings.noteMode === 'clear' ? 'Новая заметка' : `Заметка от ${date}`;
-	const readOnly = settings.noteMode === 'view' ? true : false;
 	const btnText = 'Сохранить';
 	const changeNote = (type) => {
 		setSettings({
@@ -117,9 +103,8 @@ const CreateNote = observer((props) => {
 		});
 
 		if (type === 'clear') {
-			setNote({
-				...note,
-				title: '',
+			setNoteElem({
+				...noteElem,
 				description: ''
 			});
 			setDisabledBtn(false);
@@ -142,35 +127,20 @@ const CreateNote = observer((props) => {
 			/>
 			<KeyboardAvoidingView style={[ styles.content, contentActive ]} behavior={ Platform.OS === 'ios' ? 'padding' : 'height' } >
 				<ScrollView contentContainerStyle={ styles.body } showsVerticalScrollIndicator={ false }>
-					<View style={ styles.inputWrap }>
-						<TextInput
-							multiline
-							style={ styles.inputTitle }
-							placeholder="Здесь может быть заголовок"
-							placeholderTextColor="rgba(255, 255, 255, .5)"
-							value={ note.title }
-							readOnly={ readOnly }
-							onChangeText={ (title) => checkTitleLength(title) }
-							onKeyPress={ (event) => checkText(event, 'title') }
-							onSelectionChange={ changeSelection }
-							onFocus={ checkFocus }
-							onBlur={ checkBlur }
-						/>
-						<Text style={ styles.hint }>Осталось { countInputWords } символов</Text>
-					</View>
+					<Text style={ styles.title }>{ day }-й лунный день</Text>
 					<View style={ styles.textareaWrap }>
 						<TextInput
 							multiline
 							style={ styles.inputDescription }
 							placeholder="Начните свою запись или вставьте текст"
 							placeholderTextColor="rgba(255, 255, 255, .5)"
-							value={ note.description }
-							readOnly={ readOnly }
+							value={ noteElem.description }
+							readOnly={ settings.noteMode === 'view' }
 							onChangeText={ (description) => setDescription(description) }
-							onKeyPress={ (event) => checkText(event, 'description') }
-							onSelectionChange={ changeSelection }
-							onFocus={ checkFocus }
-							onBlur={ checkBlur }
+							onKeyPress={ (event) => checkText(event) }
+							onSelectionChange={ (event) => changeSelection(event) }
+							onFocus={ () => checkFocus() }
+							onBlur={ () => checkBlur() }
 							ref={ descriptionRef }
 						/>
 					</View>
@@ -208,22 +178,12 @@ const styles = StyleSheet.create({
 	body: {
 		flex: 1
 	},
-	inputWrap: {
-		flexShrink: 0,
+	title: {
+		color: '#fff',
+		// fontFamily: 'SFSBold',
+		fontSize: 34,
+		lineHeight: 40,
 		marginBottom: 15
-	},
-	inputTitle: {
-		color: '#fff',
-		// fontFamily: 'SFBold',
-		fontSize: 20,
-		lineHeight: 24,
-	},
-	hint: {
-		color: '#fff',
-		// fontFamily: 'SFReg',
-		fontSize: 12,
-		lineHeight: 14,
-		marginTop: 5
 	},
 	textareaWrap: {
 		flex: 1

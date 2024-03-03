@@ -7,7 +7,6 @@ export default function Note(props) {
 		navigation,
 		note
 	} = props;
-	const titleLimit = (title) => title.length > 45 ? `${title.slice(0, 35)}...` : title;
 	const descLimit = (desc) => desc.length > 60 ? `${desc.slice(0, 50)}...` : desc;
 	const { settings, setSettings } = useContext(SettingsContext);
 	const checkTypeNote = (item) => {
@@ -27,7 +26,7 @@ export default function Note(props) {
 			style={ styles.note }
 			onPress={ () => checkTypeNote(note) }
 		>
-			<Text style={ styles.title }>{ titleLimit(note.title) }</Text>
+			<Text style={ styles.title }>{ note.day }-й лунный день</Text>
 			<Text style={ styles.date }>{ note.date }</Text>
 			<Text style={ styles.desc }>{ descLimit(note.description) }</Text>
 		</Pressable>
