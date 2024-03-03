@@ -9,6 +9,7 @@ export default function Premium({ navigation }) {
 	const [ rate, setRate ] = useState('Weekly');
 	const [ buttonText, setButtonText ] = useState('');
 	const leftButton = {
+		btnAction: 'premium',
 		screenLink: 'account',
 		type: 'back'
 	};

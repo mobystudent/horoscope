@@ -11,6 +11,7 @@ export default function Header(props) {
 		subtitle = '',
 		leftButton: {
 			screenLink: screenLinkLeft = '',
+			btnAction: btnActionLeft = '',
 			type: typeLeft = ''
 		} = {},
 		rightButton: {
@@ -60,6 +61,19 @@ export default function Header(props) {
 		}
 	};
 
+	const checkTypeLeftButton = () => {
+		if (btnActionLeft) {
+			if (btnActionLeft === 'premium') {
+				setSettings({
+					...settings,
+					background: 'main'
+				});
+			}
+		}
+
+		navigation.navigate(screenLinkLeft);
+	};
+
 	const checkTypeRightButton = () => {
 		if (btnActionRight) {
 			if (btnActionRight === 'more') {
@@ -85,8 +99,8 @@ export default function Header(props) {
 
 	return (
 		<View style={ styles.header }>
-			{ Object.keys(props).length !== 0 && <>
-				<Pressable style={ styles.btn } onPress={ () => navigation.navigate(screenLinkLeft) }>
+			{ Object.keys(props).length && <>
+				<Pressable style={ styles.btn } onPress={ () => checkTypeLeftButton() }>
 					{ showIcon(typeLeft) }
 				</Pressable>
 				<View>
