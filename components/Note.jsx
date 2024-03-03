@@ -28,7 +28,7 @@ export default function Note(props) {
 		>
 			<Text style={ styles.title }>{ note.day }-й лунный день</Text>
 			<Text style={ styles.date }>{ note.date }</Text>
-			<Text style={ styles.desc }>{ descLimit(note.description) }</Text>
+			<Text style={ styles.desc }>{ note.description ? descLimit(note.description) : 'Добавить заметку' }</Text>
 		</Pressable>
 	);
 }

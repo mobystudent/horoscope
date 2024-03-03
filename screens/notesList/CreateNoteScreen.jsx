@@ -6,10 +6,7 @@ import Header from '../../components/Header';
 import ModalSettings from '../../components/ModalSettings';
 import { SettingsContext } from '../../contexts/settings';
 
-import { observer } from 'mobx-react-lite';
-import notesStore from '../../stores/notes.store';
-
-const CreateNote = observer((props) => {
+export default function CreateNote (props) {
 	const {
 		navigation,
 		route: {
@@ -25,8 +22,8 @@ const CreateNote = observer((props) => {
 	} = props;
 	const { settings, setSettings } = useContext(SettingsContext);
 	const [ noteElem, setNoteElem ] = useState({
-		date: date,
-		description: description
+		date,
+		description: date ? description : ''
 	});
 	const [ pointer, setPointer ] = useState(0);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
@@ -74,10 +71,10 @@ const CreateNote = observer((props) => {
 			setDisabledBtn(nameChars.length > 1 ? false : true);
 		}
 	};
-	const setDescription = (description) => {
+	const setDescription = (text) => {
 		setNoteElem({
 			...noteElem,
-			description: description
+			description: text
 		});
 	};
 	const changeSelection = ({ nativeEvent: { selection: { start } } }) => {
@@ -90,8 +87,6 @@ const CreateNote = observer((props) => {
 			...noteElem,
 			date: moment().format("DD.MM.YYYY")
 		});
-
-		notesStore.add(noteElem);
 	};
 	const header = settings.noteMode === 'new' || settings.noteMode === 'clear' ? 'Новая заметка' : `Заметка от ${date}`;
 	const btnText = 'Сохранить';
@@ -105,7 +100,7 @@ const CreateNote = observer((props) => {
 		if (type === 'clear') {
 			setNoteElem({
 				...noteElem,
-				description: ''
+				description: 'Добавить заметку'
 			});
 			setDisabledBtn(false);
 		}
@@ -136,7 +131,7 @@ const CreateNote = observer((props) => {
 							placeholderTextColor="rgba(255, 255, 255, .5)"
 							value={ noteElem.description }
 							readOnly={ settings.noteMode === 'view' }
-							onChangeText={ (description) => setDescription(description) }
+							onChangeText={ (text) => setDescription(text) }
 							onKeyPress={ (event) => checkText(event) }
 							onSelectionChange={ (event) => changeSelection(event) }
 							onFocus={ () => checkFocus() }
@@ -161,9 +156,7 @@ const CreateNote = observer((props) => {
 			/>
 		</Container>
 	);
-});
-
-export default CreateNote;
+}
 
 const styles = StyleSheet.create({
 	content: {

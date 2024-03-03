@@ -99,7 +99,7 @@ export default function Header(props) {
 
 	return (
 		<View style={ styles.header }>
-			{ Object.keys(props).length && <>
+			{ Boolean(Object.keys(props).length) && <>
 				<Pressable style={ styles.btn } onPress={ () => checkTypeLeftButton() }>
 					{ showIcon(typeLeft) }
 				</Pressable>

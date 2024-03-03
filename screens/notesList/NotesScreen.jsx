@@ -6,11 +6,9 @@ import Note from '../../components/Note';
 import ModalSettings from '../../components/ModalSettings';
 import { SettingsContext } from '../../contexts/settings';
 
-import notesStore from '../../stores/notes.store';
-
 export default function Notes({ navigation }) {
 	const { settings, setSettings } = useContext(SettingsContext);
-	const [ notesArr, setNotesArr ] = useState(notesStore.notes);
+	const [ notesArr, setNotesArr ] = useState(settings.notesList);
 	const title = 'Все заметки';
 	// const todayMoonDay = 2;
 	const sortBtns = [

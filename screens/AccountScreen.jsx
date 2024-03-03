@@ -8,8 +8,6 @@ import Note from '../components/Note';
 import MoonMinder from '../components/MoonMinder';
 import { SettingsContext } from '../contexts/settings';
 
-import notesStore from '../stores/notes.store';
-
 import { arrowRightIcon, photoIcon } from '../icons/elements';
 
 export default function Account({ navigation }) {
@@ -78,7 +76,7 @@ export default function Account({ navigation }) {
 		const createdArr = [];
 		const components = [];
 
-		for (const note of notesStore.notes) {
+		for (const note of settings.notesList) {
 			if (note.day === settings.currentDayMoon) {
 				components.push(<Note navigation={ navigation } key={ note.id } note={ note } />);
 			} else if (note.date) {
@@ -119,7 +117,7 @@ export default function Account({ navigation }) {
 		};
 
 		getPersonalData();
-	});
+	}, []);
 
 	return (
 		<Container>

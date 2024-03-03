@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { StyleSheet, Text, View, FlatList, Animated } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Svg, { Circle } from 'react-native-svg';
 import Container from '../components/Container';
 import Header from '../components/Header';
+import { SettingsContext } from '../contexts/settings';
 
 import { checkIcon } from '../icons/elements';
 
 export default function Processing({ navigation }) {
+	const { settings, setSettings } = useContext(SettingsContext);
 	const [ steps, setSteps ] = useState([
 		{ id: 0, level: 20, title: 'Анализируем данные', active: false },
 		{ id: 1, level: 35, title: 'Адаптируем лунные события', active: false },
@@ -14,7 +17,8 @@ export default function Processing({ navigation }) {
 		{ id: 3, level: 75, title: 'Согласуем с биоритмами', active: false },
 		{ id: 4, level: 90, title: 'Составляем прогноз', active: false }
 	]);
-	const [progress, setProgress] = useState(0);
+	const [ progress, setProgress ] = useState(0);
+	const [ statusStorage, setStatusStorage ] = useState('empty');
 	const title = 'Создаем ваш профиль';
 	const renderItem = (({ item }) => (
 		<View style={ [ styles.item, item.active && styles.active ] }>
@@ -60,6 +64,46 @@ export default function Processing({ navigation }) {
 		}, time);
 
 		return () => clearInterval(progressId);
+	}, []);
+
+	useEffect(() => {
+		const setNotesList = async () => {
+			try {
+				const storage = await AsyncStorage.getItem('notesArray');
+
+				setStatusStorage(storage ? 'full' : 'empty');
+			} catch (e) {
+				console.error(e);
+			}
+
+			if (statusStorage === 'full') return;
+
+			const notesArray = [];
+
+			for (let i = 0; i < 30; i++) {
+				notesArray.push({
+					id: i,
+					day: i + 1,
+					date: '',
+					description: ''
+				});
+			}
+
+			setSettings({
+				...settings,
+				notesList: notesArray
+			});
+
+			try {
+				const notesString = JSON.stringify(notesArray);
+
+				await AsyncStorage.setItem('notesArray', notesString);
+			} catch (e) {
+				console.error(e);
+			}
+		};
+
+		setNotesList();
 	}, []);
 
 	return (
