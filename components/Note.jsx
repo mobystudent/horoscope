@@ -12,13 +12,11 @@ export default function Note(props) {
 	const checkTypeNote = (item) => {
 		setSettings({
 			...settings,
-			noteMode: item.date ? 'view' : 'new'
+			noteMode: item.date ? 'view' : 'new',
+			currentNote: item
 		});
 
-		navigation.navigate('createNote', {
-			note,
-			page: 'notes'
-		});
+		navigation.navigate('createNote', { page: 'notes' });
 	}
 
 	return (

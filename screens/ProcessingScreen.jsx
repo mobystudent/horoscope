@@ -82,7 +82,6 @@ export default function Processing({ navigation }) {
 
 			for (let i = 0; i < 30; i++) {
 				notesArray.push({
-					id: i,
 					day: i + 1,
 					date: '',
 					description: ''

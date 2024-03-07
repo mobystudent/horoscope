@@ -68,6 +68,11 @@ export default function Header(props) {
 					...settings,
 					background: 'main'
 				});
+			} else if (btnActionLeft === 'back') {
+				setSettings({
+					...settings,
+					currentNote: {}
+				});
 			}
 		}
 

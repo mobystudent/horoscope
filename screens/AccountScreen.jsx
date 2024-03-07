@@ -78,7 +78,7 @@ export default function Account({ navigation }) {
 
 		for (const note of settings.notesList) {
 			if (note.day === settings.currentDayMoon) {
-				components.push(<Note navigation={ navigation } key={ note.id } note={ note } />);
+				components.push(<Note navigation={ navigation } key={ note.day } note={ note } />);
 			} else if (note.date) {
 				createdArr.push(note);
 			}
@@ -92,7 +92,7 @@ export default function Account({ navigation }) {
 		});
 
 		for (const note of createdArr.slice(0, 2)) {
-			components.push(<Note navigation={ navigation } key={ note.id } note={ note } />);
+			components.push(<Note navigation={ navigation } key={ note.day } note={ note } />);
 		}
 
 		return components;

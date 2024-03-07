@@ -12,7 +12,8 @@ export default function SettingsProvider({ children }) {
 		photoSettings: false, // показывание модального окна с настройками на странице загрузки аватара пользователя
 		premium: false, // показывает активным/неактивным блок MoonMinder+
 		background: 'main', // 'main', 'premium'
-		notesList: []
+		notesList: [],
+		currentNote: {}
 	});
 
 	return (
