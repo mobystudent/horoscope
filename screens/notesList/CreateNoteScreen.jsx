@@ -17,13 +17,10 @@ export default function CreateNote (props) {
 		} = {}
 	} = props;
 	const { settings, setSettings } = useContext(SettingsContext);
-	const [ noteElem, setNoteElem ] = useState({
-		day: settings.currentNote.day,
-		date: settings.currentNote.date,
-		description: settings.currentNote.date ? settings.currentNote.description : ''
-	});
+	const [ description, setDescription ] = useState('');
 	console.log('settings -----------------------------');
 	console.log(settings.currentNote);
+	console.log(settings.notesList);
 	console.log('settings -----------------------------');
 	const [ pointer, setPointer ] = useState(0);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
@@ -55,8 +52,8 @@ export default function CreateNote (props) {
 		const regex = new RegExp('[а-яА-Я\-Backspace ]');
 		const check = regex.test(key);
 		const nameChars = key === 'Backspace'
-			? noteElem.description.slice(0, pointer - 1) + noteElem.description.slice(pointer)
-			: noteElem.description.slice(0, pointer) + key + noteElem.description.slice(pointer);
+			? description.slice(0, pointer - 1) + description.slice(pointer)
+			: description.slice(0, pointer) + key + description.slice(pointer);
 		const exceptionLetters = ['k', 'e', 'p', 'c', 'a', 's'];
 
 		if(!check || exceptionLetters.includes(key)) {
@@ -72,45 +69,41 @@ export default function CreateNote (props) {
 			setDisabledBtn(nameChars.length > 1 ? false : true);
 		}
 	};
-	const setDescription = (text) => {
-		setNoteElem({
-			...noteElem,
-			description: text
-		});
-	};
 	const changeSelection = ({ nativeEvent: { selection: { start } } }) => {
 		setPointer(start);
 	};
 	const checkFocus = () => setContentActive(styles.contentActive);
 	const checkBlur = () => setContentActive('');
-	const save = () => {
-		const newArr = settings.notesList.map((noteItem) => {
-			return noteItem.day === noteElem.day ? {
-				day: noteElem.day,
-				date: moment().format("DD.MM.YYYY"),
-				description: noteElem.description
+	const save = async () => {
+		const updatedNotesList = settings.notesList.map((noteItem) => {
+			return noteItem.day === settings.currentNote.day ? {
+				day: settings.currentNote.day,
+				date: settings.noteMode !== 'clear' && moment().format("DD.MM.YYYY"),
+				description
 			} : noteItem;
 		});
 
-		console.log('noteElem start');
-		console.log(noteElem);
-		console.log(newArr);
-		console.log('noteElem edn');
-		// try {
-		// 	await AsyncStorage.setItem('notesArray', notesString);
-		// 	navigation.navigate(page);
-		// } catch (e) {
-		// 	console.error(e);
-		// }
-		setSettings({
-			...settings,
-			currentNote: {}
-		});
-		setNoteElem({});
+		console.log('updatedNotesList ==========================');
+		console.log(updatedNotesList);
+		console.log('updatedNotesList ==========================');
 
-		navigation.navigate(page);
+		try {
+			// const notesString = JSON.stringify(updatedNotesList);
+
+			// await AsyncStorage.setItem('notesArray', notesString);
+
+			navigation.navigate(page);
+			setSettings({
+				...settings,
+				notesList: updatedNotesList,
+				// currentNote: {}
+			});
+			setDescription('');
+		} catch (e) {
+			console.error(e);
+		}
 	};
-	const header = settings.noteMode === 'new' || settings.noteMode === 'clear' ? 'Новая заметка' : `Заметка от ${date}`;
+	const header = settings.noteMode === 'new' || settings.noteMode === 'clear' ? 'Новая заметка' : `Заметка от ${settings.currentNote.date}`;
 	const btnText = 'Сохранить';
 	const changeNote = (type) => {
 		setSettings({
@@ -120,10 +113,7 @@ export default function CreateNote (props) {
 		});
 
 		if (type === 'clear') {
-			setNoteElem({
-				...noteElem,
-				description: 'Добавить заметку'
-			});
+			setDescription('');
 			setDisabledBtn(false);
 		}
 	};
@@ -133,6 +123,12 @@ export default function CreateNote (props) {
 			descriptionRef.current.focus();
 		}
 	}, [settings.noteMode]);
+
+	useEffect(() => {
+		if (settings.currentNote.date) {
+			setDescription(settings.currentNote.description);
+		}
+	}, []);
 
 	return (
 		<Container>
@@ -144,14 +140,14 @@ export default function CreateNote (props) {
 			/>
 			<KeyboardAvoidingView style={[ styles.content, contentActive ]} behavior={ Platform.OS === 'ios' ? 'padding' : 'height' } >
 				<ScrollView contentContainerStyle={ styles.body } showsVerticalScrollIndicator={ false }>
-					<Text style={ styles.title }>{ noteElem.day }-й лунный день</Text>
+					<Text style={ styles.title }>{ settings.currentNote.day }-й лунный день</Text>
 					<View style={ styles.textareaWrap }>
 						<TextInput
 							multiline
 							style={ styles.inputDescription }
 							placeholder="Начните свою запись или вставьте текст"
 							placeholderTextColor="rgba(255, 255, 255, .5)"
-							value={ noteElem.description }
+							value={ description }
 							readOnly={ settings.noteMode === 'view' }
 							onChangeText={ (text) => setDescription(text) }
 							onKeyPress={ (event) => checkText(event) }
