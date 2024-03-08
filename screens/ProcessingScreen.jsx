@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { StyleSheet, Text, View, FlatList, Animated } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Svg, { Circle } from 'react-native-svg';
@@ -18,7 +18,6 @@ export default function Processing({ navigation }) {
 		{ id: 4, level: 90, title: 'Составляем прогноз', active: false }
 	]);
 	const [ progress, setProgress ] = useState(0);
-	const [ statusStorage, setStatusStorage ] = useState('empty');
 	const title = 'Создаем ваш профиль';
 	const renderItem = (({ item }) => (
 		<View style={ [ styles.item, item.active && styles.active ] }>
@@ -68,16 +67,6 @@ export default function Processing({ navigation }) {
 
 	useEffect(() => {
 		const setNotesList = async () => {
-			try {
-				const storage = await AsyncStorage.getItem('notesArray');
-
-				setStatusStorage(storage ? 'full' : 'empty');
-			} catch (e) {
-				console.error(e);
-			}
-
-			if (statusStorage === 'full') return;
-
 			const notesArray = [];
 
 			for (let i = 0; i < 30; i++) {

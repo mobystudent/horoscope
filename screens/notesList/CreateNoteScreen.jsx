@@ -43,10 +43,7 @@ export default function CreateNote (props) {
 	};
 	const rightButton = {
 		btnAction: 'more',
-		type: 'more',
-		params: {
-			description: settings.currentNote.description
-		}
+		type: 'more'
 	};
 	const checkText = ({ nativeEvent: { key } }) => {
 		const regex = new RegExp('[а-яА-Я\-Backspace ]');
@@ -88,15 +85,15 @@ export default function CreateNote (props) {
 		console.log('updatedNotesList ==========================');
 
 		try {
-			// const notesString = JSON.stringify(updatedNotesList);
+			const notesString = JSON.stringify(updatedNotesList);
 
-			// await AsyncStorage.setItem('notesArray', notesString);
+			await AsyncStorage.setItem('notesArray', notesString);
 
 			navigation.navigate(page);
 			setSettings({
 				...settings,
 				notesList: updatedNotesList,
-				// currentNote: {}
+				currentNote: {}
 			});
 			setDescription('');
 		} catch (e) {
@@ -125,10 +122,8 @@ export default function CreateNote (props) {
 	}, [settings.noteMode]);
 
 	useEffect(() => {
-		if (settings.currentNote.date) {
-			setDescription(settings.currentNote.description);
-		}
-	}, []);
+		setDescription(settings.currentNote.description || '');
+	}, [settings.currentNote]);
 
 	return (
 		<Container>
