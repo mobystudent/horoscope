@@ -83,8 +83,10 @@ export default function Processing({ navigation }) {
 			});
 
 			try {
+				const personString = JSON.stringify(settings.person);
 				const notesString = JSON.stringify(notesArray);
 
+				await AsyncStorage.setItem('person', personString);
 				await AsyncStorage.setItem('notesArray', notesString);
 			} catch (e) {
 				console.error(e);

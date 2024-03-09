@@ -1,7 +1,8 @@
-import * as React from 'react';
+import { useContext } from 'react';
 import { StyleSheet, Text, Pressable, View, Keyboard } from 'react-native';
 import Container from './Container';
 import Header from './Header';
+import { SettingsContext } from '../contexts/settings';
 
 export default function PersonalTemplate(props) {
 	const {
@@ -13,6 +14,7 @@ export default function PersonalTemplate(props) {
 		disabledBtn,
 		nextStep
 	} = props;
+	const { settings } = useContext(SettingsContext);
 	const leftButton = {
 		screenLink: 'account',
 		type: 'back'
@@ -21,8 +23,8 @@ export default function PersonalTemplate(props) {
 	return (
 		<Container>
 			<Header
-				navigation={ navigation }
-				leftButton={ leftButton }
+				navigation={ settings.personalMode === 'edit' && navigation }
+				leftButton={ settings.personalMode === 'edit' && leftButton }
 			/>
 			<Pressable style={ styles.body } onPress={ () => Keyboard.dismiss() }>
 				<Text style={ styles.title }>{ title }</Text>

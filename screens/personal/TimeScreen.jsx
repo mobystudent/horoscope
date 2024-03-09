@@ -1,21 +1,14 @@
 import { useState, useContext } from 'react';
 import { StyleSheet, Text, View, Pressable, FlatList } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import PersonalTemplate from '../../components/PersonalTemplate';
 import { SettingsContext } from '../../contexts/settings';
 // import DateTimePicker from 'react-native-ui-datepicker';
 // import dayjs from 'dayjs';
 
-export default function TimeScreen(props) {
-	const {
-		navigation,
-		route: {
-			params: {
-				value = '12h00m'
-			} = {}
-		} = {}
-	} = props;
-	const { settings } = useContext(SettingsContext);
-	const [ time, setTime ] = useState(value);
+export default function TimeScreen({ navigation }) {
+	const { settings, setSettings } = useContext(SettingsContext);
+	const [ time, setTime ] = useState(settings.person.time);
 	// const date = new Date();
 	// const noon = date.setHours(12, 0, 0, 0);
 	// const [value, setValue] = useState(dayjs());
@@ -85,11 +78,33 @@ export default function TimeScreen(props) {
 			<Text style={ styles.num }>{ item.title }</Text>
 		</Pressable>
 	));
-	const nextStep = () => {
-		if (!disabledBtn && settings.personalMode === 'edit') {
-			navigation.navigate('city');
-		} else {
+	const nextStep = async () => {
+		if (disabledBtn) return;
+
+		const userData = {
+			...settings.person,
+			time
+		};
+
+		setSettings({
+			...settings,
+			person: {
+				...userData
+			}
+		});
+
+		if (settings.personalMode === 'edit') {
+			try {
+				const personString = JSON.stringify(userData);
+
+				await AsyncStorage.setItem('person', personString);
+			} catch (e) {
+				console.error(e);
+			}
+
 			navigation.navigate('account');
+		} else {
+			navigation.navigate('city');
 		}
 	}
 	const title = 'Во сколько вы родились?';

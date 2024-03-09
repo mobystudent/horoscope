@@ -4,17 +4,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import PersonalTemplate from '../../components/PersonalTemplate';
 import { SettingsContext } from '../../contexts/settings';
 
-export default function NameScreen(props) {
-	const {
-		navigation,
-		route: {
-			params: {
-				value = null
-			} = {}
-		} = {}
-	} = props;
-	const { settings } = useContext(SettingsContext);
-	const [ name, setName ] = useState(value);
+export default function NameScreen({ navigation }) {
+	const { settings, setSettings } = useContext(SettingsContext);
+	const [ name, setName ] = useState(settings.person.name);
 	const [ pointer, setPointer ] = useState(0);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
 	const maxLengthName = 16;
@@ -47,16 +39,32 @@ export default function NameScreen(props) {
 		setPointer(start);
 	};
 	const nextStep = async () => {
-		if (!disabledBtn && settings.personalMode === 'edit') {
-			navigation.navigate('time');
-		} else {
-			navigation.navigate('account');
-		}
+		if (disabledBtn) return;
 
-		try {
-			await AsyncStorage.setItem('name', name);
-		} catch (e) {
-			console.error(e);
+		const userData = {
+			...settings.person,
+			name
+		};
+
+		setSettings({
+			...settings,
+			person: {
+				...userData
+			}
+		});
+
+		if (settings.personalMode === 'edit') {
+			try {
+				const personString = JSON.stringify(userData);
+
+				await AsyncStorage.setItem('person', personString);
+			} catch (e) {
+				console.error(e);
+			}
+
+			navigation.navigate('account');
+		} else {
+			navigation.navigate('time');
 		}
 	}
 	const title = 'Как вас зовут?';

@@ -4,15 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import PersonalTemplate from '../../components/PersonalTemplate';
 import { SettingsContext } from '../../contexts/settings';
 
-export default function CityScreen(props) {
-	const {
-		navigation,
-		route: {
-			params: {
-				value = null
-			} = {}
-		} = {}
-	} = props;
+export default function CityScreen({ navigation }) {
 	const data = [
 		{ title: 'Париж' },
 		{ title: 'Марсель' },
@@ -29,8 +21,8 @@ export default function CityScreen(props) {
 		{ title: 'Рубе' },
 		{ title: 'Туркуэн' }
 	];
-	const { settings } = useContext(SettingsContext);
-	const [ city, setCity ] = useState(value);
+	const { settings, setSettings } = useContext(SettingsContext);
+	const [ city, setCity ] = useState(settings.person.city);
 	const [ pointer, setPointer ] = useState(0);
 	const [ suggestion, setSuggestion ] = useState([]);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
@@ -79,16 +71,32 @@ export default function CityScreen(props) {
 		</Pressable>
 	));
 	const nextStep = async () => {
-		if (!disabledBtn && settings.personalMode === 'edit') {
-			navigation.navigate('gender');
-		} else {
-			navigation.navigate('account');
-		}
+		if (disabledBtn) return;
 
-		try {
-			await AsyncStorage.setItem('city', city);
-		} catch (e) {
-			console.error(e);
+		const userData = {
+			...settings.person,
+			city
+		};
+
+		setSettings({
+			...settings,
+			person: {
+				...userData
+			}
+		});
+
+		if (settings.personalMode === 'edit') {
+			try {
+				const personString = JSON.stringify(userData);
+
+				await AsyncStorage.setItem('person', personString);
+			} catch (e) {
+				console.error(e);
+			}
+
+			navigation.navigate('account');
+		} else {
+			navigation.navigate('gender');
 		}
 	}
 	const title = 'Где вы родились?';

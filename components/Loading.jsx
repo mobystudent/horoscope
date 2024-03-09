@@ -19,21 +19,25 @@ export default function Loading() {
 				'SFSbold': require('../assets/fonts/SFProDisplay-Semibold.ttf')
 			});
 
-			const storage = await AsyncStorage.getItem('notesArray');
-			const storageNotesList = JSON.parse(storage);
+			const storagePersonString = await AsyncStorage.getItem('person');
+			const storageNotesString = await AsyncStorage.getItem('notesArray');
+			const storagePerson = JSON.parse(storagePersonString);
+			const storageNotesList = JSON.parse(storageNotesString);
 
 			setSettings({
 				...settings,
+				// person: storagePerson,
 				notesList: storageNotesList
 			});
 
 			setReady(true);
 			console.log('storageNotesList +++++++++++++++++++++++++++++++++++++');
 			console.log(storageNotesList);
+			console.log(storagePerson);
 			console.log('storageNotesListy +++++++++++++++++++++++++++++++++++++');
-			if (ready) {
+			// if (ready) {
 				await SplashScreen.hideAsync();
-			}
+			// }
 		};
 
 		loadFonts();

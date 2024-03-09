@@ -6,17 +6,9 @@ import { SettingsContext } from '../../contexts/settings';
 
 import { maleIcon, femaleIcon } from '../../icons/elements';
 
-export default function GenderScreen(props) {
-	const {
-		navigation,
-		route: {
-			params: {
-				value = null
-			} = {}
-		} = {}
-	} = props;
-	const { settings } = useContext(SettingsContext);
-	const [ gender, setGender ] = useState(value);
+export default function GenderScreen({ navigation }) {
+	const { settings, setSettings } = useContext(SettingsContext);
+	const [ gender, setGender ] = useState(settings.person.gender);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
 	const genderBtns = [
 		{
@@ -35,16 +27,32 @@ export default function GenderScreen(props) {
 		setDisabledBtn(false);
 	};
 	const nextStep = async () => {
-		if (!disabledBtn && settings.personalMode === 'edit') {
-			navigation.navigate('processing');
-		} else {
-			navigation.navigate('account');
-		}
+		if (disabledBtn) return;
 
-		try {
-			await AsyncStorage.setItem('gender', gender);
-		} catch (e) {
-			console.error(e);
+		const userData = {
+			...settings.person,
+			gender
+		};
+
+		setSettings({
+			...settings,
+			person: {
+				...userData
+			}
+		});
+
+		if (settings.personalMode === 'edit') {
+			try {
+				const personString = JSON.stringify(userData);
+
+				await AsyncStorage.setItem('person', personString);
+			} catch (e) {
+				console.error(e);
+			}
+
+			navigation.navigate('account');
+		} else {
+			navigation.navigate('processing');
 		}
 	}
 	const title = 'Ваш пол:';
