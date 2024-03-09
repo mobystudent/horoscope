@@ -2,12 +2,14 @@ import { useState, useEffect, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
+import Navigation from '../Navigation';
 
 import { SettingsContext } from '../contexts/settings';
 
 export default function Loading() {
 	const { settings, setSettings } = useContext(SettingsContext);
 	const [ ready, setReady ] = useState(false);
+	const [ firstScreen, setFirstScreen ] = useState(false);
 
 	useEffect(() => {
 		const loadFonts = async () => {
@@ -24,22 +26,21 @@ export default function Loading() {
 			const storagePerson = JSON.parse(storagePersonString);
 			const storageNotesList = JSON.parse(storageNotesString);
 
+			setFirstScreen(Boolean(storagePersonString) ? 'account' : 'name');
 			setSettings({
 				...settings,
-				// person: storagePerson,
-				notesList: storageNotesList
+				person: storagePerson || {},
+				notesList: storageNotesList || []
 			});
-
 			setReady(true);
-			console.log('storageNotesList +++++++++++++++++++++++++++++++++++++');
-			console.log(storageNotesList);
-			console.log(storagePerson);
-			console.log('storageNotesListy +++++++++++++++++++++++++++++++++++++');
-			// if (ready) {
+
+			if (ready) {
 				await SplashScreen.hideAsync();
-			// }
+			}
 		};
 
 		loadFonts();
 	}, []);
+
+	return <Navigation screen={ firstScreen } />;
 };

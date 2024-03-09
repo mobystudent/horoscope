@@ -4,7 +4,7 @@ import Container from './Container';
 import Header from './Header';
 import { SettingsContext } from '../contexts/settings';
 
-export default function PersonalTemplate(props) {
+export default function PersonTemplate(props) {
 	const {
 		navigation,
 		children,
@@ -23,8 +23,8 @@ export default function PersonalTemplate(props) {
 	return (
 		<Container>
 			<Header
-				navigation={ settings.personalMode === 'edit' && navigation }
-				leftButton={ settings.personalMode === 'edit' && leftButton }
+				navigation={ settings.registered && navigation }
+				leftButton={ settings.registered && leftButton }
 			/>
 			<Pressable style={ styles.body } onPress={ () => Keyboard.dismiss() }>
 				<Text style={ styles.title }>{ title }</Text>

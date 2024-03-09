@@ -79,7 +79,8 @@ export default function Processing({ navigation }) {
 
 			setSettings({
 				...settings,
-				notesList: notesArray
+				notesList: notesArray,
+				registered: true
 			});
 
 			try {

@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import { StyleSheet, Text, TextInput, View, KeyboardAvoidingView, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import PersonalTemplate from '../../components/PersonalTemplate';
+import PersonTemplate from '../../components/PersonTemplate';
 import { SettingsContext } from '../../contexts/settings';
 
 export default function NameScreen({ navigation }) {
@@ -53,7 +53,7 @@ export default function NameScreen({ navigation }) {
 			}
 		});
 
-		if (settings.personalMode === 'edit') {
+		if (settings.registered) {
 			try {
 				const personString = JSON.stringify(userData);
 
@@ -72,7 +72,7 @@ export default function NameScreen({ navigation }) {
 	const btnText = 'Далее';
 
 	return (
-		<PersonalTemplate
+		<PersonTemplate
 			navigation={ navigation }
 			title={ title }
 			description={ description }
@@ -94,7 +94,7 @@ export default function NameScreen({ navigation }) {
 					<Text style={ styles.hint }>Осталось { countInputWords } символов</Text>
 				</View>
 			</KeyboardAvoidingView>
-		</PersonalTemplate>
+		</PersonTemplate>
 	);
 }
 

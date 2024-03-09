@@ -53,7 +53,7 @@ export default function Account({ navigation }) {
 	const userDataArray = userData.map((data, i) => {
 		const style = !i ? styles.button : [ styles.button, styles.buttonLine ];
 
-		return <Pressable style={ style } key={ i } onPress={ () => moveToEditData(data.screen) }>
+		return <Pressable style={ style } key={ i } onPress={ () => navigation.navigate(data.screen) }>
 			<Text style={ styles.text }>{ data.title }</Text>
 			<Text style={ styles.text }>{ settings.person[data.screen] || data.value }</Text>
 		</Pressable>;
@@ -95,13 +95,6 @@ export default function Account({ navigation }) {
 
 		return components;
 	};
-	const moveToEditData = (screen) => {
-		setSettings({
-			...settings,
-			personalMode: 'edit'
-		});
-		navigation.navigate(screen);
-	};
 
 	return (
 		<Container>
@@ -117,7 +110,7 @@ export default function Account({ navigation }) {
 							{ photoIcon('#fff') }
 						</View>
 					</Pressable>
-					<Pressable onPress={ () => moveToEditData('name') }>
+					<Pressable onPress={ () => navigation.navigate('name') }>
 						<Text style={ styles.name }>{ settings.person.name }, 28</Text>
 					</Pressable>
 				</View>

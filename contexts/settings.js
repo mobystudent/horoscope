@@ -8,7 +8,7 @@ export default function SettingsProvider({ children }) {
 		noteFilter: false, // показывание модального окна с фильтрами на странице всех заметок NotesScreen
 		noteSettings: false, // показывание модального окна с настройками на странице выбранной заметки CreateNoteScreen
 		currentDayMoon: 5, // сегодняшний лунный день
-		personalMode: 'new', // new, edit
+		registered: false, // проверка первый раз пользователь настраивает приложение или нет (при очистке всех данных будет снова первый раз)
 		photoSettings: false, // показывание модального окна с настройками на странице загрузки аватара пользователя
 		premium: false, // показывает активным/неактивным блок MoonMinder+
 		background: 'main', // 'main', 'premium'

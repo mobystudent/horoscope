@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import { StyleSheet, Text, View, Pressable, FlatList } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import PersonalTemplate from '../../components/PersonalTemplate';
+import PersonTemplate from '../../components/PersonTemplate';
 import { SettingsContext } from '../../contexts/settings';
 // import DateTimePicker from 'react-native-ui-datepicker';
 // import dayjs from 'dayjs';
@@ -93,7 +93,7 @@ export default function TimeScreen({ navigation }) {
 			}
 		});
 
-		if (settings.personalMode === 'edit') {
+		if (settings.registered) {
 			try {
 				const personString = JSON.stringify(userData);
 
@@ -112,7 +112,7 @@ export default function TimeScreen({ navigation }) {
 	const btnText = 'Далее';
 
 	return (
-		<PersonalTemplate
+		<PersonTemplate
 			navigation={ navigation }
 			title={ title }
 			description={ description }
@@ -143,7 +143,7 @@ export default function TimeScreen({ navigation }) {
 					<View style={ styles.activeLine }></View>
 				</View>
 			</View>
-		</PersonalTemplate>
+		</PersonTemplate>
 	);
 	// <DateTimePicker
 	// 	mode="time"

@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import { StyleSheet, Text, View, Pressable } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import PersonalTemplate from '../../components/PersonalTemplate';
+import PersonTemplate from '../../components/PersonTemplate';
 import { SettingsContext } from '../../contexts/settings';
 
 import { maleIcon, femaleIcon } from '../../icons/elements';
@@ -41,7 +41,7 @@ export default function GenderScreen({ navigation }) {
 			}
 		});
 
-		if (settings.personalMode === 'edit') {
+		if (settings.registered) {
 			try {
 				const personString = JSON.stringify(userData);
 
@@ -72,7 +72,7 @@ export default function GenderScreen({ navigation }) {
 	});
 
 	return (
-		<PersonalTemplate
+		<PersonTemplate
 			navigation={ navigation }
 			title={ title }
 			description={ description }
@@ -83,7 +83,7 @@ export default function GenderScreen({ navigation }) {
 			<View style={ styles.content }>
 				{ genderBlocks }
 			</View>
-		</PersonalTemplate>
+		</PersonTemplate>
 	);
 }
 

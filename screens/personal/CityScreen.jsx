@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import { StyleSheet, FlatList, TextInput, View, Pressable, Text, KeyboardAvoidingView, Keyboard, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import PersonalTemplate from '../../components/PersonalTemplate';
+import PersonTemplate from '../../components/PersonTemplate';
 import { SettingsContext } from '../../contexts/settings';
 
 export default function CityScreen({ navigation }) {
@@ -85,7 +85,7 @@ export default function CityScreen({ navigation }) {
 			}
 		});
 
-		if (settings.personalMode === 'edit') {
+		if (settings.registered) {
 			try {
 				const personString = JSON.stringify(userData);
 
@@ -104,7 +104,7 @@ export default function CityScreen({ navigation }) {
 	const btnText = 'Далее';
 
 	return (
-		<PersonalTemplate
+		<PersonTemplate
 			navigation={ navigation }
 			title={ title }
 			description={ description }
@@ -131,7 +131,7 @@ export default function CityScreen({ navigation }) {
 					style={ styles.list }
 				/>
 			</KeyboardAvoidingView>
-		</PersonalTemplate>
+		</PersonTemplate>
 	);
 }
 
