@@ -12,8 +12,16 @@ export default function SettingsProvider({ children }) {
 		photoSettings: false, // показывание модального окна с настройками на странице загрузки аватара пользователя
 		premium: false, // показывает активным/неактивным блок MoonMinder+
 		background: 'main', // 'main', 'premium'
-		notesList: [],
-		currentNote: {}
+		notesList: [], // список всех заметок, нужен для удобной работы с заметками из хранилища
+		currentNote: {}, // заметка с которой сейчас работает пользователь
+		person: {
+			name: '',
+			date: '',
+			time: '',
+			city: '',
+			gender: '',
+			image: ''
+		} // личные данные пользователя: имя, дата рождения, время, город, пол и фотография
 	});
 
 	return (

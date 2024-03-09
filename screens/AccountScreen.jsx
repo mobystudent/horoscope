@@ -1,6 +1,5 @@
-import { useState, useEffect, useContext } from 'react';
+import { useContext } from 'react';
 import { StyleSheet, Text, Pressable, View, ScrollView } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Container from '../components/Container';
 import Header from '../components/Header';
 import MoonBirthday from '../components/MoonBirthday';
@@ -11,8 +10,7 @@ import { SettingsContext } from '../contexts/settings';
 import { arrowRightIcon, photoIcon } from '../icons/elements';
 
 export default function Account({ navigation }) {
-	const [ person, setPerson ] = useState({});
-	const { settings } = useContext(SettingsContext);
+	const { settings, setSettings } = useContext(SettingsContext);
 	const title = 'Мой профиль';
 	const leftButton = {
 		screenLink: 'moon',
@@ -55,9 +53,9 @@ export default function Account({ navigation }) {
 	const userDataArray = userData.map((data, i) => {
 		const style = !i ? styles.button : [ styles.button, styles.buttonLine ];
 
-		return <Pressable style={ style } key={ i } onPress={ () => navigation.navigate(data.screen, data) }>
+		return <Pressable style={ style } key={ i } onPress={ () => moveToEditData(data.screen) }>
 			<Text style={ styles.text }>{ data.title }</Text>
-			<Text style={ styles.text }>{ person[data.screen] || data.value }</Text>
+			<Text style={ styles.text }>{ settings.person[data.screen] || data.value }</Text>
 		</Pressable>;
 	});
 	const documentsArray = documents.map((document, i) => {
@@ -97,27 +95,13 @@ export default function Account({ navigation }) {
 
 		return components;
 	};
-
-	useEffect(() => {
-		const getPersonalData = async () => {
-			try {
-				const personName = await AsyncStorage.getItem('name');
-				const personCity = await AsyncStorage.getItem('city');
-				const personGender = await AsyncStorage.getItem('gender');
-
-				setPerson({
-					name: personName,
-					city: personCity,
-					gender: personGender
-				});
-				console.log(person);
-			} catch (e) {
-				console.error(e);
-			}
-		};
-
-		getPersonalData();
-	}, []);
+	const moveToEditData = (screen) => {
+		setSettings({
+			...settings,
+			personalMode: 'edit'
+		});
+		navigation.navigate(screen);
+	};
 
 	return (
 		<Container>
@@ -133,8 +117,8 @@ export default function Account({ navigation }) {
 							{ photoIcon('#fff') }
 						</View>
 					</Pressable>
-					<Pressable onPress={ () => navigation.navigate('name', { value: person.name }) }>
-						<Text style={ styles.name }>{ person.name }, 28</Text>
+					<Pressable onPress={ () => moveToEditData('name') }>
+						<Text style={ styles.name }>{ settings.person.name }, 28</Text>
 					</Pressable>
 				</View>
 				<MoonMinder navigation={ navigation } />
