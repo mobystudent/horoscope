@@ -9,7 +9,7 @@ import { SettingsContext } from '../contexts/settings';
 export default function Loading() {
 	const { settings, setSettings } = useContext(SettingsContext);
 	const [ ready, setReady ] = useState(false);
-	const [ firstScreen, setFirstScreen ] = useState(false);
+	const [ firstScreen, setFirstScreen ] = useState('');
 
 	useEffect(() => {
 		const loadFonts = async () => {
@@ -34,13 +34,13 @@ export default function Loading() {
 			});
 			setReady(true);
 
-			if (ready) {
-				await SplashScreen.hideAsync();
-			}
+			await SplashScreen.hideAsync();
 		};
 
 		loadFonts();
 	}, []);
+
+	if (!ready) return;
 
 	return <Navigation screen={ firstScreen } />;
 };

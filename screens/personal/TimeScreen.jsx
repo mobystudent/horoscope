@@ -49,9 +49,9 @@ export default function TimeScreen({ navigation }) {
 		let timeLine = '';
 
 		if (type === 'hours') {
-			timeLine = `${value}${time.slice(2)}`;
+			timeLine = time ? `${value}${time.slice(2)}` : `${value}H00`;
 		} else if (type === 'minutes') {
-			timeLine = time.slice(0, 3) + value + time.slice(5);
+			timeLine = time ? time.slice(0, 3) + value + time.slice(5) : `12H${value}M`;
 		} else if (type === 'midday') {
 			const hoursValue = +time.slice(0, 2);
 
@@ -109,7 +109,7 @@ export default function TimeScreen({ navigation }) {
 	}
 	const title = 'Во сколько вы родились?';
 	const description = 'Введите время своего рождения, чтобы получить более точные прогнозы лунного влияния на различные сферы вашей жизни';
-	const btnText = 'Далее';
+	const btnText = settings.registered ? 'Сохранить' : 'Далее';
 
 	return (
 		<PersonTemplate

@@ -17,7 +17,6 @@ import PremiumScreen from './screens/PremiumScreen';
 const Stack = createStackNavigator();
 
 export default function Navigation({ screen }) {
-
 	return (
 		<NavigationContainer>
 			<Stack.Navigator

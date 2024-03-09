@@ -33,6 +33,8 @@ export default function CityScreen({ navigation }) {
 		Keyboard.dismiss();
 	};
 	const emptyFilter = ({ nativeEvent: { key } }) => {
+		if (!city) return;
+
 		const regex = new RegExp('[а-яА-Я\-Backspace ]');
 		const check = regex.test(key);
 		const cityChars = key === 'Backspace'
@@ -101,7 +103,7 @@ export default function CityScreen({ navigation }) {
 	}
 	const title = 'Где вы родились?';
 	const description = 'Укажите место своего рождения, чтобы адаптировать календарь под ваш географический регион и лунные события';
-	const btnText = 'Далее';
+	const btnText = settings.registered ? 'Сохранить' : 'Далее';
 
 	return (
 		<PersonTemplate

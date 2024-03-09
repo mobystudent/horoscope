@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import { StyleSheet, Text, Pressable, View, ScrollView } from 'react-native';
+import moment from 'moment';
 import Container from '../components/Container';
 import Header from '../components/Header';
 import MoonBirthday from '../components/MoonBirthday';
@@ -10,7 +11,7 @@ import { SettingsContext } from '../contexts/settings';
 import { arrowRightIcon, photoIcon } from '../icons/elements';
 
 export default function Account({ navigation }) {
-	const { settings, setSettings } = useContext(SettingsContext);
+	const { settings } = useContext(SettingsContext);
 	const title = 'Мой профиль';
 	const leftButton = {
 		screenLink: 'moon',
@@ -95,6 +96,12 @@ export default function Account({ navigation }) {
 
 		return components;
 	};
+	const countAge = () => {
+		// const birthday = moment(settings.person.date, "DD.MM.YYYY");
+		const birthday = moment("15.07.1999", "DD.MM.YYYY");
+
+		return moment().diff(birthday, 'years');
+	};
 
 	return (
 		<Container>
@@ -111,7 +118,7 @@ export default function Account({ navigation }) {
 						</View>
 					</Pressable>
 					<Pressable onPress={ () => navigation.navigate('name') }>
-						<Text style={ styles.name }>{ settings.person.name }, 28</Text>
+						<Text style={ styles.name }>{ settings.person.name }, { countAge() }</Text>
 					</Pressable>
 				</View>
 				<MoonMinder navigation={ navigation } />

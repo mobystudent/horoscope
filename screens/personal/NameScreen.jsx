@@ -12,6 +12,8 @@ export default function NameScreen({ navigation }) {
 	const maxLengthName = 16;
 	const [ countInputWords, setCountInputWords ] = useState(maxLengthName);
 	const checkText = ({ nativeEvent: { key } }) => {
+		if (!name) return;
+
 		const regex = new RegExp('[а-яА-Я\-Backspace ]');
 		const check = regex.test(key);
 		const nameChars = key === 'Backspace'
@@ -69,7 +71,7 @@ export default function NameScreen({ navigation }) {
 	}
 	const title = 'Как вас зовут?';
 	const description = 'Введите своё имя, чтобы создать персональный профиль и получать индивидуальные рекомендации лунного календаря';
-	const btnText = 'Далее';
+	const btnText = settings.registered ? 'Сохранить' : 'Далее';
 
 	return (
 		<PersonTemplate
