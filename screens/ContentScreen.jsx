@@ -57,9 +57,11 @@ const styles = StyleSheet.create({
 		lineHeight: 24
 	},
 	symbol: {
-		color: "rgba(255, 255, 255, .5)",
+		color: 'rgba(255, 255, 255, .5)',
+		// fontFamily: 'SFReg',
 		fontSize: 12,
-		marginBottom: 15,
-		textTransform: 'uppercase'
+		letterSpacing: -.075,
+		textTransform: 'uppercase',
+		marginBottom: 15
 	}
 });

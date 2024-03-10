@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { StyleSheet, View, Text, Pressable, ScrollView, Image } from 'react-native';
 import Container from '../components/Container';
 import Header from '../components/Header';
+import MoonInfo from '../components/MoonInfo';
 import { SettingsContext } from '../contexts/settings';
 
 import * as zodiac from '../icons/zodiac';
@@ -28,6 +29,23 @@ export default function Calender({ navigation }) {
 			text: 'В Раке'
 		}
 	];
+	const moonDay = {
+		zodiac: {
+			symbol: 'единорог',
+			title: 'Хороший день для занятия спорта',
+			description: 'ЗНАК ЗОДИАКА Давно выяснено, что при оценке дизайна и композиции читаемый текст мешает сосредоточиться. Lorem Ipsum используют потому, что тот обеспечивает более или менее стандартное заполнение шаблона, а также реальное распределение букв и пробелов в абзацах, которое не получается при простой дубликации "Здесь ваш текст.. Здесь ваш текст.. Здесь ваш текст.." Многие программы электронной вёрстки и редакторы HTML используют Lorem Ipsum в качестве текста по умолчанию, так что поиск по ключевым словам "lorem ipsum" сразу показывает, как много веб-страниц всё ещё дожидаются своего настоящего рождения. За прошедшие годы текст Lorem Ipsum получил много версий. Некоторые версии появились по ошибке, некоторые - намеренно (например, юмористические варианты).'
+		},
+		moon: {
+			symbol: 'единорог',
+			title: 'Хороший день для занятия программирования',
+			description: 'ЛУНА Давно выяснено, что при оценке дизайна и композиции читаемый текст мешает сосредоточиться. Lorem Ipsum используют потому, что тот обеспечивает более или менее стандартное заполнение шаблона, а также реальное распределение букв и пробелов в абзацах, которое не получается при простой дубликации "Здесь ваш текст.. Здесь ваш текст.. Здесь ваш текст.." Многие программы электронной вёрстки и редакторы HTML используют Lorem Ipsum в качестве текста по умолчанию, так что поиск по ключевым словам "lorem ipsum" сразу показывает, как много веб-страниц всё ещё дожидаются своего настоящего рождения. За прошедшие годы текст Lorem Ipsum получил много версий. Некоторые версии появились по ошибке, некоторые - намеренно (например, юмористические варианты).'
+		},
+		planet: {
+			symbol: 'единорог',
+			title: 'Хороший день для занятия пением',
+			description: 'ПЛАНЕТА Давно выяснено, что при оценке дизайна и композиции читаемый текст мешает сосредоточиться. Lorem Ipsum используют потому, что тот обеспечивает более или менее стандартное заполнение шаблона, а также реальное распределение букв и пробелов в абзацах, которое не получается при простой дубликации "Здесь ваш текст.. Здесь ваш текст.. Здесь ваш текст.." Многие программы электронной вёрстки и редакторы HTML используют Lorem Ipsum в качестве текста по умолчанию, так что поиск по ключевым словам "lorem ipsum" сразу показывает, как много веб-страниц всё ещё дожидаются своего настоящего рождения. За прошедшие годы текст Lorem Ipsum получил много версий. Некоторые версии появились по ошибке, некоторые - намеренно (например, юмористические варианты).'
+		}
+	};
 	const moonPhase = {
 		title: 'Растущая луна',
 		phase: 'I Фаза',
@@ -69,11 +87,11 @@ export default function Calender({ navigation }) {
 			/>
 			<ScrollView contentContainerStyle={ styles.body } showsVerticalScrollIndicator={ false }>
 				<View style={ styles.period }>
-					<Pressable style={ styles.periodButton } onPress={ () => navigation.navigate('moon') }>
-						<Text style={ styles.periodText }>Сегодня</Text>
+					<Pressable style={ styles.button } onPress={ () => navigation.navigate('moon') }>
+						<Text style={ styles.buttonText }>Сегодня</Text>
 					</Pressable>
-					<View style={ styles.periodButton }>
-						<Text style={ styles.periodText }>Календарь</Text>
+					<View style={ styles.button }>
+						<Text style={ styles.buttonText }>Календарь</Text>
 					</View>
 				</View>
 				<View style={ styles.moonPhase }>
@@ -90,6 +108,7 @@ export default function Calender({ navigation }) {
 						{ detailsList }
 					</View>
 				</ScrollView>
+				<MoonInfo data={ moonDay } />
 			</ScrollView>
 		</Container>
 	);
@@ -104,14 +123,14 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		marginBottom: 15
 	},
-	periodButton: {
+	button: {
 		flexGrow: 1,
 		paddingVertical: 10,
 		paddingHorizontal: 15,
 		borderRadius: 16,
 		backgroundColor: 'rgba(255, 255, 255, .12)'
 	},
-	periodText: {
+	buttonText: {
 		// fontFamily: 'SFMed',
 		fontSize: 14,
 		lineHeight: 16,
