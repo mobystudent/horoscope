@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { StyleSheet, Text, View, Pressable, Image, Dimensions } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import Container from '../../components/Container';
 import Header from '../../components/Header';
@@ -10,8 +11,8 @@ import { photoIcon } from '../../icons/elements';
 
 export default ({ navigation }) => {
 	const { settings, setSettings } = useContext(SettingsContext);
-	const [ typeLoad, setTypeLoad ] = useState(null);
-	const [ selectedImage, setSelectedImage ] = useState(null);
+	const [ selectedImage, setSelectedImage ] = useState(settings.person.image);
+	const [ disabledBtn, setDisabledBtn ] = useState(true);
 	const windowHeight = Dimensions.get('window').height;
 	const windowWidth = Dimensions.get('window').width;
 	const settingsBtns = [
@@ -41,55 +42,28 @@ export default ({ navigation }) => {
 		type: 'more',
 	};
 	const changePhoto = async (type) => {
-		const permissionsOptions = {
-			canAskAgain: true
-		};
-
 		if (type === 'library') {
 			const options = {
 				mediaTypes: ImagePicker.MediaTypeOptions.Images,
 				allowsEditing: false,
 				aspect: [4, 3],
 				quality: 1
-			}
+			};
 
-			// try {
-			// 	const accessLibrary = await ImagePicker.requestMediaLibraryPermissionsAsync(permissionsOptions);
-			// 	console.log(accessLibrary);
-			// 	// Ваш код, который должен выполняться после успешного разрешения
-			// } catch (error) {
-			// 	console.error("Ошибка при запросе разрешений на медиабиблиотеку:", error);
-			// 	// Обработка ошибки, если это необходимо
-			// }
+			try {
+				const accessLibrary = await ImagePicker.requestMediaLibraryPermissionsAsync();
+				const extraAccessLibrary = await ImagePicker.getMediaLibraryPermissionsAsync();
 
-			const accessLibrary = await ImagePicker.requestMediaLibraryPermissionsAsync(permissionsOptions);
-			const extraAccessLibrary = await ImagePicker.getMediaLibraryPermissionsAsync(permissionsOptions);
-			console.log('START ACCESS');
-			console.log(accessLibrary);
-			console.log(extraAccessLibrary);
-			console.log('END ACCESS');
+				if (accessLibrary.granted && extraAccessLibrary.granted) {
+					const libraryImage = await ImagePicker.launchImageLibraryAsync(options);
 
-			// ExponentImagePicker.requestMediaLibraryPermissionsAsync()
-			// 	.then(() => {
-			// 		console.log('Here Lam');
-			// 		// Ваш код, который должен выполняться после успешного разрешения
-			// 	})
-			// 	.catch((error) => {
-			// 		console.error("Ошибка при запросе разрешений на медиабиблиотеку:", error);
-			// 		// Обработка ошибки, если это необходимо
-			// 	});
-
-
-			if (accessLibrary.granted && extraAccessLibrary.granted) {
-				const libraryImage = await ImagePicker.launchImageLibraryAsync(options);
-				console.log(libraryImage);
-
-				if (libraryImage.canceled) {
-					console.log('CANCEL');
-				} else {
-					setSelectedImage(libraryImage.assets[0].uri);
-					console.log(libraryImage);
+					if (!libraryImage.canceled) {
+						setSelectedImage(libraryImage.assets[0].uri);
+						setDisabledBtn(false);
+					}
 				}
+			} catch (error) {
+				console.error("Ошибка при запросе разрешений в медиабиблиотеку:", error);
 			}
 		} else if (type === 'selfie') {
 			const options = {
@@ -99,22 +73,25 @@ export default ({ navigation }) => {
 				aspect: [4, 3],
 				quality: 1
 			}
-			const accessCamera = await ImagePicker.requestCameraPermissionsAsync(permissionsOptions);
-			const extraAccessCamera = await ImagePicker.getCameraPermissionsAsync(permissionsOptions);
 
-			if (accessCamera.granted && extraAccessCamera.granted) {
-				const selfieImage = await ImagePicker.launchCameraAsync(options);
-				console.log(selfieImage);
+			try {
+				const accessCamera = await ImagePicker.requestCameraPermissionsAsync();
+				const extraAccessCamera = await ImagePicker.getCameraPermissionsAsync();
 
-				if (selfieImage.canceled) {
-					console.log('CANCEL');
-				} else {
-					setSelectedImage(selfieImage.assets[0].uri);
-					console.log(selfieImage);
+				if (accessCamera.granted && extraAccessCamera.granted) {
+					const selfieImage = await ImagePicker.launchCameraAsync(options);
+
+					if (!selfieImage.canceled) {
+						setSelectedImage(selfieImage.assets[0].uri);
+						setDisabledBtn(false);
+					}
 				}
+			} catch (error) {
+				console.error("Ошибка при запросе разрешений к фронтальной камере:", error);
 			}
 		} else if (type === 'delete') {
 			setSelectedImage('');
+			setDisabledBtn(!selectedImage || false);
 		}
 
 		setSettings({
@@ -128,6 +105,30 @@ export default ({ navigation }) => {
 			photoSettings: true
 		});
 	};
+	const save = async () => {
+		const userData = {
+			...settings.person,
+			image: selectedImage
+		};
+
+		setSettings({
+			...settings,
+			person: {
+				...userData
+			}
+		});
+
+		try {
+			const personString = JSON.stringify(userData);
+
+			await AsyncStorage.setItem('person', personString);
+		} catch (e) {
+			console.error(e);
+		}
+
+		navigation.navigate('account');
+	};
+	const btnText = 'Сохранить';
 
 	return (
 		<Container>
@@ -137,10 +138,10 @@ export default ({ navigation }) => {
 				rightButton={ rightButton }
 			/>
 			<View style={ styles.body }>
-				<Pressable onPress={ () => openModalSettins() }>
+				<Pressable style={ styles.wrap } onPress={ () => openModalSettins() }>
 					{ selectedImage ?
 						<View style={ styles.background }>
-							<Image style={[ styles.photo, { width: windowWidth, height: windowHeight - 135 }]} source={{ uri: selectedImage }} resizeMode="contain" />
+							<Image style={{ width: windowWidth, height: windowHeight - 135 }} source={{ uri: selectedImage }} resizeMode="contain" />
 						</View>
 						: <>
 							<View style={ [styles.circle, { width: windowWidth - 30, height: windowWidth - 30 }] }>
@@ -151,6 +152,13 @@ export default ({ navigation }) => {
 							<Text style={ styles.hint }>Кликни чтобы загрузить</Text>
 						</>
 					}
+				</Pressable>
+				<Pressable
+					style={[ styles.button, disabledBtn && styles.disabledButton ]}
+					onPress={ () => save() }
+					disabled={ disabledBtn }
+				>
+					<Text style={[ styles.buttonText, disabledBtn && styles.disabledText ]}>{ btnText }</Text>
 				</Pressable>
 			</View>
 			<ModalSettings
@@ -167,7 +175,8 @@ const styles = StyleSheet.create({
 	body: {
 		flex: 1,
 		justifyContent: 'center',
-		alignItems: 'center'
+		alignItems: 'center',
+		paddingBottom: 15
 	},
 	background: {
 		flex: 1,
@@ -194,5 +203,30 @@ const styles = StyleSheet.create({
 		fontSize: 12,
 		lineHeight: 14,
 		marginTop: 5
+	},
+	wrap: {
+		flex: 1,
+		justifyContent: 'center',
+		paddingVertical: 15,
+	},
+	button: {
+		width: '100%',
+		borderRadius: 17,
+		backgroundColor: '#F2F2F3'
+	},
+	buttonText: {
+		// fontFamily: 'SFSbold',
+		textAlign: 'center',
+		fontSize: 17,
+		color: '#1A1E2C',
+		paddingVertical: 20,
+		paddingHorizontal: 65,
+	},
+	disabledButton: {
+		backgroundColor: "rgba(255, 255, 255, 0.12)"
+	},
+	disabledText: {
+		color: "#fff",
+		opacity: 0.5
 	}
 });

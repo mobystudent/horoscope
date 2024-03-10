@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { StyleSheet, Text, Pressable, View, ScrollView } from 'react-native';
+import { StyleSheet, Text, Pressable, View, ScrollView, Image } from 'react-native';
 import moment from 'moment';
 import Container from '../components/Container';
 import Header from '../components/Header';
@@ -113,9 +113,12 @@ export default function Account({ navigation }) {
 			<ScrollView contentContainerStyle={ styles.body } showsVerticalScrollIndicator={ false }>
 				<View style={ styles.block }>
 					<Pressable style={ styles.circle } onPress={ () => navigation.navigate('image') }>
-						<View style={ styles.photoIcon }>
-							{ photoIcon('#fff') }
-						</View>
+						{ settings.person.image ?
+							<Image style={ styles.photo } source={{ uri: settings.person.image }} />
+							: <View style={ styles.photoIcon }>
+								{ photoIcon('#fff') }
+							</View>
+						}
 					</Pressable>
 					<Pressable onPress={ () => navigation.navigate('name') }>
 						<Text style={ styles.name }>{ settings.person.name }, { countAge() }</Text>
@@ -171,7 +174,12 @@ const styles = StyleSheet.create({
 		marginRight: 'auto',
 		marginBottom: 10,
 		borderRadius: 95/2,
-		backgroundColor: 'rgba(255, 255, 255, .12)'
+		backgroundColor: 'rgba(255, 255, 255, .12)',
+		overflow: 'hidden'
+	},
+	photo: {
+		width: 95,
+		height: 95
 	},
 	photoIcon: {
 		width: 35,
