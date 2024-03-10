@@ -1,5 +1,5 @@
-import { useState, useEffect, useContext } from 'react';
-import { StyleSheet, Text, View, Pressable, Image, Dimensions } from 'react-native';
+import { useState, useContext } from 'react';
+import { StyleSheet, Text, View, Pressable, Image, ImageBackground, Dimensions } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import Container from '../../components/Container';
@@ -13,7 +13,7 @@ export default ({ navigation }) => {
 	const { settings, setSettings } = useContext(SettingsContext);
 	const [ selectedImage, setSelectedImage ] = useState(settings.person.image);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
-	const windowHeight = Dimensions.get('window').height;
+	const [ heightArea, setHeightArea ] = useState(0);
 	const windowWidth = Dimensions.get('window').width;
 	const settingsBtns = [
 		// {
@@ -128,6 +128,9 @@ export default ({ navigation }) => {
 
 		navigation.navigate('account');
 	};
+	const onLayout = ({ nativeEvent }) => {
+		setHeightArea(nativeEvent.layout.height);
+	};
 	const btnText = 'Сохранить';
 
 	return (
@@ -140,11 +143,31 @@ export default ({ navigation }) => {
 			<View style={ styles.body }>
 				<Pressable style={ styles.wrap } onPress={ () => openModalSettins() }>
 					{ selectedImage ?
-						<View style={ styles.background }>
-							<Image style={{ width: windowWidth, height: windowHeight - 135 }} source={{ uri: selectedImage }} resizeMode="contain" />
+						<View style={[ styles.background, { width: windowWidth }  ]} onLayout={ onLayout }>
+							<ImageBackground style={ styles.imageBackground } source={{ uri: selectedImage }} resizeMode="cover">
+								<View style={[
+										styles.cropArea,
+										{
+											width: windowWidth,
+											height: windowWidth,
+											borderRadius: windowWidth / 2
+										}
+									]}>
+									<Image style={{ width: windowWidth, height: heightArea }} source={{ uri: selectedImage }} resizeMode="cover" />
+								</View>
+								<View style={ styles.cover }>
+								</View>
+							</ImageBackground>
 						</View>
 						: <>
-							<View style={ [styles.circle, { width: windowWidth - 30, height: windowWidth - 30 }] }>
+							<View style={[
+									styles.circle,
+									{
+										width: windowWidth - 30,
+										height: windowWidth - 30,
+										borderRadius: (windowWidth - 30) / 2
+									}
+								]}>
 								<View style={ styles.photoIcon }>
 									{ photoIcon('#fff') }
 								</View>
@@ -184,13 +207,31 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		backgroundColor: '#000'
 	},
+	imageBackground: {
+		justifyContent: 'center',
+		width: '100%',
+		height: '100%',
+	},
+	cover: {
+		position: 'absolute',
+		width: '100%',
+		height: '100%',
+		backgroundColor: 'rgba(0, 0, 0, .4)',
+		zIndex: 1
+	},
 	circle: {
 		justifyContent: 'center',
 		alignItems: 'center',
-		width: 395,
-		height: 395,
-		borderRadius: 395/2,
 		backgroundColor: 'rgba(255, 255, 255, .12)'
+	},
+	cropArea: {
+		position: 'absolute',
+		justifyContent: 'center',
+		alignItems: 'center',
+		borderWidth: 2,
+		borderColor: '#F2F2F7',
+		overflow: 'hidden',
+		zIndex: 2
 	},
 	photoIcon: {
 		width: 140,
