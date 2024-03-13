@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
 import Container from '../components/Container';
 import Header from '../components/Header';
+import MoonInfo from '../components/MoonInfo';
 import { SettingsContext } from '../contexts/settings';
 
 export default function Moon({ navigation }) {
@@ -29,6 +30,7 @@ export default function Moon({ navigation }) {
 				rightButton={ rightButton }
 			/>
 			<ScrollView contentContainerStyle={ styles.body } showsVerticalScrollIndicator={ false }>
+				<MoonInfo data={ settings.currentMoonDay.content } />
 			</ScrollView>
 		</Container>
 	);

@@ -6,27 +6,14 @@ export default function MoonInfo(props) {
 		data = {}
 	} = props;
 	const [ activeTab, setActiveTab ] = useState('moon');
-	const tabs = [
-		{
-			name: 'zodiac',
-			text: 'Луна в Скорпионе'
-		},
-		{
-			name: 'moon',
-			text: 'Лунный день'
-		},
-		{
-			name: 'planet',
-			text: 'День Меркурия'
-		}
-	];
-	const tabslist = tabs.map(({ name, text }) => {
+	const tabslist = data.map(({ name, title }) => {
 		return (
 			<Pressable style={[ styles.button, activeTab === name && styles.activeButton ]} key={ name } onPress={ () => setActiveTab(name) }>
-				<Text style={[ styles.buttonText, activeTab === name && styles.activeButtonText ]}>{ text }</Text>
+				<Text style={[ styles.buttonText, activeTab === name && styles.activeButtonText ]}>{ title }</Text>
 			</Pressable>
 		);
 	});
+	const textContent = data.find((block) => block.name === activeTab);
 
 	return (
 		<>
@@ -34,9 +21,9 @@ export default function MoonInfo(props) {
 				{ tabslist }
 			</ScrollView>
 			<View style={ styles.block }>
-				<Text style={ styles.symbol }>{ `Символ дня: ${data[activeTab].symbol}` }</Text>
-				<Text style={ styles.title }>{ data[activeTab].title }</Text>
-				<Text style={ styles.description }>{ data[activeTab].description }</Text>
+				<Text style={ styles.symbol }>{ `Символ дня: ${textContent.block.symbol}` }</Text>
+				<Text style={ styles.title }>{ textContent.block.title }</Text>
+				<Text style={ styles.description }>{ textContent.block.description }</Text>
 			</View>
 		</>
 	);
