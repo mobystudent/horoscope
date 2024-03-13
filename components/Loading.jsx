@@ -32,16 +32,22 @@ export default function Loading() {
 					phase: 'I Фаза',
 				},
 				slogan: 'Свой стержень внутренний держи, алхимию души и пищи соверши',
-				info: [
+				details: [
 					{
 						title: 'Сегодня',
 						day: '21',
-						text: 'Сентября 2023'
+						period: {
+							start: 'Сентября',
+							end: '2023'
+						}
 					},
 					{
 						title: 'Лунный день',
 						day: '5',
-						text: 'С 07:53 до 23:03'
+						period: {
+							start: 'С 01:53 20.05',
+							end: 'до 23:03 21.05'
+						}
 					},
 					{
 						title: 'Солнце',

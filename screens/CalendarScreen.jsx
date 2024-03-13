@@ -3,32 +3,16 @@ import { StyleSheet, View, Text, Pressable, ScrollView, Image } from 'react-nati
 import Container from '../components/Container';
 import Header from '../components/Header';
 import MoonInfo from '../components/MoonInfo';
+import MoonDetails from '../components/MoonDetails';
 import { SettingsContext } from '../contexts/settings';
 
-import * as zodiac from '../icons/zodiac';
+
 import fullMoon from '../assets/images/fullMoon.png';
 
 export default function Calendar({ navigation }) {
 	const { settings } = useContext(SettingsContext);
 	const title = 'Календарь';
 	const subtitle = '21 сентября';
-	const details = [
-		{
-			title: 'Сегодня',
-			day: '21',
-			text: 'Июля 2023'
-		},
-		{
-			title: 'Лунный день',
-			day: '5',
-			text: 'С 07:53 до 23:03'
-		},
-		{
-			title: 'Солнце',
-			sign: 'cancer',
-			text: 'В Раке'
-		}
-	];
 	const moonPhase = {
 		title: 'Растущая луна',
 		phase: 'I Фаза',
@@ -43,21 +27,6 @@ export default function Calendar({ navigation }) {
 		type: 'note',
 		// params: { noteToday, page: 'moon' }
 	};
-	const detailsList = details.map((detail) => {
-		return (
-			<View style={ styles.detailItem } key={ styles.title }>
-				<Text style={[ styles.detailTitle, styles.detailText ]}>{ detail.title }</Text>
-				{
-					detail.day ?
-					<Text style={ styles.detailDay }>{ detail.day }</Text>
-					: <View style={ styles.zodiac }>
-						{ zodiac[detail.sign]('#fff') }
-					</View>
-				}
-				<Text style={ styles.detailText }>{ detail.text }</Text>
-			</View>
-		);
-	});
 
 	return (
 		<Container>
@@ -86,11 +55,7 @@ export default function Calendar({ navigation }) {
 						<Text style={ styles.moonText }>{ moonPhase.phase }</Text>
 					</View>
 				</View>
-				<ScrollView contentContainerStyle={ styles.detailsScroll } horizontal={ true }>
-					<View style={ styles.details }>
-						{ detailsList }
-					</View>
-				</ScrollView>
+				<MoonDetails data={ settings.currentMoonDay.details } />
 				<MoonInfo data={ settings.currentMoonDay.content } />
 			</ScrollView>
 		</Container>
@@ -119,42 +84,6 @@ const styles = StyleSheet.create({
 		lineHeight: 16,
 		color: '#fff',
 		textAlign: 'center'
-	},
-	detailsScroll: {
-		marginBottom: 15
-	},
-	details: {
-		flexDirection: 'row',
-		columnGap: 10
-	},
-	detailItem: {
-		rowGap: 15,
-		width: 125,
-		padding: 15,
-		borderRadius: 16,
-		backgroundColor: 'rgba(255, 255, 255, .12)'
-	},
-	detailTitle: {
-		textTransform: 'uppercase',
-		opacity: .5
-	},
-	detailDay: {
-		// fontFamily: 'SFBold',
-		fontSize: 34,
-		lineHeight: 40,
-		color: '#fff',
-		letterSpacing: -.215
-	},
-	detailText: {
-		// fontFamily: 'SFReg',
-		fontSize: 12,
-		lineHeight: 14,
-		color: '#fff',
-		letterSpacing: -.075
-	},
-	zodiac: {
-		width: 40,
-		height: 40
 	},
 	moonPhase: {
 		flexDirection: 'row',
