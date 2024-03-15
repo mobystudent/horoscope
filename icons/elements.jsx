@@ -7,8 +7,8 @@ export function checkIcon(color) {
 	</Svg>
 };
 export function arrowLeftIcon(color, opacity) {
-	return <Svg viewBox="0 0 11 18" fill="none">
-	<Path d="M9.5 1L1.5 9L9.5 17" stroke={ color } strokeOpacity={ opacity } strokeWidth={ 2 } strokeLinecap="round" strokeLinejoin="round"/>
+	return <Svg viewBox="0 0 9 14" fill="none">
+	<Path d="M7 1.5L1.5 7L7 12.5" stroke={ color } strokeOpacity={ opacity } strokeWidth={ 2 } strokeLinecap="round" strokeLinejoin="round"/>
 	</Svg>
 };
 export function arrowRightIcon(color, opacity) {
@@ -46,15 +46,13 @@ export function filterIcon(color) {
 	</Svg>
 }
 export function accountIcon(color) {
-	return <Svg viewBox="0 0 36 36" fill="none">
-		<Path d="M22,33V19.5L33.47,8A1.81,1.81,0,0,0,34,6.7V5a1,1,0,0,0-1-1H3A1,1,0,0,0,2,5V6.67a1.79,1.79,0,0,0,.53,1.27L14,19.58v10.2Z" fill={ color }/>
-		<Path d="M33.48,4h-31A.52.52,0,0,0,2,4.52V6.24a1.33,1.33,0,0,0,.39.95l12,12v10l7.25,3.61V19.17l12-12A1.35,1.35,0,0,0,34,6.26V4.52A.52.52,0,0,0,33.48,4Z" fill={ color }/>
+	return <Svg viewBox="0 0 24 24" fill="none">
+		<Path d="M12 24C5.4317 24 0 18.5683 0 12C0 5.41974 5.41974 0 11.988 0C18.5683 0 24 5.41974 24 12C24 18.5683 18.5683 24 12 24ZM12 16.008C15.7687 16.008 18.6281 17.5155 19.7288 19.0349C21.4277 17.1805 22.4566 14.7159 22.4566 12C22.4566 6.20937 17.7787 1.54337 11.988 1.54337C6.20937 1.54337 1.55533 6.20937 1.55533 12C1.55533 14.7159 2.58425 17.1805 4.25922 19.0349C5.37188 17.5155 8.23131 16.008 12 16.008ZM12 13.9621C9.70289 13.9382 7.9322 12.012 7.92024 9.45164C7.90828 7.04686 9.72682 5.03689 12 5.03689C14.2732 5.03689 16.0798 7.04686 16.0798 9.45164C16.0798 12.012 14.2971 13.9741 12 13.9621Z" fill={ color }/>
 	</Svg>
 }
 export function noteIcon(color) {
-	return <Svg viewBox="0 0 36 36" fill="none">
-		<Path d="M22,33V19.5L33.47,8A1.81,1.81,0,0,0,34,6.7V5a1,1,0,0,0-1-1H3A1,1,0,0,0,2,5V6.67a1.79,1.79,0,0,0,.53,1.27L14,19.58v10.2Z" fill={ color }/>
-		<Path d="M33.48,4h-31A.52.52,0,0,0,2,4.52V6.24a1.33,1.33,0,0,0,.39.95l12,12v10l7.25,3.61V19.17l12-12A1.35,1.35,0,0,0,34,6.26V4.52A.52.52,0,0,0,33.48,4Z" fill={ color }/>
+	return <Svg viewBox="0 0 22 20" fill="none">
+		<Path d="M17.3172 3.4921L15.5271 1.58199L16.6059 0.456162C17.1394 -0.100426 17.7085 -0.163675 18.1945 0.354964L18.479 0.658558C18.9651 1.1772 18.9414 1.77173 18.3961 2.36627L17.3172 3.4921ZM2.94888 18.7856L0.41189 19.9621C0.174789 20.0632 -0.0741681 19.785 0.0206725 19.532L1.18247 16.8882L14.6143 2.58132L16.3807 4.47878L2.94888 18.7856ZM3.75502 20L5.22505 18.4314H21.265C21.6681 18.4314 22 18.7856 22 19.2157C22 19.6458 21.6681 20 21.265 20H3.75502Z" fill={ color }/>
 	</Svg>
 }
 export function chartIcon(color) {
