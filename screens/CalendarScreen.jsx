@@ -4,6 +4,7 @@ import Container from '../components/Container';
 import Header from '../components/Header';
 import MoonInfo from '../components/MoonInfo';
 import MoonDetails from '../components/MoonDetails';
+import MoonCalendar from '../components/MoonCalendar';
 import { SettingsContext } from '../contexts/settings';
 
 
@@ -46,6 +47,7 @@ export default function Calendar({ navigation }) {
 						<Text style={ styles.buttonText }>Календарь</Text>
 					</View>
 				</View>
+				<MoonCalendar />
 				<View style={ styles.moonPhase }>
 					<View style={ styles.moonIcon }>
 						<Image style={ styles.imageMoon } source={ moonPhase.image } />

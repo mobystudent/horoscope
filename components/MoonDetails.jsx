@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
 	},
 	detailItem: {
 		rowGap: 15,
-		width: 160,
+		width: 'auto',
 		padding: 15,
 		borderRadius: 16,
 		backgroundColor: 'rgba(255, 255, 255, .12)'
