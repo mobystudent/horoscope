@@ -1,13 +1,22 @@
 import { useState } from 'react';
 import { StyleSheet, View, Text, Pressable } from 'react-native';
+import moment from 'moment';
 
 import { arrowRightIcon, arrowLeftIcon } from '../icons/elements';
 import * as zodiac from '../icons/zodiac';
 import * as phase from '../icons/phase';
 
-export default function MoonCalendar(props) {
+export default function MoonCalendar() {
+	const dateStart = '15-03-24';
 	const [ dayWidth, setDayWidth ] = useState(0);
 	const croppedNameDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+	const nameDays = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
+	const monthsNominative = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+	const monthsGenitive = ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'];
+	const date = moment(dateStart, 'DD-MM-YY');
+	const numberDay = date.date();
+	const numberWeekDay = date.isoWeekday();
+	const numberMonth = date.month();
 	const days = [
 		{
 			number: '1',
@@ -61,7 +70,16 @@ export default function MoonCalendar(props) {
 	});
 	const monthArray = days.map(({ number, moon, sign }) => {
 		return (
-			<Pressable style={[ styles.item, { width: dayWidth } ]} key={ number } onPress={ () => checkDay() }>
+			<Pressable
+				style={[
+					styles.item,
+					numberDay === number && styles.itemActive,
+					{ width: dayWidth },
+					number === '1' && { marginLeft: (numberWeekDay - 1) * (dayWidth + 5) }
+				]}
+				key={ number }
+				onPress={ () => checkDay()
+			}>
 				<Text style={ styles.number }>{ number }</Text>
 				<View style={ styles.wrap }>
 					<View style={ styles.itemIcon }>
@@ -82,8 +100,8 @@ export default function MoonCalendar(props) {
 		<View style={ styles.calendar }>
 			<View style={ styles.header }>
 				<View>
-					<Text style={ styles.month }>Июль</Text>
-					<Text style={ styles.weekDay }>Понедельник</Text>
+					<Text style={ styles.month }>{ monthsNominative[numberMonth] }</Text>
+					<Text style={ styles.weekDay }>{ nameDays[numberDay] }</Text>
 				</View>
 				<View style={ styles.control }>
 					<Pressable style={ styles.button } onPress={ () => console.log('prev') }>
@@ -167,6 +185,9 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 		borderWidth: 1,
 		borderColor: 'rgba(255, 255, 255, .1)',
+	},
+	itemActive: {
+		backgroundColor: 'rgba(255, 255, 255, .12)'
 	},
 	number: {
 		// fontFamily: 'SFMed',
