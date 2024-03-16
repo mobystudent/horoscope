@@ -3,6 +3,8 @@ import { StyleSheet, View, Text, Pressable } from 'react-native';
 import { SettingsContext } from '../contexts/settings';
 import moment from 'moment';
 
+import lang from '../languages/lang_ru.json';
+
 import { arrowRightIcon, arrowLeftIcon } from '../icons/elements';
 import * as zodiac from '../icons/zodiac';
 import * as phase from '../icons/phase';
@@ -20,10 +22,7 @@ export default function MoonCalendar() {
 		}
 	} = useContext(SettingsContext);
 	const [ dayWidth, setDayWidth ] = useState(0);
-	const croppedNameDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
-	const nameDays = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
-	const monthsNominative = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
-	const monthsGenitive = ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'];
+	const parseLang = JSON.parse(JSON.stringify(lang));
 	const date = moment(period, 'DD-MM-YY');
 	const numberDay = date.date();
 	const numberWeekDay = date.isoWeekday();
@@ -76,8 +75,8 @@ export default function MoonCalendar() {
 
 		setDayWidth(bodyWidth / 7);
 	};
-	const setNameDays = croppedNameDays.map((day) => {
-		return <Text style={[ styles.day, { width: dayWidth } ]} key={ day }>{ day }</Text>;
+	const nameDays = parseLang.week.map(({ cropName }) => {
+		return <Text style={[ styles.day, { width: dayWidth } ]} key={ cropName }>{ cropName }</Text>;
 	});
 	const monthArray = days.map(({ number, moon, sign }) => {
 		return (
@@ -111,8 +110,8 @@ export default function MoonCalendar() {
 		<View style={ styles.calendar }>
 			<View style={ styles.header }>
 				<View>
-					<Text style={ styles.month }>{ monthsNominative[numberMonth] }</Text>
-					<Text style={ styles.weekDay }>{ nameDays[numberDay] }</Text>
+					<Text style={ styles.month }>{ parseLang.months[numberMonth].nameNom }</Text>
+					<Text style={ styles.weekDay }>{ parseLang.week[numberWeekDay].fullName }</Text>
 				</View>
 				<View style={ styles.control }>
 					<Pressable style={ styles.button } onPress={ () => console.log('prev') }>
@@ -128,7 +127,7 @@ export default function MoonCalendar() {
 				</View>
 			</View>
 			<View style={ styles.body } onLayout={ (event) => calendarWidth(event) }>
-				{ setNameDays }
+				{ nameDays }
 				{ monthArray }
 			</View>
 		</View>

@@ -3,6 +3,8 @@ import { StyleSheet, View, Text, ScrollView } from 'react-native';
 import { SettingsContext } from '../contexts/settings';
 import moment from 'moment';
 
+import lang from '../languages/lang_ru.json';
+
 import * as zodiacIcons from '../icons/zodiac';
 
 export default function MoonDetails() {
@@ -13,51 +15,13 @@ export default function MoonDetails() {
 			}
 		}
 	} = useContext(SettingsContext);
+	const parseLang = JSON.parse(JSON.stringify(lang));
 	const blocks = {
 		sunDay: 'Сегодня',
 		moonDay: 'Лунный день',
 		sunSign: 'Солнце',
 		moonSign: 'Луна'
 	};
-	const zodiac = {
-		aries: {
-			namePrep: 'Овне',
-		},
-		taurus: {
-			namePrep: 'Тельце',
-		},
-		gemini: {
-			namePrep: 'Близнеце',
-		},
-		cancer: {
-			namePrep: 'Раке',
-		},
-		leo: {
-			namePrep: 'Льве',
-		},
-		virgo: {
-			namePrep: 'Деве',
-		},
-		libra: {
-			namePrep: 'Весах',
-		},
-		scorpio: {
-			namePrep: 'Скорпионе',
-		},
-		sagittarius: {
-			namePrep: 'Стрельце',
-		},
-		capricorn: {
-			namePrep: 'Козероге',
-		},
-		aquarius: {
-			namePrep: 'Водолее',
-		},
-		pisces: {
-			namePrep: 'Рыбах',
-		}
-	};
-	const monthsGenitive = ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'];
 	const infoDays = (name, obj) => {
 		let textUpper = '';
 		let textLower = '';
@@ -65,7 +29,7 @@ export default function MoonDetails() {
 		if (name === 'sunDay') {
 			const date = moment(obj.period, 'DD-MM-YY');
 
-			textUpper = monthsGenitive[date.month()];
+			textUpper = parseLang.months[date.month()].nameGen;
 			textLower = date.year();
 		} else {
 			const parsePeriod = obj.period.split('-');
@@ -99,7 +63,7 @@ export default function MoonDetails() {
 					}
 					{
 						typeof block === 'string' ?
-						<Text style={ styles.text }>{ `В ${ zodiac[block].namePrep }` }</Text>
+						<Text style={ styles.text }>{ `В ${ parseLang.zodiac[block].namePrep }` }</Text>
 						: <View>
 							{ infoDays(key, block) }
 						</View>

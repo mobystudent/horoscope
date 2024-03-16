@@ -1,0 +1,120 @@
+{
+	"months": [
+		{
+			"nameNom": "Январь",
+			"nameGen": "Января"
+		},
+		{
+			"nameNom": "Февраль",
+			"nameGen": "Февраля"
+		},
+		{
+			"nameNom": "Март",
+			"nameGen": "Марта"
+		},
+		{
+			"nameNom": "Апрель",
+			"nameGen": "Апреля"
+		},
+		{
+			"nameNom": "Май",
+			"nameGen": "Мая"
+		},
+		{
+			"nameNom": "Июнь",
+			"nameGen": "Июня"
+		},
+		{
+			"nameNom": "Июль",
+			"nameGen": "Июля"
+		},
+		{
+			"nameNom": "Август",
+			"nameGen": "Августа"
+		},
+		{
+			"nameNom": "Сентябрь",
+			"nameGen": "Сентября"
+		},
+		{
+			"nameNom": "Октябрь",
+			"nameGen": "Октября"
+		},
+		{
+			"nameNom": "Ноябрь",
+			"nameGen": "Ноября"
+		},
+		{
+			"nameNom": "Декабрь",
+			"nameGen": "Декабря"
+		}
+	],
+	"zodiac": {
+		"aries": {
+			"namePrep": "Овне"
+		},
+		"taurus": {
+			"namePrep": "Тельце"
+		},
+		"gemini": {
+			"namePrep": "Близнеце"
+		},
+		"cancer": {
+			"namePrep": "Раке"
+		},
+		"leo": {
+			"namePrep": "Льве"
+		},
+		"virgo": {
+			"namePrep": "Деве"
+		},
+		"libra": {
+			"namePrep": "Весах"
+		},
+		"scorpio": {
+			"namePrep": "Скорпионе"
+		},
+		"sagittarius": {
+			"namePrep": "Стрельце"
+		},
+		"capricorn": {
+			"namePrep": "Козероге"
+		},
+		"aquarius": {
+			"namePrep": "Водолее"
+		},
+		"pisces": {
+			"namePrep": "Рыбах"
+		}
+	},
+	"week": [
+		{
+			"cropName": "Пн",
+			"fullName": "Понедельник"
+		},
+		{
+			"cropName": "Вт",
+			"fullName": "Вторник"
+		},
+		{
+			"cropName": "Ср",
+			"fullName": "Среда"
+		},
+		{
+			"cropName": "Чт",
+			"fullName": "Четверг"
+		},
+		{
+			"cropName": "Пт",
+			"fullName": "Пятница"
+		},
+		{
+			"cropName": "Сб",
+			"fullName": "Суббота"
+		},
+		{
+			"cropName": "Вс",
+			"fullName": "Воскресенье"
+		}
+	]
+}
