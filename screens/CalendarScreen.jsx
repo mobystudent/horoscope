@@ -58,7 +58,7 @@ export default function Calendar({ navigation }) {
 					</View>
 				</View>
 				<MoonDetails />
-				<MoonInfo data={ settings.currentMoonDay.content } />
+				<MoonInfo />
 			</ScrollView>
 		</Container>
 	);

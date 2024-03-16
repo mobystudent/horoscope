@@ -1,19 +1,34 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { StyleSheet, View, Text, Pressable, ScrollView } from 'react-native';
+import { SettingsContext } from '../contexts/settings';
 
-export default function MoonInfo(props) {
+import lang from '../languages/lang_ru.json';
+
+export default function MoonInfo() {
 	const {
-		data = {}
-	} = props;
+		settings: {
+			currentMoonDay: {
+				details: {
+					moonSign
+				},
+				content
+			}
+		}
+	} = useContext(SettingsContext);
 	const [ activeTab, setActiveTab ] = useState('moon');
-	const tabslist = data.map(({ name, title }) => {
+	const parseLang = JSON.parse(JSON.stringify(lang));
+	const blocks = {
+		zodiac: `Луна в ${ parseLang.zodiac[moonSign].namePrep }`,
+		moon: 'Лунный день',
+		planet: `День ${ content.planet.name }`
+	};
+	const tabslist = Object.keys(blocks).map((key) => {
 		return (
-			<Pressable style={[ styles.button, activeTab === name && styles.activeButton ]} key={ name } onPress={ () => setActiveTab(name) }>
-				<Text style={[ styles.buttonText, activeTab === name && styles.activeButtonText ]}>{ title }</Text>
+			<Pressable style={[ styles.button, activeTab === key && styles.activeButton ]} key={ key } onPress={ () => setActiveTab(key) }>
+				<Text style={[ styles.buttonText, activeTab === key && styles.activeButtonText ]}>{ blocks[key] }</Text>
 			</Pressable>
 		);
 	});
-	const textContent = data.find((block) => block.name === activeTab);
 
 	return (
 		<>
@@ -21,9 +36,9 @@ export default function MoonInfo(props) {
 				{ tabslist }
 			</ScrollView>
 			<View style={ styles.block }>
-				<Text style={ styles.symbol }>{ `Символ дня: ${textContent.block.symbol}` }</Text>
-				<Text style={ styles.title }>{ textContent.block.title }</Text>
-				<Text style={ styles.description }>{ textContent.block.description }</Text>
+				{ 'symbol' in content[activeTab] && <Text style={ styles.symbol }>{ `Символ дня: ${ content[activeTab].symbol }` }</Text> }
+				<Text style={ styles.title }>{ content[activeTab].title }</Text>
+				<Text style={ styles.description }>{ content[activeTab].description }</Text>
 			</View>
 		</>
 	);
