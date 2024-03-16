@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { StyleSheet, View, Text, Pressable } from 'react-native';
+import { SettingsContext } from '../contexts/settings';
 import moment from 'moment';
 
 import { arrowRightIcon, arrowLeftIcon } from '../icons/elements';
@@ -7,13 +8,23 @@ import * as zodiac from '../icons/zodiac';
 import * as phase from '../icons/phase';
 
 export default function MoonCalendar() {
-	const dateStart = '15-03-24';
+	const {
+		settings: {
+			currentMoonDay: {
+				details: {
+					sunDay: {
+						period
+					}
+				}
+			}
+		}
+	} = useContext(SettingsContext);
 	const [ dayWidth, setDayWidth ] = useState(0);
 	const croppedNameDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 	const nameDays = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
 	const monthsNominative = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 	const monthsGenitive = ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'];
-	const date = moment(dateStart, 'DD-MM-YY');
+	const date = moment(period, 'DD-MM-YY');
 	const numberDay = date.date();
 	const numberWeekDay = date.isoWeekday();
 	const numberMonth = date.month();

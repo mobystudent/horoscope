@@ -1,30 +1,107 @@
-import * as React from 'react';
+import { useContext } from 'react';
 import { StyleSheet, View, Text, ScrollView } from 'react-native';
+import { SettingsContext } from '../contexts/settings';
+import moment from 'moment';
 
-import * as zodiac from '../icons/zodiac';
+import * as zodiacIcons from '../icons/zodiac';
 
-export default function MoonDetails(props) {
+export default function MoonDetails() {
 	const {
-		data = {}
-	} = props;
-	const detailsList = data.slice(0, 3).map((detail) => {
+		settings: {
+			currentMoonDay: {
+				details
+			}
+		}
+	} = useContext(SettingsContext);
+	const blocks = {
+		sunDay: 'Сегодня',
+		moonDay: 'Лунный день',
+		sunSign: 'Солнце',
+		moonSign: 'Луна'
+	};
+	const zodiac = {
+		aries: {
+			namePrep: 'Овне',
+		},
+		taurus: {
+			namePrep: 'Тельце',
+		},
+		gemini: {
+			namePrep: 'Близнеце',
+		},
+		cancer: {
+			namePrep: 'Раке',
+		},
+		leo: {
+			namePrep: 'Льве',
+		},
+		virgo: {
+			namePrep: 'Деве',
+		},
+		libra: {
+			namePrep: 'Весах',
+		},
+		scorpio: {
+			namePrep: 'Скорпионе',
+		},
+		sagittarius: {
+			namePrep: 'Стрельце',
+		},
+		capricorn: {
+			namePrep: 'Козероге',
+		},
+		aquarius: {
+			namePrep: 'Водолее',
+		},
+		pisces: {
+			namePrep: 'Рыбах',
+		}
+	};
+	const monthsGenitive = ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'];
+	const infoDays = (name, obj) => {
+		let textUpper = '';
+		let textLower = '';
+
+		if (name === 'sunDay') {
+			const date = moment(obj.period, 'DD-MM-YY');
+
+			textUpper = monthsGenitive[date.month()];
+			textLower = date.year();
+		} else {
+			const parsePeriod = obj.period.split('-');
+
+			textUpper = parsePeriod[0];
+			textLower = parsePeriod[1];
+		}
+
 		return (
-			<View style={ styles.detailItem } key={ detail.title }>
-				<Text style={[ styles.title, styles.text ]}>{ detail.title }</Text>
+			<>
+				<Text style={ styles.text }>{ textUpper }</Text>
+				<Text style={ styles.text }>{ textLower }</Text>
+			</>
+		);
+	};
+	const detailsList = Object.keys(blocks).map((key) => {
+		if (key === 'moonSign') return;
+
+		const block = details[key];
+
+		return (
+			<View style={ styles.detailItem } key={ key }>
+				<Text style={[ styles.title, styles.text ]}>{ blocks[key] }</Text>
 				<View style={ styles.info }>
 					{
-						detail.day ?
-						<Text style={ styles.day }>{ detail.day }</Text>
+						typeof block === 'object' ?
+						<Text style={ styles.day }>{ block.day }</Text>
 						: <View style={ styles.sign }>
-							{ zodiac[detail.sign]('#fff') }
+							{ zodiacIcons[block]('#fff') }
 						</View>
 					}
 					{
-						detail.text ?
-						<Text style={ styles.text }>{ detail.text }</Text>
+						typeof block === 'string' ?
+						<Text style={ styles.text }>{ `В ${ zodiac[block].namePrep }` }</Text>
 						: <View>
-							<Text style={ styles.text }>{ detail.period.start }</Text>
-							<Text style={ styles.text }>{ detail.period.end }</Text>
+							{ infoDays(key, block) }
 						</View>
 					}
 				</View>

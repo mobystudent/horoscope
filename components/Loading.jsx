@@ -32,34 +32,18 @@ export default function Loading() {
 					phase: 'I Фаза',
 				},
 				slogan: 'Свой стержень внутренний держи, алхимию души и пищи соверши',
-				details: [
-					{
-						title: 'Сегодня',
+				details: {
+					sunDay: {
 						day: '21',
-						period: {
-							start: 'Сентября',
-							end: '2023'
-						}
+						period: '21-09-23'
 					},
-					{
-						title: 'Лунный день',
+					moonDay: {
 						day: '5',
-						period: {
-							start: 'С 01:53 20.05',
-							end: 'до 23:03 21.05'
-						}
+						period: 'С 01:53 20.05-до 23:03 21.05'
 					},
-					{
-						title: 'Солнце',
-						sign: 'cancer',
-						text: 'В Раке'
-					},
-					{
-						title: 'Луна',
-						sign: 'virgo',
-						text: 'В Деве'
-					}
-				],
+					sunSign: 'cancer',
+					moonSign: 'virgo',
+				},
 				content: [
 					{
 						name: 'zodiac',

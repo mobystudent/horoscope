@@ -57,7 +57,7 @@ export default function Calendar({ navigation }) {
 						<Text style={ styles.moonText }>{ moonPhase.phase }</Text>
 					</View>
 				</View>
-				<MoonDetails data={ settings.currentMoonDay.details } />
+				<MoonDetails />
 				<MoonInfo data={ settings.currentMoonDay.content } />
 			</ScrollView>
 		</Container>
