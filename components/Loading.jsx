@@ -62,7 +62,7 @@ export default function Loading() {
 				}
 			};
 
-			setFirstScreen(Boolean(storagePersonString) ? 'calendar' : 'name');
+			setFirstScreen(Boolean(storagePersonString) ? 'moon' : 'name');
 			setSettings({
 				...settings,
 				person: storagePerson || {},
