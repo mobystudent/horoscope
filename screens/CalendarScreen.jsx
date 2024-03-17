@@ -57,7 +57,7 @@ export default function Calendar({ navigation }) {
 						<Text style={ styles.moonText }>{ moonPhase.phase }</Text>
 					</View>
 				</View>
-				<MoonDetails />
+				<MoonDetails type="calendar" />
 				<MoonInfo />
 			</ScrollView>
 		</Container>

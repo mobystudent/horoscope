@@ -93,7 +93,7 @@ export default function MoonCalendar() {
 				<Text style={ styles.number }>{ number }</Text>
 				<View style={ styles.wrap }>
 					<View style={ styles.itemIcon }>
-					{ phase[moon]('#fff') }
+						{ phase[moon]('#fff') }
 					</View>
 					<View style={ styles.itemIcon }>
 						{ zodiac[sign]('#fff') }

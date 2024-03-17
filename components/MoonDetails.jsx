@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useState, useContext } from 'react';
 import { StyleSheet, View, Text, ScrollView } from 'react-native';
 import { SettingsContext } from '../contexts/settings';
 import moment from 'moment';
@@ -6,8 +6,9 @@ import moment from 'moment';
 import lang from '../languages/lang_ru.json';
 
 import * as zodiacIcons from '../icons/zodiac';
+import { borderIcon } from '../icons/elements';
 
-export default function MoonDetails() {
+export default function MoonDetails({ type }) {
 	const {
 		settings: {
 			currentMoonDay: {
@@ -15,6 +16,7 @@ export default function MoonDetails() {
 			}
 		}
 	} = useContext(SettingsContext);
+	const [ blockSize, setBlockSize ] = useState(0);
 	const parseLang = JSON.parse(JSON.stringify(lang));
 	const blocks = {
 		sunDay: 'Сегодня',
@@ -34,8 +36,16 @@ export default function MoonDetails() {
 		} else {
 			const parsePeriod = obj.period.split('-');
 
-			textUpper = parsePeriod[0];
-			textLower = parsePeriod[1];
+			if (type === 'calendar') {
+				textUpper = parsePeriod[0];
+				textLower = parsePeriod[1];
+			} else {
+				const periodStart = parsePeriod[0];
+				const lastIndent = periodStart.lastIndexOf(' ');
+
+				textUpper = periodStart.slice(0, lastIndent);
+				textLower = periodStart.slice(lastIndent + 1);;
+			}
 		}
 
 		return (
@@ -45,40 +55,82 @@ export default function MoonDetails() {
 			</>
 		);
 	};
-	const detailsList = Object.keys(blocks).map((key) => {
-		if (key === 'moonSign') return;
+	const detailsSize = ({ nativeEvent: { layout } }) => {
+		const width = (layout.width - 10) / 2;
+
+		setBlockSize({
+			width,
+			height: (134 * width) / 167
+		});
+	};
+	const detailsList = Object.keys(blocks).map((key, i) => {
+		if (type === 'calendar' && key === 'moonSign') return;
 
 		const block = details[key];
 
 		return (
-			<View style={ styles.detailItem } key={ key }>
-				<Text style={[ styles.title, styles.text ]}>{ blocks[key] }</Text>
-				<View style={ styles.info }>
-					{
-						typeof block === 'object' ?
-						<Text style={ styles.day }>{ block.day }</Text>
-						: <View style={ styles.sign }>
-							{ zodiacIcons[block]('#fff') }
-						</View>
+			<View style={
+						type === 'calendar'
+						? styles.detailItem
+						: [
+							styles.detailsBlock,
+							i % 2 && styles.detailItemPair,
+							{
+								width: blockSize.width,
+								height: blockSize.height
+							}
+						]
 					}
+					key={ key }
+				>
+				<Text style={[ styles.title, styles.text ]}>{ blocks[key] }</Text>
+				<View style={
+						type === 'calendar'
+						? styles.infoRow
+						: [
+							styles.infoColumn,
+							i % 2 && styles.infoColumnPair
+						]
+					}>
 					{
-						typeof block === 'string' ?
-						<Text style={ styles.text }>{ `В ${ parseLang.zodiac[block].namePrep }` }</Text>
-						: <View>
-							{ infoDays(key, block) }
-						</View>
+						typeof block === 'object'
+						? <>
+							<Text style={ styles.day }>{ block.day }</Text>
+							<View style={ i % 2 && styles.textWrap }>
+								{ infoDays(key, block) }
+							</View>
+						</>
+						: <>
+							<View style={ styles.sign }>
+								{ zodiacIcons[block]('#fff') }
+							</View>
+							<Text style={ styles.text }>{ `В ${ parseLang.zodiac[block].namePrep }` }</Text>
+						</>
 					}
 				</View>
+				{
+					type === 'day' && <View style={[ styles.borderIcon, { width: blockSize.width, height: blockSize.height } ]}>
+						{ borderIcon('#fff', .1)[i] }
+					</View>
+				}
 			</View>
 		);
 	});
 
 	return (
-		<ScrollView contentContainerStyle={ styles.scroll } horizontal={ true }>
-			<View style={ styles.details }>
-				{ detailsList }
+		type === 'calendar' ? (
+			<ScrollView contentContainerStyle={ styles.scroll } horizontal={ true }>
+				<View style={ styles.details }>
+					{ detailsList }
+				</View>
+			</ScrollView>
+		) : (
+			<View style={ styles.square }>
+				<View style={ styles.details } onLayout={ (event) => detailsSize(event) }>
+					{ detailsList }
+				</View>
 			</View>
-		</ScrollView>
+		)
 	);
 }
 
@@ -86,9 +138,17 @@ const styles = StyleSheet.create({
 	scroll: {
 		marginBottom: 15
 	},
+	square: {
+		marginBottom: 15
+	},
 	details: {
 		flexDirection: 'row',
-		columnGap: 10
+		flexWrap: 'wrap',
+		gap: 10
+	},
+	detailsBlock: {
+		rowGap: 15,
+		padding: 15
 	},
 	detailItem: {
 		rowGap: 15,
@@ -96,6 +156,9 @@ const styles = StyleSheet.create({
 		padding: 15,
 		borderRadius: 16,
 		backgroundColor: 'rgba(255, 255, 255, .12)'
+	},
+	detailItemPair: {
+		alignItems: 'flex-end'
 	},
 	title: {
 		textTransform: 'uppercase',
@@ -108,10 +171,17 @@ const styles = StyleSheet.create({
 		color: '#fff',
 		letterSpacing: -.215
 	},
-	info: {
+	infoRow: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		columnGap: 10
+	},
+	infoColumn: {
+		flex: 1,
+		justifyContent: 'space-between'
+	},
+	infoColumnPair: {
+		alignItems: 'flex-end'
 	},
 	text: {
 		// fontFamily: 'SFReg',
@@ -120,8 +190,14 @@ const styles = StyleSheet.create({
 		color: '#fff',
 		letterSpacing: -.075
 	},
+	textWrap: {
+		alignItems: 'flex-end'
+	},
 	sign: {
 		width: 40,
 		height: 40
+	},
+	borderIcon: {
+		position: 'absolute'
 	}
 });
