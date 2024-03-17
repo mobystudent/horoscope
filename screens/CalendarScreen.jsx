@@ -47,7 +47,7 @@ export default function Calendar({ navigation }) {
 						<Text style={ styles.buttonText }>Календарь</Text>
 					</View>
 				</View>
-				<MoonCalendar />
+				<MoonCalendar type="calendar" />
 				<View style={ styles.moonPhase }>
 					<View style={ styles.moonIcon }>
 						<Image style={ styles.imageMoon } source={ moonPhase.image } />

@@ -9,7 +9,7 @@ import { arrowRightIcon, arrowLeftIcon } from '../icons/elements';
 import * as zodiac from '../icons/zodiac';
 import * as phase from '../icons/phase';
 
-export default function MoonCalendar() {
+export default function MoonCalendar({ type }) {
 	const {
 		settings: {
 			currentMoonDay: {
@@ -68,6 +68,101 @@ export default function MoonCalendar() {
 			moon: 'waxingMoon',
 			sign: 'leo'
 		},
+		{
+			number: '9',
+			moon: 'waxingMoon',
+			sign: 'leo'
+		},
+		{
+			number: '10',
+			moon: 'waxingMoon',
+			sign: 'leo'
+		},
+		{
+			number: '11',
+			moon: 'waxingMoon',
+			sign: 'leo'
+		},
+		{
+			number: '12',
+			moon: 'waxingMoon',
+			sign: 'leo'
+		},
+		{
+			number: '13',
+			moon: 'waxingMoon',
+			sign: 'leo'
+		},
+		{
+			number: '14',
+			moon: 'waxingMoon',
+			sign: 'leo'
+		},
+		{
+			number: '15',
+			moon: 'waxingMoon',
+			sign: 'leo'
+		},
+		{
+			number: '16',
+			moon: 'waxingMoon',
+			sign: 'leo'
+		},
+		{
+			number: '17',
+			moon: 'waxingMoon',
+			sign: 'leo'
+		},
+		{
+			number: '18',
+			moon: 'waxingMoon',
+			sign: 'leo'
+		},
+		{
+			number: '19',
+			moon: 'waxingMoon',
+			sign: 'leo'
+		},
+		{
+			number: '20',
+			moon: 'waxingMoon',
+			sign: 'leo'
+		},
+		{
+			number: '21',
+			moon: 'waxingMoon',
+			sign: 'leo'
+		},
+		{
+			number: '22',
+			moon: 'waxingMoon',
+			sign: 'leo'
+		},
+		{
+			number: '23',
+			moon: 'waxingMoon',
+			sign: 'leo'
+		},
+		{
+			number: '24',
+			moon: 'waxingMoon',
+			sign: 'leo'
+		},
+		{
+			number: '25',
+			moon: 'waxingMoon',
+			sign: 'leo'
+		},
+		{
+			number: '26',
+			moon: 'waxingMoon',
+			sign: 'leo'
+		},
+		{
+			number: '27',
+			moon: 'waxingMoon',
+			sign: 'leo'
+		},
 	];
 	const calendarWidth = ({ nativeEvent: { layout } }) => {
 		const columnGap = 5;
@@ -78,14 +173,25 @@ export default function MoonCalendar() {
 	const nameDays = parseLang.week.map(({ cropName }) => {
 		return <Text style={[ styles.day, { width: dayWidth } ]} key={ cropName }>{ cropName }</Text>;
 	});
-	const monthArray = days.map(({ number, moon, sign }) => {
+	const filterWeek = () => {
+		const firstDayWeek = numberWeekDay - 1;
+		const firstDay = numberDay - firstDayWeek;
+		const lastDay = firstDay + 7;
+
+		return days.filter((day) => day.number >= firstDay && day.number < lastDay);
+	};
+	const visibleDays = type === 'calendar' ? days : filterWeek();
+	const monthArray = visibleDays.map(({ number, moon, sign }) => {
+		const numberYear = date.format('YY');
+		const numberFirstDay = moment(`01-${ numberMonth + 1 }-${ numberYear }`, 'DD-MM-YY').isoWeekday();
+
 		return (
 			<Pressable
 				style={[
 					styles.item,
 					numberDay === number && styles.itemActive,
 					{ width: dayWidth },
-					number === '1' && { marginLeft: (numberWeekDay - 1) * (dayWidth + 5) }
+					number === '1' && { marginLeft: (numberFirstDay - 1) * (dayWidth + 5) }
 				]}
 				key={ number }
 				onPress={ () => checkDay()
@@ -108,10 +214,10 @@ export default function MoonCalendar() {
 
 	return (
 		<View style={ styles.calendar }>
-			<View style={ styles.header }>
+			{ type === 'calendar' && <View style={ styles.header }>
 				<View>
 					<Text style={ styles.month }>{ parseLang.months[numberMonth].nameNom }</Text>
-					<Text style={ styles.weekDay }>{ parseLang.week[numberWeekDay].fullName }</Text>
+					<Text style={ styles.weekDay }>{ parseLang.week[numberWeekDay - 1].fullName }</Text>
 				</View>
 				<View style={ styles.control }>
 					<Pressable style={ styles.button } onPress={ () => console.log('prev') }>
@@ -125,7 +231,7 @@ export default function MoonCalendar() {
 						</View>
 					</Pressable>
 				</View>
-			</View>
+			</View> }
 			<View style={ styles.body } onLayout={ (event) => calendarWidth(event) }>
 				{ nameDays }
 				{ monthArray }

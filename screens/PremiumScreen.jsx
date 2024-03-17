@@ -22,7 +22,7 @@ export default function Premium({ navigation }) {
 		},
 		{
 			id: 2,
-			icon: personIcon('#fff'),
+			icon: personIcon('#fff', 1),
 			style: 'personIcon',
 			text: 'Hyper-personalized horoscopes'
 		},
