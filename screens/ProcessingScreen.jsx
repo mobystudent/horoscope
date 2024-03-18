@@ -77,18 +77,38 @@ export default function Processing({ navigation }) {
 				});
 			}
 
+			const moonDay = {
+				phase: 'firstQuarter',
+				details: {
+					moonDay: {
+						day: '5',
+						percent: '33',
+						period: '01:53 20.05 - 23:03 21.05'
+					},
+					moonSign: 'libra'
+				},
+				content: {
+					symbol: 'единорог',
+					title: 'Хороший день для занятия спорта',
+					description: 'Давно выяснено, что при оценке дизайна и композиции читаемый текст мешает сосредоточиться. Lorem Ipsum используют потому, что тот обеспечивает более или менее стандартное заполнение шаблона, а также реальное распределение букв и пробелов в абзацах, которое не получается при простой дубликации "Здесь ваш текст.. Здесь ваш текст.. Здесь ваш текст.." Многие программы электронной вёрстки и редакторы HTML используют Lorem Ipsum в качестве текста по умолчанию, так что поиск по ключевым словам "lorem ipsum" сразу показывает, как много веб-страниц всё ещё дожидаются своего настоящего рождения. За прошедшие годы текст Lorem Ipsum получил много версий. Некоторые версии появились по ошибке, некоторые - намеренно (например, юмористические варианты).'
+				}
+			};
+
 			setSettings({
 				...settings,
 				notesList: notesArray,
+				birthdayMoon: moonDay,
 				registered: true
 			});
 
 			try {
 				const personString = JSON.stringify(settings.person);
 				const notesString = JSON.stringify(notesArray);
+				const birthdayString = JSON.stringify(moonDay);
 
 				await AsyncStorage.setItem('person', personString);
 				await AsyncStorage.setItem('notesArray', notesString);
+				await AsyncStorage.setItem('birthdayMoon', birthdayString);
 			} catch (e) {
 				console.error(e);
 			}

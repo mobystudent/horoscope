@@ -3,53 +3,50 @@ import { StyleSheet, Text, Pressable, View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import { SettingsContext } from '../contexts/settings';
 
+import lang from '../languages/lang_ru.json';
+
 import { arrowRightIcon } from '../icons/elements';
 import * as zodiac from '../icons/zodiac';
 
 export default function MoonBirthday({ navigation }) {
-	const { settings } = useContext(SettingsContext);
-	const moonDay = {
-		day: settings.currentDayMoon,
-		headerTitle: 'Лунный день',
-		symbol: 'единорог',
-		title: 'Хороший день для занятия спорта',
-		description: 'Давно выяснено, что при оценке дизайна и композиции читаемый текст мешает сосредоточиться. Lorem Ipsum используют потому, что тот обеспечивает более или менее стандартное заполнение шаблона, а также реальное распределение букв и пробелов в абзацах, которое не получается при простой дубликации "Здесь ваш текст.. Здесь ваш текст.. Здесь ваш текст.." Многие программы электронной вёрстки и редакторы HTML используют Lorem Ipsum в качестве текста по умолчанию, так что поиск по ключевым словам "lorem ipsum" сразу показывает, как много веб-страниц всё ещё дожидаются своего настоящего рождения. За прошедшие годы текст Lorem Ipsum получил много версий. Некоторые версии появились по ошибке, некоторые - намеренно (например, юмористические варианты).',
-		period: {
-			start: {
-				time: '23:26',
-				day: '15.07'
-			},
-			end: {
-				time: '00:26',
-				day: '15.07'
+	const {
+		settings: {
+			birthdayMoon: {
+				phase,
+				details: {
+					moonDay,
+					moonSign
+				}
 			}
 		}
-	};
-	const moonPhase = {
-		percent: 33,
-		title: 'Убывающая луна',
-		phase: '4-фаза',
-		sign: 'libra'
-	}
+	} = useContext(SettingsContext);
+	const parseLang = JSON.parse(JSON.stringify(lang));
 	const width = 40;
 	const strokeWidth = 2;
 	const radius = (width - strokeWidth) / 2;
 	const circumference = 2 * Math.PI * radius;
-	const strokeDashoffset = circumference - moonPhase.percent / 100 * circumference;
+	const strokeDashoffset = circumference - moonDay.percent / 100 * circumference;
+	const setPeriod = () => {
+		const splitPeriod = moonDay.period.split(' ');
+
+		return (
+			<View style={ styles.data }>
+				<Text style={ styles.text }>{ splitPeriod[1] }</Text>
+				<Text style={ [ styles.text, styles.moonMark ] }>{ `${ splitPeriod[0] } - ${ splitPeriod[3] }` }</Text>
+				<Text style={ styles.text }>{ splitPeriod[4] }</Text>
+			</View>
+		);
+	};
 
 	return (
 		<View style={ styles.content }>
-			<Pressable style={ styles.block } onPress={ () => navigation.navigate('content', moonDay) }>
+			<Pressable style={ styles.block } onPress={ () => navigation.navigate('content') }>
 				<View style={ styles.dayWrap }>
 					<Text style={ styles.day }>{ moonDay.day }</Text>
 				</View>
 				<View style={ styles.wrap }>
-					<Text style={ styles.title }>{ moonDay.headerTitle }</Text>
-					<View style={ styles.data }>
-						<Text style={ styles.text }>{ moonDay.period.start.day }</Text>
-						<Text style={ [ styles.text, styles.moonMark ] }>{ `${moonDay.period.start.time}-${moonDay.period.end.time}` }</Text>
-						<Text style={ styles.text }>{ moonDay.period.end.day }</Text>
-					</View>
+					<Text style={ styles.title }>Лунный день</Text>
+					{ setPeriod() }
 				</View>
 				<View style={ styles.iconWrap }>
 					<View style={ styles.arrowRightIcon }>
@@ -70,14 +67,14 @@ export default function MoonBirthday({ navigation }) {
 							style={ styles.circleFill }
 						/>
 					</Svg>
-					<Text style={ styles.counter }>{ `${ moonPhase.percent }%` }</Text>
+					<Text style={ styles.counter }>{ `${ moonDay.percent }%` }</Text>
 				</View>
 				<View style={ styles.wrap }>
-					<Text style={ styles.title }>{ moonPhase.title }</Text>
-					<Text style={ styles.text }>{ moonPhase.phase }</Text>
+					<Text style={ styles.title }>{ parseLang.phase[phase].title }</Text>
+					<Text style={ styles.text }>{ parseLang.phase[phase].type }</Text>
 				</View>
 				<View style={ styles.zodiac }>
-					{ zodiac[moonPhase.sign]('#fff') }
+					{ zodiac[moonSign]('#fff') }
 				</View>
 			</View>
 		</View>

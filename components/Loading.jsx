@@ -23,8 +23,10 @@ export default function Loading() {
 
 			const storagePersonString = await AsyncStorage.getItem('person');
 			const storageNotesString = await AsyncStorage.getItem('notesArray');
+			const storageBirthdayString = await AsyncStorage.getItem('birthdayMoon');
 			const storagePerson = JSON.parse(storagePersonString);
 			const storageNotesList = JSON.parse(storageNotesString);
+			const storageBirthdayMoon = JSON.parse(storageBirthdayString);
 
 			const moonData = {
 				phase: 'fullMoon',
@@ -39,7 +41,7 @@ export default function Loading() {
 						period: 'С 01:53 20.05-до 23:03 21.05'
 					},
 					sunSign: 'cancer',
-					moonSign: 'virgo',
+					moonSign: 'virgo'
 				},
 				content: {
 					zodiac: {
@@ -64,6 +66,7 @@ export default function Loading() {
 				...settings,
 				person: storagePerson || {},
 				notesList: storageNotesList || [],
+				birthdayMoon: storageBirthdayMoon || {},
 				currentMoonDay: moonData
 			});
 			setReady(true);
