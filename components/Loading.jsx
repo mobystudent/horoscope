@@ -27,10 +27,7 @@ export default function Loading() {
 			const storageNotesList = JSON.parse(storageNotesString);
 
 			const moonData = {
-				moon: {
-					title: 'Растущая луна',
-					phase: 'I Фаза',
-				},
+				phase: 'fullMoon',
 				slogan: 'Свой стержень внутренний держи, алхимию души и пищи соверши',
 				details: {
 					sunDay: {

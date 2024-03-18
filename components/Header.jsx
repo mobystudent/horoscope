@@ -96,6 +96,15 @@ export default function Header(props) {
 					...settings,
 					photoSettings: true
 				});
+			} else if (btnActionRight === 'note') {
+				const numberMoonDay = settings.currentMoonDay.details.moonDay.day;
+
+				setSettings({
+					...settings,
+					currentNote: settings.notesList[numberMoonDay]
+				});
+
+				navigation.navigate(screenLinkRight);
 			}
 		} else {
 			return navigation.navigate(screenLinkRight, { ...params });
@@ -133,6 +142,7 @@ const styles = StyleSheet.create({
 		color: '#fff',
 		textAlign: 'center',
 		fontSize: 17,
+		lineHeight: 20,
 		letterSpacing: -.1,
 		marginBottom: 5
 	},
@@ -140,7 +150,8 @@ const styles = StyleSheet.create({
 		// fontFamily: 'SFReg',
 		color: 'rgba(255, 255, 255, .5)',
 		textAlign: 'center',
-		fontSize: 12
+		fontSize: 12,
+		lineHeight: 14
 	},
 	btn: {
 		alignItems: 'center',

@@ -7,21 +7,28 @@ import MoonDetails from '../components/MoonDetails';
 import MoonCalendar from '../components/MoonCalendar';
 import { SettingsContext } from '../contexts/settings';
 
+import lang from '../languages/lang_ru.json';
+
 import { personIcon } from '../icons/elements';
 
 import fullMoon from '../assets/images/fullMoon.png';
 
 export default function Moon({ navigation }) {
-	const { settings } = useContext(SettingsContext);
+	const {
+		settings: {
+			currentMoonDay: {
+				phase,
+				slogan,
+				details: {
+					sunDay: {
+						period
+					}
+				}
+			}
+		}
+	} = useContext(SettingsContext);
 	const [ activeTab, setActiveTab ] = useState('day');
-	const title = activeTab === "day" ? 'Растущая луна' : 'Календарь';
-	const subtitle = activeTab === "day" ? 'I Фаза' : '21 сентября';
-	const noteToday = settings.notesList.filter((note) => note.day === settings.currentDayMoon);
-	const moonPhase = {
-		title: 'Растущая луна',
-		phase: 'I Фаза',
-		image: fullMoon
-	};
+	const parseLang = JSON.parse(JSON.stringify(lang));
 	const tabs = {
 		day: 'Сегодня',
 		calendar: 'Календарь'
@@ -32,9 +39,17 @@ export default function Moon({ navigation }) {
 	};
 	const rightButton = {
 		screenLink: 'createNote',
+		btnAction: 'note',
 		type: 'note',
-		// params: { noteToday, page: 'moon' }
 	};
+	const getDate = () => {
+		const day = period.slice(0, 2);
+		const month = period.slice(3, 5);
+
+		return `${ day } ${ parseLang.months[+month - 1].nameGen }`
+	};
+	const title = activeTab === "day" ? parseLang.phase[phase].title : 'Календарь';
+	const subtitle = activeTab === "day" ? parseLang.phase[phase].type : getDate();
 	const tabslist = Object.keys(tabs).map((key) => {
 		return (
 			<Pressable style={[ styles.button, activeTab === key && styles.activeButton ]} key={ key } onPress={ () => setActiveTab(key) }>
@@ -62,15 +77,15 @@ export default function Moon({ navigation }) {
 						<View style={ styles.personIcon }>
 							{ personIcon('#fff', .5) }
 						</View>
-						<Text style={ styles.sloganText }>{ settings.currentMoonDay.slogan }</Text>
+						<Text style={ styles.sloganText }>{ slogan }</Text>
 					</View>
 					: <View style={ styles.moonPhase }>
 						<View style={ styles.moonIcon }>
-							<Image style={ styles.imageMoon } source={ moonPhase.image } />
+							<Image style={ styles.imageMoon } source={ fullMoon } />
 						</View>
 						<View style={ styles.moonWrap }>
-							<Text style={ styles.moonTitle }>{ moonPhase.title }</Text>
-							<Text style={ styles.moonText }>{ moonPhase.phase }</Text>
+							<Text style={ styles.moonTitle }>{ parseLang.phase[phase].title }</Text>
+							<Text style={ styles.moonText }>{ parseLang.phase[phase].type }</Text>
 						</View>
 					</View>
 				}

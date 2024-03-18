@@ -116,5 +116,39 @@
 			"cropName": "Вс",
 			"fullName": "Воскресенье"
 		}
-	]
+	],
+	"phase": {
+		"newMoon": {
+			"title": "Новолуние",
+			"type": "Новолуние"
+		},
+		"waxingCrescent": {
+			"title": "Растущий Серп",
+			"type": "I Фаза"
+		},
+		"firstQuarter": {
+			"title": "Первая четверть",
+			"type": "I Четверть"
+		},
+		"waxingGibbous": {
+			"title": "Растущая Луна",
+			"type": "II Фаза"
+		},
+		"fullMoon": {
+			"title": "Полнолуние",
+			"type": "Полнолуние"
+		},
+		"waningGibbous": {
+			"title": "Убывающий Серп",
+			"type": "III Фаза"
+		},
+		"thirdQuarter": {
+			"title": "Последняя четверть",
+			"type": "III четверть"
+		},
+		"waningCrescent": {
+			"title": "Убывающая Луна",
+			"type": "IV Фаза"
+		}
+	}
 }
