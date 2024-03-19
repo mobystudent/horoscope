@@ -117,7 +117,7 @@ export default function Header(props) {
 				<Pressable style={ styles.btn } onPress={ () => checkTypeLeftButton() }>
 					{ showIcon(typeLeft) }
 				</Pressable>
-				<View>
+				<View style={ styles.wrap }>
 					<Text style={ styles.title }>{ title }</Text>
 					{ subtitle && <Text style={ styles.subtitle }>{ subtitle }</Text>}
 				</View>
@@ -137,14 +137,16 @@ const styles = StyleSheet.create({
 		height: 50,
 		marginTop: 30
 	},
+	wrap: {
+		rowGap: 5
+	},
 	title: {
 		// fontFamily: 'SFBold',
 		color: '#fff',
 		textAlign: 'center',
 		fontSize: 17,
 		lineHeight: 20,
-		letterSpacing: -.1,
-		marginBottom: 5
+		letterSpacing: -.1
 	},
 	subtitle: {
 		// fontFamily: 'SFReg',

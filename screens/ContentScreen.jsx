@@ -1,22 +1,20 @@
-import * as React from 'react';
+import { useContext } from 'react';
 import { StyleSheet, Text, ScrollView } from 'react-native';
 import Container from '../components/Container';
 import Header from '../components/Header';
+import { SettingsContext } from '../contexts/settings';
 
-export default function Content(props) {
+export default function Content({ navigation }) {
 	const {
-		navigation,
-		route: {
-			params: {
-				day = null,
-				headerTitle = '',
+		settings: {
+			displayDocument: {
+				header = '',
 				title = '',
 				symbol = '',
 				description = ''
 			} = {}
-		}
-	} = props;
-	const header = day ? `${ day }-й ${ headerTitle }` : headerTitle;
+		} = {}
+	} = useContext(SettingsContext);
 	const leftButton = {
 		screenLink: 'account',
 		type: 'back'
@@ -45,9 +43,9 @@ const styles = StyleSheet.create({
 	},
 	title: {
 		color: '#fff',
-		// fontFamily: 'SFBold',
-		fontSize: 20,
-		lineHeight: 24,
+		// fontFamily: 'SFSBold',
+		fontSize: 34,
+		lineHeight: 40,
 		marginBottom: 15
 	},
 	description: {

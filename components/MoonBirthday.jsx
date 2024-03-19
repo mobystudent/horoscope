@@ -16,9 +16,12 @@ export default function MoonBirthday({ navigation }) {
 				details: {
 					moonDay,
 					moonSign
-				}
+				},
+				content
 			}
-		}
+		},
+		settings,
+		setSettings
 	} = useContext(SettingsContext);
 	const parseLang = JSON.parse(JSON.stringify(lang));
 	const width = 40;
@@ -26,6 +29,17 @@ export default function MoonBirthday({ navigation }) {
 	const radius = (width - strokeWidth) / 2;
 	const circumference = 2 * Math.PI * radius;
 	const strokeDashoffset = circumference - moonDay.percent / 100 * circumference;
+	const openContent = () => {
+		setSettings({
+			...settings,
+			displayDocument: {
+				header: `${ moonDay.day }-й лунный день`,
+				...content
+			}
+		});
+
+		navigation.navigate('content');
+	};
 	const setPeriod = () => {
 		const splitPeriod = moonDay.period.split(' ');
 
@@ -40,7 +54,7 @@ export default function MoonBirthday({ navigation }) {
 
 	return (
 		<View style={ styles.content }>
-			<Pressable style={ styles.block } onPress={ () => navigation.navigate('content') }>
+			<Pressable style={ styles.block } onPress={ () => openContent() }>
 				<View style={ styles.dayWrap }>
 					<Text style={ styles.day }>{ moonDay.day }</Text>
 				</View>
