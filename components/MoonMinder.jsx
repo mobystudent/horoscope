@@ -60,14 +60,14 @@ const styles = StyleSheet.create({
 		overflow: 'hidden'
 	},
 	title: {
-		// fontFamily: 'SFBold',
+		fontFamily: 'SFBold',
 		fontSize: 20,
 		lineHeight: 26,
 		color: '#fff',
 		marginBottom: 5
 	},
 	desc: {
-		// fontFamily: 'SFReg',
+		fontFamily: 'SFReg',
 		fontSize: 14,
 		lineHeight: 18,
 		color: 'rgba(255, 255, 255, .5)',
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
 		backgroundColor: '#fff'
 	},
 	btnText: {
-		// fontFamily: 'SFMed',
+		fontFamily: 'SFMed',
 		fontSize: 16,
 		lineHeight: 20,
 		textAlign: 'center',

@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
 		position: 'static'
 	},
 	num: {
-		// fontFamily: 'SFReg',
+		fontFamily: 'SFReg',
 		fontSize: 16,
 		lineHeight: 20,
 		color: '#fff',

@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
 		backgroundColor: 'rgba(255, 255, 255, .12)'
 	},
 	buttonText: {
-		// fontFamily: 'SFMed',
+		fontFamily: 'SFMed',
 		fontSize: 14,
 		lineHeight: 16,
 		color: '#fff',
@@ -76,20 +76,20 @@ const styles = StyleSheet.create({
 	},
 	title: {
 		color: '#fff',
-		// fontFamily: 'SFBold',
+		fontFamily: 'SFBold',
 		fontSize: 20,
 		lineHeight: 24,
 		marginBottom: 15
 	},
 	description: {
 		color: '#fff',
-		// fontFamily: 'SFReg',
+		fontFamily: 'SFReg',
 		fontSize: 16,
 		lineHeight: 24
 	},
 	symbol: {
 		color: 'rgba(255, 255, 255, .5)',
-		// fontFamily: 'SFReg',
+		fontFamily: 'SFReg',
 		fontSize: 12,
 		letterSpacing: -.075,
 		textTransform: 'uppercase',

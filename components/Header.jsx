@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
 		rowGap: 5
 	},
 	title: {
-		// fontFamily: 'SFBold',
+		fontFamily: 'SFBold',
 		color: '#fff',
 		textAlign: 'center',
 		fontSize: 17,
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
 		letterSpacing: -.1
 	},
 	subtitle: {
-		// fontFamily: 'SFReg',
+		fontFamily: 'SFReg',
 		color: 'rgba(255, 255, 255, .5)',
 		textAlign: 'center',
 		fontSize: 12,

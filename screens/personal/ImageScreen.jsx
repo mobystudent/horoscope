@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
 	hint: {
 		textAlign: 'center',
 		color: '#fff',
-		// fontFamily: 'SFReg',
+		fontFamily: 'SFReg',
 		fontSize: 12,
 		lineHeight: 14,
 		marginTop: 5
@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
 		backgroundColor: '#F2F2F3'
 	},
 	buttonText: {
-		// fontFamily: 'SFSbold',
+		fontFamily: 'SFSbold',
 		textAlign: 'center',
 		fontSize: 17,
 		color: '#1A1E2C',

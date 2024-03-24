@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
 	},
 	title: {
 		color: '#fff',
-		// fontFamily: 'SFSbold',
+		fontFamily: 'SFSbold',
 		fontSize: 42,
 		lineHeight: 50,
 		textAlign: 'center',
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
 	},
 	subtitle: {
 		color: '#fff',
-		// fontFamily: 'SFReg',
+		fontFamily: 'SFReg',
 		fontSize: 16,
 		lineHeight: 20,
 		textAlign: 'center',
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
 	},
 	text: {
 		color: '#fff',
-		// fontFamily: 'SFMed',
+		fontFamily: 'SFMed',
 		fontSize: 20,
 		lineHeight: 24
 	},
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
 	},
 	rateText: {
 		color: '#fff',
-		// fontFamily: 'SFBold',
+		fontFamily: 'SFBold',
 		fontSize: 17,
 		lineHeight: 19,
 		letterSpacing: -.186
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
 	},
 	btnText: {
 		color: '#1A1E2C',
-		// fontFamily: 'SFBold',
+		fontFamily: 'SFBold',
 		fontSize: 17,
 		lineHeight: 19,
 		textAlign: 'center'

@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
 		opacity: .5
 	},
 	day: {
-		// fontFamily: 'SFBold',
+		fontFamily: 'SFBold',
 		fontSize: 34,
 		lineHeight: 40,
 		color: '#fff',
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
 		alignItems: 'flex-end'
 	},
 	text: {
-		// fontFamily: 'SFReg',
+		fontFamily: 'SFReg',
 		fontSize: 12,
 		lineHeight: 14,
 		color: '#fff',

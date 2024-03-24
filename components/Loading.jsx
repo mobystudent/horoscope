@@ -14,7 +14,7 @@ export default function Loading() {
 	const [ month, setMonth ] = useState({});
 
 	useEffect(() => {
-		const loadFonts = async () => {
+		const loadData = async () => {
 			await SplashScreen.preventAutoHideAsync();
 			await Font.loadAsync({
 				'SFBold': require('../assets/fonts/SFProDisplay-Bold.ttf'),
@@ -120,7 +120,7 @@ export default function Loading() {
 			// }
 		};
 
-		loadFonts();
+		loadData();
 	}, []);
 
 	if (!ready) return;

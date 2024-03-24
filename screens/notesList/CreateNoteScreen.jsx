@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
 	},
 	title: {
 		color: '#fff',
-		// fontFamily: 'SFSBold',
+		fontFamily: 'SFSBold',
 		fontSize: 34,
 		lineHeight: 40,
 		marginBottom: 15
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
 	},
 	inputDescription: {
 		color: '#fff',
-		// fontFamily: 'SFReg',
+		fontFamily: 'SFReg',
 		fontSize: 16,
 		lineHeight: 24,
 	},
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
 		backgroundColor: '#F2F2F3',
 	},
 	buttonText: {
-		// fontFamily: 'SFSbold',
+		fontFamily: 'SFSbold',
 		textAlign: 'center',
 		fontSize: 17,
 		color: '#1A1E2C',

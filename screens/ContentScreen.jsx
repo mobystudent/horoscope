@@ -43,20 +43,20 @@ const styles = StyleSheet.create({
 	},
 	title: {
 		color: '#fff',
-		// fontFamily: 'SFSBold',
+		fontFamily: 'SFSBold',
 		fontSize: 34,
 		lineHeight: 40,
 		marginBottom: 15
 	},
 	description: {
 		color: '#fff',
-		// fontFamily: 'SFReg',
+		fontFamily: 'SFReg',
 		fontSize: 16,
 		lineHeight: 24
 	},
 	symbol: {
 		color: 'rgba(255, 255, 255, .5)',
-		// fontFamily: 'SFReg',
+		fontFamily: 'SFReg',
 		fontSize: 12,
 		letterSpacing: -.075,
 		textTransform: 'uppercase',

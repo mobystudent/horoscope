@@ -38,14 +38,14 @@ const styles = StyleSheet.create({
 		backgroundColor: 'rgba(255, 255, 255, .12)'
 	},
 	title: {
-		// fontFamily: 'SFBold',
+		fontFamily: 'SFBold',
 		fontSize: 20,
 		lineHeight: 26,
 		color: '#fff',
 		marginBottom: 5
 	},
 	date: {
-		// fontFamily: 'SFReg',
+		fontFamily: 'SFReg',
 		fontSize: 14,
 		lineHeight: 18,
 		color: 'rgba(255, 255, 255, .5)',
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
 	},
 	desc: {
 		marginTop: 'auto',
-		// fontFamily: 'SFReg',
+		fontFamily: 'SFReg',
 		fontSize: 16,
 		lineHeight: 22,
 		color: '#fff'

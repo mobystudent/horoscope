@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
 	},
 	sloganText: {
 		flex: 1,
-		// fontFamily: 'SFReg',
+		fontFamily: 'SFReg',
 		fontSize: 16,
 		lineHeight: 20,
 		color: '#fff',
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
 		backgroundColor: 'rgba(255, 255, 255, .12)'
 	},
 	buttonText: {
-		// fontFamily: 'SFMed',
+		fontFamily: 'SFMed',
 		fontSize: 14,
 		lineHeight: 16,
 		color: '#fff',
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
 		height: '100%'
 	},
 	moonTitle: {
-		// fontFamily: 'SFBold',
+		fontFamily: 'SFBold',
 		fontSize: 20,
 		lineHeight: 24,
 		color: '#fff',
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
 		marginBottom: 5
 	},
 	moonText: {
-		// fontFamily: 'SFReg',
+		fontFamily: 'SFReg',
 		fontSize: 16,
 		lineHeight: 20,
 		color: '#fff',

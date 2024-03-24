@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		paddingVertical: 12,
 		color: '#fff',
-		// fontFamily: 'SFReg',
+		fontFamily: 'SFReg',
 		fontSize: 16,
 		lineHeight: 20,
 		textAlignVertical: 'center',
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
 	},
 	hint: {
 		color: '#fff',
-		// fontFamily: 'SFReg',
+		fontFamily: 'SFReg',
 		fontSize: 12,
 		lineHeight: 14,
 		marginTop: 5

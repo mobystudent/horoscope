@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
 		height: 28
 	},
 	name: {
-		// fontFamily: 'SFBold',
+		fontFamily: 'SFBold',
 		fontSize: 20,
 		lineHeight: 24,
 		color: '#fff',
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
 		width: '100%'
 	},
 	title: {
-		// fontFamily: 'SFReg',
+		fontFamily: 'SFReg',
 		fontSize: 12,
 		lineHeight: 16,
 		color: 'rgba(255, 255, 255, .5)',
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
 		borderTopColor: 'rgba(255, 255, 255, .1)'
 	},
 	text: {
-		// fontFamily: 'SFReg',
+		fontFamily: 'SFReg',
 		fontSize: 16,
 		lineHeight: 20,
 		color: '#fff',
