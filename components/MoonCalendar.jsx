@@ -18,7 +18,8 @@ export default function MoonCalendar({ type }) {
 						period
 					}
 				}
-			}
+			},
+			currentMonth
 		}
 	} = useContext(SettingsContext);
 	const [ dayWidth, setDayWidth ] = useState(0);
@@ -27,146 +28,9 @@ export default function MoonCalendar({ type }) {
 	const numberDay = date.date();
 	const numberWeekDay = date.isoWeekday();
 	const numberMonth = date.month();
-	const days = [
-		{
-			number: '1',
-			moon: 'newMoon',
-			sign: 'leo'
-		},
-		{
-			number: '2',
-			moon: 'fullMoon',
-			sign: 'leo'
-		},
-		{
-			number: '3',
-			moon: 'lastQuarter',
-			sign: 'leo'
-		},
-		{
-			number: '4',
-			moon: 'waningMoon',
-			sign: 'leo'
-		},
-		{
-			number: '5',
-			moon: 'oldMoon',
-			sign: 'leo'
-		},
-		{
-			number: '6',
-			moon: 'youngMoon',
-			sign: 'leo'
-		},
-		{
-			number: '7',
-			moon: 'firstQuarter',
-			sign: 'leo'
-		},
-		{
-			number: '8',
-			moon: 'waxingMoon',
-			sign: 'leo'
-		},
-		{
-			number: '9',
-			moon: 'waxingMoon',
-			sign: 'leo'
-		},
-		{
-			number: '10',
-			moon: 'waxingMoon',
-			sign: 'leo'
-		},
-		{
-			number: '11',
-			moon: 'waxingMoon',
-			sign: 'leo'
-		},
-		{
-			number: '12',
-			moon: 'waxingMoon',
-			sign: 'leo'
-		},
-		{
-			number: '13',
-			moon: 'waxingMoon',
-			sign: 'leo'
-		},
-		{
-			number: '14',
-			moon: 'waxingMoon',
-			sign: 'leo'
-		},
-		{
-			number: '15',
-			moon: 'waxingMoon',
-			sign: 'leo'
-		},
-		{
-			number: '16',
-			moon: 'waxingMoon',
-			sign: 'leo'
-		},
-		{
-			number: '17',
-			moon: 'waxingMoon',
-			sign: 'leo'
-		},
-		{
-			number: '18',
-			moon: 'waxingMoon',
-			sign: 'leo'
-		},
-		{
-			number: '19',
-			moon: 'waxingMoon',
-			sign: 'leo'
-		},
-		{
-			number: '20',
-			moon: 'waxingMoon',
-			sign: 'leo'
-		},
-		{
-			number: '21',
-			moon: 'waxingMoon',
-			sign: 'leo'
-		},
-		{
-			number: '22',
-			moon: 'waxingMoon',
-			sign: 'leo'
-		},
-		{
-			number: '23',
-			moon: 'waxingMoon',
-			sign: 'leo'
-		},
-		{
-			number: '24',
-			moon: 'waxingMoon',
-			sign: 'leo'
-		},
-		{
-			number: '25',
-			moon: 'waxingMoon',
-			sign: 'leo'
-		},
-		{
-			number: '26',
-			moon: 'waxingMoon',
-			sign: 'leo'
-		},
-		{
-			number: '27',
-			moon: 'waxingMoon',
-			sign: 'leo'
-		},
-	];
 	const calendarWidth = ({ nativeEvent: { layout } }) => {
 		const columnGap = 5;
-		const bodyWidth = layout.width - columnGap*6;
+		const bodyWidth = layout.width - columnGap * 6;
 
 		setDayWidth(bodyWidth / 7);
 	};
@@ -176,12 +40,14 @@ export default function MoonCalendar({ type }) {
 	const filterWeek = () => {
 		const firstDayWeek = numberWeekDay - 1;
 		const firstDay = numberDay - firstDayWeek;
-		const lastDay = firstDay + 7;
+		const firstDayOfWeek = firstDay < 0 ? 0 : firstDay - 1;
+		const countDaysOfMonth = Object.keys(currentMonth).length;
+		const lastDayOfWeek = firstDay + 6 > countDaysOfMonth ? countDaysOfMonth : firstDay + 6;
 
-		return days.filter((day) => day.number >= firstDay && day.number < lastDay);
+		return Object.keys(currentMonth).slice(firstDayOfWeek, lastDayOfWeek);
 	};
-	const visibleDays = type === 'calendar' ? days : filterWeek();
-	const monthArray = visibleDays.map(({ number, moon, sign }) => {
+	const visibleDays = type === 'calendar' ? Object.keys(currentMonth) : filterWeek();
+	const monthArray = visibleDays.map((key) => {
 		const numberYear = date.format('YY');
 		const numberFirstDay = moment(`01-${ numberMonth + 1 }-${ numberYear }`, 'DD-MM-YY').isoWeekday();
 
@@ -189,20 +55,20 @@ export default function MoonCalendar({ type }) {
 			<Pressable
 				style={[
 					styles.item,
-					numberDay === number && styles.itemActive,
+					numberDay === key && styles.itemActive,
 					{ width: dayWidth },
-					number === '1' && { marginLeft: (numberFirstDay - 1) * (dayWidth + 5) }
+					key === '1' && { marginLeft: (numberFirstDay - 1) * (dayWidth + 5) }
 				]}
-				key={ number }
+				key={ key }
 				onPress={ () => checkDay()
 			}>
-				<Text style={ styles.number }>{ number }</Text>
+				<Text style={ styles.number }>{ key }</Text>
 				<View style={ styles.wrap }>
 					<View style={ styles.itemIcon }>
-						{ phase[moon]('#fff') }
+						{ phase[currentMonth[key].moon]('#fff') }
 					</View>
 					<View style={ styles.itemIcon }>
-						{ zodiac[sign]('#fff') }
+						{ zodiac[currentMonth[key].sign]('#fff') }
 					</View>
 				</View>
 			</Pressable>

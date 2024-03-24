@@ -34,11 +34,11 @@ export default function Loading() {
 				details: {
 					sunDay: {
 						day: '21',
-						period: '21-09-23'
+						period: '02-09-23'
 					},
 					moonDay: {
 						day: '5',
-						period: 'С 01:53 20.05-до 23:03 21.05'
+						period: '01:53 20.05-23:03 21.05'
 					},
 					sunSign: 'cancer',
 					moonSign: 'virgo'
@@ -60,6 +60,132 @@ export default function Loading() {
 					}
 				}
 			};
+			const month = {
+				'1': {
+					moon: 'newMoon',
+					sign: 'leo'
+				},
+				'2': {
+					moon: 'fullMoon',
+					sign: 'leo'
+				},
+				'3': {
+					moon: 'lastQuarter',
+					sign: 'leo'
+				},
+				'4': {
+					moon: 'waningMoon',
+					sign: 'leo'
+				},
+				'5': {
+					moon: 'oldMoon',
+					sign: 'leo'
+				},
+				'6': {
+					moon: 'youngMoon',
+					sign: 'leo'
+				},
+				'7': {
+					moon: 'firstQuarter',
+					sign: 'leo'
+				},
+				'8': {
+					moon: 'waxingMoon',
+					sign: 'leo'
+				},
+				'9': {
+					moon: 'waxingMoon',
+					sign: 'leo'
+				},
+				'10': {
+					moon: 'waxingMoon',
+					sign: 'leo'
+				},
+				'11': {
+					moon: 'waxingMoon',
+					sign: 'leo'
+				},
+				'12': {
+					moon: 'waxingMoon',
+					sign: 'leo'
+				},
+				'13': {
+					moon: 'waxingMoon',
+					sign: 'leo'
+				},
+				'14': {
+					moon: 'waxingMoon',
+					sign: 'leo'
+				},
+				'15': {
+					moon: 'waxingMoon',
+					sign: 'leo'
+				},
+				'16': {
+					moon: 'waxingMoon',
+					sign: 'leo'
+				},
+				'17': {
+					moon: 'waxingMoon',
+					sign: 'leo'
+				},
+				'18': {
+					moon: 'waxingMoon',
+					sign: 'leo'
+				},
+				'19': {
+					moon: 'waxingMoon',
+					sign: 'leo'
+				},
+				'20': {
+					moon: 'waxingMoon',
+					sign: 'leo'
+				},
+				'21': {
+					moon: 'waxingMoon',
+					sign: 'leo'
+				},
+				'22': {
+					moon: 'waxingMoon',
+					sign: 'leo'
+				},
+				'23': {
+					moon: 'waxingMoon',
+					sign: 'leo'
+				},
+				'24': {
+					moon: 'waxingMoon',
+					sign: 'leo'
+				},
+				'25': {
+					moon: 'waxingMoon',
+					sign: 'leo'
+				},
+				'26': {
+					moon: 'waxingMoon',
+					sign: 'leo'
+				},
+				'27': {
+					moon: 'waxingMoon',
+					sign: 'leo'
+				},
+				'28': {
+					moon: 'waxingMoon',
+					sign: 'leo'
+				},
+				'29': {
+					moon: 'waxingMoon',
+					sign: 'leo'
+				},
+				'30': {
+					moon: 'waxingMoon',
+					sign: 'leo'
+				},
+				// '31': {
+				// 	moon: 'waxingMoon',
+				// 	sign: 'leo'
+				// },
+			}
 
 			setFirstScreen(Boolean(storagePersonString) ? 'moon' : 'name');
 			setSettings({
@@ -67,7 +193,8 @@ export default function Loading() {
 				person: storagePerson || {},
 				notesList: storageNotesList || [],
 				birthdayMoon: storageBirthdayMoon || {},
-				currentMoonDay: moonData
+				currentMoonDay: moonData,
+				currentMonth: month
 			});
 			setReady(true);
 

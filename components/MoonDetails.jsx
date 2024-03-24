@@ -37,8 +37,8 @@ export default function MoonDetails({ type }) {
 			const parsePeriod = obj.period.split('-');
 
 			if (type === 'calendar') {
-				textUpper = parsePeriod[0];
-				textLower = parsePeriod[1];
+				textUpper = `С ${parsePeriod[0]}`;
+				textLower = `до ${parsePeriod[1]}`;
 			} else {
 				const periodStart = parsePeriod[0];
 				const lastIndent = periodStart.lastIndexOf(' ');
