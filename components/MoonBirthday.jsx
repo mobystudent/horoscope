@@ -6,7 +6,7 @@ import { SettingsContext } from '../contexts/settings';
 import lang from '../languages/lang_ru.json';
 
 import { arrowRightIcon } from '../icons/elements';
-import * as zodiac from '../icons/zodiac';
+import { zodiacIcons } from '../icons/zodiac';
 
 export default function MoonBirthday({ navigation }) {
 	const {
@@ -87,8 +87,8 @@ export default function MoonBirthday({ navigation }) {
 					<Text style={ styles.title }>{ parseLang.phase[phase].title }</Text>
 					<Text style={ styles.text }>{ parseLang.phase[phase].type }</Text>
 				</View>
-				<View style={ styles.zodiac }>
-					{ zodiac[moonSign]('#fff') }
+				<View style={ styles.zodiacIcon }>
+					{ zodiacIcons('#fff')[moonSign] }
 				</View>
 			</View>
 		</View>
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
 		width: 9,
 		height: 14
 	},
-	zodiac: {
+	zodiacIcon: {
 		alignItems: 'center',
 		justifyContent: 'center',
 		width: 40,

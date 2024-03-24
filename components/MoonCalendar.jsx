@@ -6,8 +6,8 @@ import moment from 'moment';
 import lang from '../languages/lang_ru.json';
 
 import { arrowRightIcon, arrowLeftIcon } from '../icons/elements';
-import * as zodiacIcons from '../icons/zodiac';
-import * as phaseIcons from '../icons/phase';
+import { zodiacIcons } from '../icons/zodiac';
+import { phaseIcons } from '../icons/phase';
 
 export default function MoonCalendar({ type }) {
 	const {
@@ -65,10 +65,10 @@ export default function MoonCalendar({ type }) {
 				<Text style={ styles.number }>{ key }</Text>
 				<View style={ styles.wrap }>
 					<View style={ styles.itemIcon }>
-						{ phaseIcons[currentMonth[key].phase]('#fff') }
+						{ phaseIcons('#fff')[currentMonth[key].phase] }
 					</View>
 					<View style={ styles.itemIcon }>
-						{ zodiacIcons[currentMonth[key].sign]('#fff') }
+						{ zodiacIcons('#fff')[currentMonth[key].sign] }
 					</View>
 				</View>
 			</Pressable>

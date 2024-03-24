@@ -5,16 +5,17 @@ import moment from 'moment';
 
 import lang from '../languages/lang_ru.json';
 
-import * as zodiacIcons from '../icons/zodiac';
+import { zodiacIcons } from '../icons/zodiac';
 import { borderIcon } from '../icons/elements';
 
 export default function MoonDetails({ type }) {
 	const {
 		settings: {
 			currentMoonDay: {
-				details
-			}
-		}
+				phase = '',
+				details = {}
+			} = {}
+		} = {}
 	} = useContext(SettingsContext);
 	const [ blockSize, setBlockSize ] = useState(0);
 	const parseLang = JSON.parse(JSON.stringify(lang));
@@ -102,7 +103,7 @@ export default function MoonDetails({ type }) {
 						</>
 						: <>
 							<View style={ styles.sign }>
-								{ zodiacIcons[block]('#fff') }
+								{ zodiacIcons('#fff')[block] }
 							</View>
 							<Text style={ styles.text }>{ `В ${ parseLang.zodiac[block].namePrep }` }</Text>
 						</>
