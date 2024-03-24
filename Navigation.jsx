@@ -2,6 +2,7 @@ import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import NameScreen from './screens/personal/NameScreen';
+import DateScreen from './screens/personal/DateScreen';
 import TimeScreen from './screens/personal/TimeScreen';
 import CityScreen from './screens/personal/CityScreen';
 import GenderScreen from './screens/personal/GenderScreen';
@@ -26,6 +27,7 @@ export default function Navigation({ screen }) {
 				}}
 			>
 				<Stack.Screen name="name" component={ NameScreen } />
+				<Stack.Screen name="date" component={ DateScreen } />
 				<Stack.Screen name="time" component={ TimeScreen } />
 				<Stack.Screen name="city" component={ CityScreen } />
 				<Stack.Screen name="gender" component={ GenderScreen } />

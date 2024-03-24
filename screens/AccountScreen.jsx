@@ -20,12 +20,10 @@ export default function Account({ navigation }) {
 	const userData = [
 		{
 			title: 'Дата',
-			value: '15.07.1999',
 			screen: 'date'
 		},
 		{
 			title: 'Время',
-			value: '19:30',
 			screen: 'time'
 		},
 		{
@@ -61,7 +59,7 @@ export default function Account({ navigation }) {
 
 		return <Pressable style={ style } key={ i } onPress={ () => navigation.navigate(data.screen) }>
 			<Text style={ styles.text }>{ data.title }</Text>
-			<Text style={ styles.text }>{ settings.person[data.screen] || data.value }</Text>
+			<Text style={ styles.text }>{ settings.person[data.screen] }</Text>
 		</Pressable>;
 	});
 	const documentsArray = Object.keys(documents).map((key, i) => {

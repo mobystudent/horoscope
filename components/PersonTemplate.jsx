@@ -27,8 +27,10 @@ export default function PersonTemplate(props) {
 				leftButton={ settings.registered && leftButton }
 			/>
 			<Pressable style={ styles.body } onPress={ () => Keyboard.dismiss() }>
-				<Text style={ styles.title }>{ title }</Text>
-				<Text style={ styles.description }>{ description }</Text>
+				<View style={ styles.header }>
+					<Text style={ styles.title }>{ title }</Text>
+					<Text style={ styles.description }>{ description }</Text>
+				</View>
 				<View style={ styles.wrap }>
 					{ children }
 				</View>
@@ -50,9 +52,13 @@ const styles = StyleSheet.create({
 		paddingTop: 15,
 		paddingBottom: 45
 	},
+	header: {
+		minHeight: 165,
+		marginBottom: 25
+	},
 	wrap: {
 		flex: 1,
-		marginBottom: 100,
+		marginBottom: 40,
 		minHeight: 120
 	},
 	title: {
@@ -67,8 +73,7 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		fontFamily: 'SFReg',
 		fontSize: 16,
-		lineHeight: 20,
-		marginBottom: 65
+		lineHeight: 20
 	},
 	button: {
 		borderRadius: 17,
@@ -83,7 +88,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 65,
 	},
 	disabledButton: {
-		backgroundColor: "rgba(255, 255, 255, 0.12)"
+		backgroundColor: 'rgba(255, 255, 255, 0.12)'
 	},
 	disabledText: {
 		color: "#fff",
