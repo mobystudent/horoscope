@@ -17,15 +17,15 @@ export default function Moon({ navigation }) {
 	const {
 		settings: {
 			currentMoonDay: {
-				phase,
-				slogan,
+				phase = '',
+				slogan = '',
 				details: {
 					sunDay: {
-						period
-					}
-				}
-			}
-		}
+						period = ''
+					} = {}
+				} = {}
+			} = {}
+		} = {}
 	} = useContext(SettingsContext);
 	const [ activeTab, setActiveTab ] = useState('day');
 	const parseLang = JSON.parse(JSON.stringify(lang));

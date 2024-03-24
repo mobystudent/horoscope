@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
+import moment from 'moment';
 import Navigation from '../Navigation';
 
 import { SettingsContext } from '../contexts/settings';
@@ -10,6 +11,7 @@ export default function Loading() {
 	const { settings, setSettings } = useContext(SettingsContext);
 	const [ ready, setReady ] = useState(false);
 	const [ firstScreen, setFirstScreen ] = useState('');
+	const [ month, setMonth ] = useState({});
 
 	useEffect(() => {
 		const loadFonts = async () => {
@@ -27,6 +29,11 @@ export default function Loading() {
 			const storagePerson = JSON.parse(storagePersonString);
 			const storageNotesList = JSON.parse(storageNotesString);
 			const storageBirthdayMoon = JSON.parse(storageBirthdayString);
+			const currentDate = moment().format('YYYY-DD-MM');
+
+			console.log('currentDate =================');
+			console.log(currentDate);
+			console.log('currentDate =================');
 
 			const moonData = {
 				phase: 'fullMoon',
@@ -34,7 +41,7 @@ export default function Loading() {
 				details: {
 					sunDay: {
 						day: '21',
-						period: '02-09-23'
+						period: '24-03-24'
 					},
 					moonDay: {
 						day: '5',
@@ -60,145 +67,57 @@ export default function Loading() {
 					}
 				}
 			};
-			const month = {
-				'1': {
-					moon: 'newMoon',
-					sign: 'leo'
-				},
-				'2': {
-					moon: 'fullMoon',
-					sign: 'leo'
-				},
-				'3': {
-					moon: 'lastQuarter',
-					sign: 'leo'
-				},
-				'4': {
-					moon: 'waningMoon',
-					sign: 'leo'
-				},
-				'5': {
-					moon: 'oldMoon',
-					sign: 'leo'
-				},
-				'6': {
-					moon: 'youngMoon',
-					sign: 'leo'
-				},
-				'7': {
-					moon: 'firstQuarter',
-					sign: 'leo'
-				},
-				'8': {
-					moon: 'waxingMoon',
-					sign: 'leo'
-				},
-				'9': {
-					moon: 'waxingMoon',
-					sign: 'leo'
-				},
-				'10': {
-					moon: 'waxingMoon',
-					sign: 'leo'
-				},
-				'11': {
-					moon: 'waxingMoon',
-					sign: 'leo'
-				},
-				'12': {
-					moon: 'waxingMoon',
-					sign: 'leo'
-				},
-				'13': {
-					moon: 'waxingMoon',
-					sign: 'leo'
-				},
-				'14': {
-					moon: 'waxingMoon',
-					sign: 'leo'
-				},
-				'15': {
-					moon: 'waxingMoon',
-					sign: 'leo'
-				},
-				'16': {
-					moon: 'waxingMoon',
-					sign: 'leo'
-				},
-				'17': {
-					moon: 'waxingMoon',
-					sign: 'leo'
-				},
-				'18': {
-					moon: 'waxingMoon',
-					sign: 'leo'
-				},
-				'19': {
-					moon: 'waxingMoon',
-					sign: 'leo'
-				},
-				'20': {
-					moon: 'waxingMoon',
-					sign: 'leo'
-				},
-				'21': {
-					moon: 'waxingMoon',
-					sign: 'leo'
-				},
-				'22': {
-					moon: 'waxingMoon',
-					sign: 'leo'
-				},
-				'23': {
-					moon: 'waxingMoon',
-					sign: 'leo'
-				},
-				'24': {
-					moon: 'waxingMoon',
-					sign: 'leo'
-				},
-				'25': {
-					moon: 'waxingMoon',
-					sign: 'leo'
-				},
-				'26': {
-					moon: 'waxingMoon',
-					sign: 'leo'
-				},
-				'27': {
-					moon: 'waxingMoon',
-					sign: 'leo'
-				},
-				'28': {
-					moon: 'waxingMoon',
-					sign: 'leo'
-				},
-				'29': {
-					moon: 'waxingMoon',
-					sign: 'leo'
-				},
-				'30': {
-					moon: 'waxingMoon',
-					sign: 'leo'
-				},
-				// '31': {
-				// 	moon: 'waxingMoon',
-				// 	sign: 'leo'
-				// },
-			}
 
-			setFirstScreen(Boolean(storagePersonString) ? 'moon' : 'name');
-			setSettings({
-				...settings,
-				person: storagePerson || {},
-				notesList: storageNotesList || [],
-				birthdayMoon: storageBirthdayMoon || {},
-				currentMoonDay: moonData,
-				currentMonth: month
-			});
-			setReady(true);
+			fetch(`https://api-moon.digitalynx.org/api/moon/special/month?date=${ currentDate }`)
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error('Network response was not ok');
+					}
 
-			await SplashScreen.hideAsync();
+					return response.json();
+				})
+				.then((data) => {
+					setMonth(data);
+					// const sortedKeys = Object.entries(month)
+					// 	.sort((a, b) => a[0] - b[0]);
+					// console.log('data ///////////////////////////');
+					// console.log( Object.fromEntries(sortedKeys));
+					// console.log(data);
+					// console.log('data ///////////////////////////');
+					// setMonth(data);
+					setFirstScreen(Boolean(storagePersonString) ? 'moon' : 'name');
+					setSettings({
+						...settings,
+						person: storagePerson || {},
+						notesList: storageNotesList || [],
+						birthdayMoon: storageBirthdayMoon || {},
+						currentMoonDay: moonData,
+						currentMonth: month
+					});
+					console.log('settings --------------------------------');
+					console.log(settings);
+					console.log('settings --------------------------------');
+					setReady(true);
+					SplashScreen.hideAsync();
+				})
+				.catch(error => {
+					console.error('There was a problem with your fetch operation:', error);
+				});
+
+			// setFirstScreen(Boolean(storagePersonString) ? 'moon' : 'name');
+			// setSettings({
+			// 	...settings,
+			// 	person: storagePerson || {},
+			// 	notesList: storageNotesList || [],
+			// 	birthdayMoon: storageBirthdayMoon || {},
+			// 	currentMoonDay: moonData
+			// });
+			// console.log(statusRequest);
+			// if (ready) {
+			// 	// setReady(true);
+			// 	console.log('READY');
+			// 	await SplashScreen.hideAsync();
+			// }
 		};
 
 		loadFonts();

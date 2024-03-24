@@ -6,8 +6,8 @@ import moment from 'moment';
 import lang from '../languages/lang_ru.json';
 
 import { arrowRightIcon, arrowLeftIcon } from '../icons/elements';
-import * as zodiac from '../icons/zodiac';
-import * as phase from '../icons/phase';
+import * as zodiacIcons from '../icons/zodiac';
+import * as phaseIcons from '../icons/phase';
 
 export default function MoonCalendar({ type }) {
 	const {
@@ -15,12 +15,12 @@ export default function MoonCalendar({ type }) {
 			currentMoonDay: {
 				details: {
 					sunDay: {
-						period
-					}
-				}
-			},
-			currentMonth
-		}
+						period = ''
+					} = {}
+				} = {}
+			} = {},
+			currentMonth = {}
+		} = {}
 	} = useContext(SettingsContext);
 	const [ dayWidth, setDayWidth ] = useState(0);
 	const parseLang = JSON.parse(JSON.stringify(lang));
@@ -65,10 +65,10 @@ export default function MoonCalendar({ type }) {
 				<Text style={ styles.number }>{ key }</Text>
 				<View style={ styles.wrap }>
 					<View style={ styles.itemIcon }>
-						{ phase[currentMonth[key].moon]('#fff') }
+						{ phaseIcons[currentMonth[key].phase]('#fff') }
 					</View>
 					<View style={ styles.itemIcon }>
-						{ zodiac[currentMonth[key].sign]('#fff') }
+						{ zodiacIcons[currentMonth[key].sign]('#fff') }
 					</View>
 				</View>
 			</Pressable>
