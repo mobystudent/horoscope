@@ -1,5 +1,6 @@
 import { useState, useContext } from 'react';
 import { StyleSheet, View, Text, ScrollView } from 'react-native';
+import { SvgXml } from 'react-native-svg';
 import { SettingsContext } from '../contexts/settings';
 import moment from 'moment';
 
@@ -7,6 +8,7 @@ import lang from '../languages/lang_ru.json';
 
 import { zodiacIcons } from '../icons/zodiac';
 import { borderIcon } from '../icons/elements';
+import { moonIcons } from '../icons/moon';
 
 export default function MoonDetails({ type }) {
 	const {
@@ -117,6 +119,10 @@ export default function MoonDetails({ type }) {
 			</View>
 		);
 	});
+	const moonIconPosition = {
+		top: blockSize.height ? blockSize.height - 165 / 2 + 5 : 0,
+		left: blockSize.width ? blockSize.width - 165 / 2 + 5 : 0
+	};
 
 	return (
 		type === 'calendar' ? (
@@ -129,6 +135,11 @@ export default function MoonDetails({ type }) {
 			<View style={ styles.square }>
 				<View style={ styles.details } onLayout={ (event) => detailsSize(event) }>
 					{ detailsList }
+					{
+						type === 'day' && <View style={[ styles.moonIcon, { top: moonIconPosition.top, left: moonIconPosition.left } ]}>
+							<SvgXml xml={ moonIcons(phase) } width={ 165 } height={ 165 } />
+						</View>
+					}
 				</View>
 			</View>
 		)
@@ -199,6 +210,9 @@ const styles = StyleSheet.create({
 		height: 40
 	},
 	borderIcon: {
+		position: 'absolute'
+	},
+	moonIcon: {
 		position: 'absolute'
 	}
 });

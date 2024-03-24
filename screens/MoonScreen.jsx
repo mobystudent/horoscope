@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
-import { StyleSheet, View, Text, Pressable, ScrollView, Image } from 'react-native';
+import { StyleSheet, View, Text, Pressable, ScrollView } from 'react-native';
+import { SvgXml } from 'react-native-svg';
 import Container from '../components/Container';
 import Header from '../components/Header';
 import MoonInfo from '../components/MoonInfo';
@@ -10,8 +11,7 @@ import { SettingsContext } from '../contexts/settings';
 import lang from '../languages/lang_ru.json';
 
 import { personIcon } from '../icons/elements';
-
-import fullMoon from '../assets/images/fullMoon.png';
+import { moonIcons } from '../icons/moon';
 
 export default function Moon({ navigation }) {
 	const {
@@ -89,9 +89,7 @@ export default function Moon({ navigation }) {
 						<Text style={ styles.sloganText }>{ slogan }</Text>
 					</View>
 					: <View style={ styles.moonPhase }>
-						<View style={ styles.moonIcon }>
-							<Image style={ styles.imageMoon } source={ fullMoon } />
-						</View>
+						<SvgXml xml={ moonIcons(phase) } width={ 48 } height={ 48 } />
 						<View style={ styles.moonWrap }>
 							<Text style={ styles.moonTitle }>{ parseLang.phase[phase].title }</Text>
 							<Text style={ styles.moonText }>{ parseLang.phase[phase].type }</Text>
@@ -161,14 +159,10 @@ const styles = StyleSheet.create({
 		columnGap: 15,
 		marginBottom: 15
 	},
-	moonIcon: {
-		width: 48,
-		height: 48
-	},
-	imageMoon: {
-		width: '100%',
-		height: '100%'
-	},
+	// moonIcon: {
+	// 	width: 48,
+	// 	height: 48
+	// },
 	moonTitle: {
 		fontFamily: 'SFBold',
 		fontSize: 20,
