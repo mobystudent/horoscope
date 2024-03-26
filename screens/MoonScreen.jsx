@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { StyleSheet, View, Text, Pressable, ScrollView } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import Container from '../components/Container';
@@ -7,6 +7,7 @@ import MoonInfo from '../components/MoonInfo';
 import MoonDetails from '../components/MoonDetails';
 import MoonCalendar from '../components/MoonCalendar';
 import { SettingsContext } from '../contexts/settings';
+import moment from 'moment';
 
 import lang from '../languages/lang_ru.json';
 
@@ -25,9 +26,7 @@ export default function Moon({ navigation }) {
 					} = {}
 				} = {}
 			} = {}
-		} = {},
-		settings,
-		setSettings
+		} = {}
 	} = useContext(SettingsContext);
 	const [ activeTab, setActiveTab ] = useState('day');
 	const parseLang = JSON.parse(JSON.stringify(lang));
@@ -45,10 +44,9 @@ export default function Moon({ navigation }) {
 		type: 'note',
 	};
 	const getDate = () => {
-		const day = period.slice(0, 2);
-		const month = period.slice(3, 5);
+		const date = moment(period, 'YYYY-MM-DD');
 
-		return `${ day } ${ parseLang.months[+month - 1].nameGen }`
+		return `${ date.date() } ${ parseLang.months[date.month()].nameGen }`
 	};
 	const title = activeTab === "day" ? parseLang.phase[phase].title : 'Календарь';
 	const subtitle = activeTab === "day" ? parseLang.phase[phase].type : getDate();
@@ -59,13 +57,6 @@ export default function Moon({ navigation }) {
 			</Pressable>
 		);
 	});
-
-	useEffect(() => {
-		setSettings({
-			...settings,
-			background: phase
-		});
-	}, []);
 
 	return (
 		<Container>

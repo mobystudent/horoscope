@@ -24,7 +24,7 @@ export default function MoonCalendar({ type }) {
 	} = useContext(SettingsContext);
 	const [ dayWidth, setDayWidth ] = useState(0);
 	const parseLang = JSON.parse(JSON.stringify(lang));
-	const date = moment(period, 'DD-MM-YY');
+	const date = moment(period, 'YYYY-MM-DD');
 	const numberDay = date.date();
 	const numberWeekDay = date.isoWeekday();
 	const numberMonth = date.month();
@@ -55,7 +55,7 @@ export default function MoonCalendar({ type }) {
 			<Pressable
 				style={[
 					styles.item,
-					numberDay === key && styles.itemActive,
+					numberDay === +key && styles.itemActive,
 					{ width: dayWidth },
 					key === '1' && { marginLeft: (numberFirstDay - 1) * (dayWidth + 5) }
 				]}

@@ -32,12 +32,12 @@ export default function MoonDetails({ type }) {
 		let textLower = '';
 
 		if (name === 'sunDay') {
-			const date = moment(obj.period, 'DD-MM-YY');
+			const date = moment(obj.period, 'YYYY-MM-DD');
 
 			textUpper = parseLang.months[date.month()].nameGen;
 			textLower = date.year();
 		} else {
-			const parsePeriod = obj.period.split('-');
+			const parsePeriod = obj.period.split(' - ');
 
 			if (type === 'calendar') {
 				textUpper = `С ${parsePeriod[0]}`;
