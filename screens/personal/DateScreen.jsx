@@ -19,7 +19,7 @@ export default function DateScreen({ navigation }) {
 	const [ currentDate, setCurrentDate ] = useState({
 		day: datePresent.date(),
 		month: datePresent.month(),
-		year: datePresent.year()
+		year: datePresent.year() - 5
 	});
 	const numberFirstDay = moment(`01-${ currentDate.month + 1 }-${ currentDate.year }`, 'DD-MM-YYYY').isoWeekday();
 	const calendarWidth = ({ nativeEvent: { layout } }) => {
@@ -91,13 +91,19 @@ export default function DateScreen({ navigation }) {
 		console.log(currentDate);
 	};
 	const changeViewMonth = (direction) => {
+		const minAgeLimit = currentDate.month === datePresent.month() && currentDate.year <= datePresent.year() - 75;
+		const maxAgeLimit = currentDate.month === datePresent.month() && currentDate.year >= datePresent.year() - 5;
 		let viewMonth = 0;
 		let viewYear = 0;
 
 		if (direction === 'next') {
+			if (maxAgeLimit) return;
+
 			viewMonth = currentDate.month + 1 > 11 ? 0 : currentDate.month + 1;
-			viewYear = currentDate.month === 0 ? currentDate.year + 1 : currentDate.year;
+			viewYear = currentDate.month === 11 ? currentDate.year + 1 : currentDate.year;
 		} else {
+			if (minAgeLimit) return;
+
 			viewMonth = currentDate.month - 1 < 0 ? 11 : currentDate.month - 1;
 			viewYear = viewMonth === 11 ? currentDate.year - 1 : currentDate.year;
 		}
@@ -124,17 +130,17 @@ export default function DateScreen({ navigation }) {
 			<View style={ styles.content }>
 				<View style={ styles.calendar }>
 					<View style={ styles.header }>
-						<Text style={ styles.month }>{ parseLang.months[currentDate.month].nameNom }</Text>
 						<Text style={ styles.year }>{ currentDate.year }</Text>
+						<Text style={ styles.month }>{ parseLang.months[currentDate.month].nameNom }</Text>
 						<View style={ styles.control }>
 							<Pressable style={ styles.button } onPress={ () => changeViewMonth('prev') }>
 								<View style={ styles.arrowIcon }>
-									{ arrowLeftIcon('#fff', .5) }
+									{ arrowLeftIcon('#fff', 1) }
 								</View>
 							</Pressable>
 							<Pressable style={ styles.button } onPress={ () => changeViewMonth('next') }>
 								<View style={ styles.arrowIcon }>
-									{ arrowRightIcon('#fff', .5) }
+									{ arrowRightIcon('#fff', 1) }
 								</View>
 							</Pressable>
 						</View>
@@ -166,13 +172,15 @@ const styles = StyleSheet.create({
 		marginBottom: 15
 	},
 	month: {
+		flex: 1,
 		fontFamily: 'SFBold',
 		fontSize: 16,
 		lineHeight: 20,
-		color: '#fff'
+		color: '#fff',
+		textAlign: 'center'
 	},
 	year: {
-		flex: 1,
+		width: 65,
 		fontFamily: 'SFBold',
 		fontSize: 16,
 		lineHeight: 20,
@@ -188,11 +196,12 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		width: 32,
 		height: 32,
-		borderRadius: 32/2
+		borderRadius: 32/2,
+		backgroundColor: 'rgba(255, 255, 255, .12)'
 	},
 	arrowIcon: {
-		width: 11,
-		height: 18
+		width: 9,
+		height: 14
 	},
 	body: {
 		flexDirection: 'row',
