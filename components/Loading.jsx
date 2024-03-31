@@ -12,22 +12,22 @@ export default function Loading() {
 	const [ readyData, setReadyData ] = useState(false);
 	const [ serverData, setServerData ] = useState(false);
 	const [ firstScreen, setFirstScreen ] = useState('');
-	const [ month, setMonth ] = useState({});
+	const [ months, setMonths ] = useState({});
 	const [ moon, setMoon ] = useState({});
 
 	useEffect(() => {
 		const currentDate = moment().format('YYYY-MM-DD');
 
-		fetch(`https://api-moon.digitalynx.org/api/moon/special/month?date=${ currentDate }`)
+		fetch(`https://api-moon.digitalynx.org/api/moon/special/year?date=${ currentDate }`)
 			.then((response) => {
 				if (!response.ok) {
-					throw new Error('Network response was not ok. Getting month failed');
+					throw new Error('Network response was not ok. Getting months failed');
 				}
 
 				return response.json();
 			})
-			.then((monthData) => {
-				setMonth(monthData);
+			.then((monthsData) => {
+				setMonths(monthsData);
 
 				return fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ currentDate }`);
 			})
@@ -73,7 +73,7 @@ export default function Loading() {
 				notesList: storageNotesList || [],
 				birthdayMoon: storageBirthdayMoon || {},
 				currentMoonDay: moon,
-				currentMonth: month,
+				monthsRange: months,
 				background: moon.phase
 			});
 			setReadyData(true);
