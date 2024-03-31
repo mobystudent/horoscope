@@ -15,9 +15,13 @@ export default function DateScreen({ navigation }) {
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
 	const [ dayWidth, setDayWidth ] = useState(0);
 	const parseLang = JSON.parse(JSON.stringify(lang));
-	const dateCur = moment();
-	const numberMonth = dateCur.month();
-	const currentYear = dateCur.year();
+	const datePresent = moment();
+	const [ currentDate, setCurrentDate ] = useState({
+		day: datePresent.date(),
+		month: datePresent.month(),
+		year: datePresent.year()
+	});
+	const numberFirstDay = moment(`01-${ currentDate.month + 1 }-${ currentDate.year }`, 'DD-MM-YYYY').isoWeekday();
 	const calendarWidth = ({ nativeEvent: { layout } }) => {
 		const columnGap = 4;
 		const bodyWidth = layout.width - columnGap * 6;
@@ -58,20 +62,18 @@ export default function DateScreen({ navigation }) {
 	};
 	const monthArray = () => {
 		const daysList = [];
-		const numberYear = dateCur.format('YY');
-		const numberFirstDay = moment(`01-${ numberMonth + 1 }-${ numberYear }`, 'DD-MM-YY').isoWeekday();
 
-		for (let i = 0; i < dateCur.daysInMonth(); i++) {
+		for (let i = 0; i < datePresent.daysInMonth(); i++) {
 			daysList.push(
 				<Pressable
 					style={[
 						styles.item,
-						date === i + 1 && styles.itemActive,
+						currentDate.day === i + 1 && styles.itemActive,
 						{ width: dayWidth, height: dayWidth, borderRadius: dayWidth / 2 },
 						i + 1 === 1 && { marginLeft: (numberFirstDay - 1) * (dayWidth + 4) }
 					]}
 					key={ i }
-					onPress={ () => checkDay(i + 1)
+					onPress={ () => chooseDay(i + 1)
 				}>
 					<Text style={ styles.number }>{ i + 1 }</Text>
 				</Pressable>
@@ -80,8 +82,31 @@ export default function DateScreen({ navigation }) {
 
 		return daysList;
 	};
-	const checkDay = (day) => {
-		setDate(day);
+	const chooseDay = (day) => {
+		setCurrentDate({
+			...currentDate,
+			day
+		});
+
+		console.log(currentDate);
+	};
+	const changeViewMonth = (direction) => {
+		let viewMonth = 0;
+		let viewYear = 0;
+
+		if (direction === 'next') {
+			viewMonth = currentDate.month + 1 > 11 ? 0 : currentDate.month + 1;
+			viewYear = currentDate.month === 0 ? currentDate.year + 1 : currentDate.year;
+		} else {
+			viewMonth = currentDate.month - 1 < 0 ? 11 : currentDate.month - 1;
+			viewYear = viewMonth === 11 ? currentDate.year - 1 : currentDate.year;
+		}
+
+		setCurrentDate({
+			...currentDate,
+			month: viewMonth,
+			year: viewYear
+		});
 	};
 	const title = 'Когда у вас день рождение?';
 	const description = 'Укажите дату своего рождения, чтобы получить доступ к астрологическому анализу и лунным фазам, влияющим на вас';
@@ -99,15 +124,15 @@ export default function DateScreen({ navigation }) {
 			<View style={ styles.content }>
 				<View style={ styles.calendar }>
 					<View style={ styles.header }>
-						<Text style={ styles.month }>{ parseLang.months[numberMonth].nameNom }</Text>
-						<Text style={ styles.year }>{ currentYear }</Text>
+						<Text style={ styles.month }>{ parseLang.months[currentDate.month].nameNom }</Text>
+						<Text style={ styles.year }>{ currentDate.year }</Text>
 						<View style={ styles.control }>
-							<Pressable style={ styles.button } onPress={ () => console.log('prev') }>
+							<Pressable style={ styles.button } onPress={ () => changeViewMonth('prev') }>
 								<View style={ styles.arrowIcon }>
 									{ arrowLeftIcon('#fff', .5) }
 								</View>
 							</Pressable>
-							<Pressable style={ styles.button } onPress={ () => console.log('next') }>
+							<Pressable style={ styles.button } onPress={ () => changeViewMonth('next') }>
 								<View style={ styles.arrowIcon }>
 									{ arrowRightIcon('#fff', .5) }
 								</View>

@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { StyleSheet, Text, Pressable, View, Keyboard } from 'react-native';
+import { StyleSheet, Text, Pressable, View, Keyboard, ScrollView } from 'react-native';
 import Container from './Container';
 import Header from './Header';
 import { SettingsContext } from '../contexts/settings';
@@ -27,20 +27,22 @@ export default function PersonTemplate(props) {
 				leftButton={ settings.registered && leftButton }
 			/>
 			<Pressable style={ styles.body } onPress={ () => Keyboard.dismiss() }>
-				<View style={ styles.header }>
-					<Text style={ styles.title }>{ title }</Text>
-					<Text style={ styles.description }>{ description }</Text>
-				</View>
-				<View style={ styles.wrap }>
-					{ children }
-				</View>
-				<Pressable
-					style={[ styles.button, disabledBtn && styles.disabledButton ]}
-					onPress={ () => nextStep() }
-					disabled={ disabledBtn }
-				>
-					<Text style={[ styles.buttonText, disabledBtn && styles.disabledText ]}>{ btnText }</Text>
-				</Pressable>
+				<ScrollView contentContainerStyle={ styles.bodyWrapper } showsVerticalScrollIndicator={ false }>
+					<View style={ styles.header }>
+						<Text style={ styles.title }>{ title }</Text>
+						<Text style={ styles.description }>{ description }</Text>
+					</View>
+					<View style={ styles.wrap }>
+						{ children }
+					</View>
+					<Pressable
+						style={[ styles.button, disabledBtn && styles.disabledButton ]}
+						onPress={ () => nextStep() }
+						disabled={ disabledBtn }
+					>
+						<Text style={[ styles.buttonText, disabledBtn && styles.disabledText ]}>{ btnText }</Text>
+					</Pressable>
+				</ScrollView>
 			</Pressable>
 		</Container>
 	);

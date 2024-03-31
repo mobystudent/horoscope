@@ -32,7 +32,7 @@ export default function MoonCalendar({ type }) {
 	const [ currentDate, setCurrentDate ] = useState({
 		day: date.date(),
 		month: date.month(),
-		year: date.format('YYYY')
+		year: date.year()
 	});
 	const numberFirstDay = moment(`01-${ currentDate.month + 1 }-${ currentDate.year }`, 'DD-MM-YYYY').isoWeekday();
 	const calendarWidth = ({ nativeEvent: { layout } }) => {
@@ -56,7 +56,6 @@ export default function MoonCalendar({ type }) {
 	};
 	const visibleDays = type === 'calendar' ? Object.keys(currentMonth) : filterWeek();
 	const monthArray = visibleDays.map((key) => {
-
 		return (
 			<Pressable
 				style={[
