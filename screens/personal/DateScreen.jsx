@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { StyleSheet, Text, View, Pressable, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PersonTemplate from '../../components/PersonTemplate';
@@ -27,6 +27,8 @@ export default function DateScreen({ navigation }) {
 		month: datePresent.month(),
 		year: datePresent.year() - 5
 	});
+	const minAgeLimit = currentDate.month === datePresent.month() && currentDate.year <= datePresent.year() - 74;
+	const maxAgeLimit = currentDate.month === datePresent.month() && currentDate.year >= datePresent.year() - 5;
 	const numberFirstDay = moment(`01-${ currentDate.month + 1 }-${ currentDate.year }`, 'DD-MM-YYYY').isoWeekday();
 	const calendarWidth = ({ nativeEvent: { layout } }) => {
 		const columnGap = 4;
@@ -70,21 +72,38 @@ export default function DateScreen({ navigation }) {
 		const daysList = [];
 		const chooseMonth = moment().year(currentDate.year).month(currentDate.month).daysInMonth();
 
-		for (let i = 0; i < chooseMonth; i++) {
-			daysList.push(
-				<Pressable
-					style={[
-						styles.item,
-						currentDate.day === i + 1 && styles.itemActive,
-						{ width: dayWidth, height: dayWidth, borderRadius: dayWidth / 2 },
-						i + 1 === 1 && { marginLeft: (numberFirstDay - 1) * (dayWidth + 4) }
-					]}
-					key={ i }
-					onPress={ () => chooseDay(i + 1)
-				}>
-					<Text style={ styles.number }>{ i + 1 }</Text>
-				</Pressable>
-			);
+		for (let day = 0; day < chooseMonth; day++) {
+			const dayDisabledMin = minAgeLimit && day + 1 < datePresent.date() && styles.disabled;
+			const dayDisabledMax = maxAgeLimit && day + 1 > datePresent.date() && styles.disabled;
+
+			if (dayDisabledMax || dayDisabledMin) {
+				daysList.push(
+					<View
+						style={[
+							styles.item,
+							{ width: dayWidth, height: dayWidth, borderRadius: dayWidth / 2 },
+						]}
+						key={ day }
+					>
+						<Text style={[ styles.number, dayDisabledMin, dayDisabledMax ]}>{ day + 1 }</Text>
+					</View>
+				);
+			} else {
+				daysList.push(
+					<Pressable
+						style={[
+							styles.item,
+							currentDate.day === day + 1 && styles.itemActive,
+							{ width: dayWidth, height: dayWidth, borderRadius: dayWidth / 2 },
+							day + 1 === 1 && { marginLeft: (numberFirstDay - 1) * (dayWidth + 4) }
+						]}
+						key={ day }
+						onPress={ () => chooseDay(day + 1) }
+					>
+						<Text style={ styles.number }>{ day + 1 }</Text>
+					</Pressable>
+				);
+			}
 		}
 
 		return daysList;
@@ -96,8 +115,6 @@ export default function DateScreen({ navigation }) {
 		});
 	};
 	const changeViewMonth = (direction) => {
-		const minAgeLimit = currentDate.month === datePresent.month() && currentDate.year <= datePresent.year() - 74;
-		const maxAgeLimit = currentDate.month === datePresent.month() && currentDate.year >= datePresent.year() - 5;
 		let viewMonth = 0;
 		let viewYear = 0;
 
@@ -134,8 +151,24 @@ export default function DateScreen({ navigation }) {
 		setShowYearsBoard(false);
 	};
 	const monthsNameArray = parseLang.months.map((month, index) => {
+		const monthDisabledMin = currentDate.year <= datePresent.year() - 74 && index < datePresent.month() && styles.disabled;
+		const monthDisabledMax = currentDate.year >= datePresent.year() - 5 && index > datePresent.month() && styles.disabled;
+
 		return (
-			<Pressable
+			monthDisabledMin || monthDisabledMax ?
+			<View
+				style={[
+					styles.boardItem,
+					{
+						width: boardItemSize.width / 3 - 2,
+						height: boardItemSize.height / 4 - 2
+					}
+				]}
+				key={ month.nameNom }
+			>
+				<Text style={[ styles.itemName, monthDisabledMin, monthDisabledMax ]}>{ month.nameNom }</Text>
+			</View>
+			: <Pressable
 				style={[
 					styles.boardItem,
 					{
@@ -185,6 +218,14 @@ export default function DateScreen({ navigation }) {
 	const title = 'Когда у вас день рождение?';
 	const description = 'Укажите дату своего рождения, чтобы получить доступ к астрологическому анализу и лунным фазам, влияющим на вас';
 	const btnText = settings.registered ? 'Сохранить' : 'Далее';
+
+	useEffect(() => {
+		const dayFormat = currentDate.day < 10 ? `0${ currentDate.day }` : currentDate.day;
+		const monthFormat = currentDate.month < 10 ? `0${ currentDate.month + 1 }` : currentDate.month + 1;
+
+		setDate(`${ dayFormat }-${ monthFormat }-${ currentDate.year }`);
+		setDisabledBtn(false);
+	}, [currentDate]);
 
 	return (
 		<PersonTemplate
@@ -305,6 +346,9 @@ const styles = StyleSheet.create({
 		lineHeight: 16,
 		color: 'rgba(255, 255, 255, .5)',
 		textAlign: 'center'
+	},
+	disabled: {
+		color: 'rgba(255, 255, 255, .12)'
 	},
 	item: {
 		justifyContent: 'center',

@@ -54,6 +54,9 @@ const styles = StyleSheet.create({
 		paddingTop: 15,
 		paddingBottom: 45
 	},
+	bodyWrapper: {
+		flex: 1
+	},
 	header: {
 		minHeight: 165,
 		marginBottom: 25
