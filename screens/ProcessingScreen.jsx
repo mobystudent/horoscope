@@ -5,6 +5,7 @@ import Svg, { Circle } from 'react-native-svg';
 import Container from '../components/Container';
 import Header from '../components/Header';
 import { SettingsContext } from '../contexts/settings';
+import moment from 'moment';
 
 import { checkIcon } from '../icons/elements';
 
@@ -18,6 +19,11 @@ export default function Processing({ navigation }) {
 		{ id: 4, level: 90, title: 'Составляем прогноз', active: false }
 	]);
 	const [ progress, setProgress ] = useState(0);
+	const [ readyData, setReadyData ] = useState(false);
+	const [ serverData, setServerData ] = useState(false);
+	const [ months, setMonths ] = useState({});
+	const [ moon, setMoon ] = useState({});
+	const [ birthdayMoon, setBirthdayMoon ] = useState({});
 	const title = 'Создаем ваш профиль';
 	const renderItem = (({ item }) => (
 		<View style={ [ styles.item, item.active && styles.active ] }>
@@ -45,7 +51,7 @@ export default function Processing({ navigation }) {
 	const strokeDashoffset = circumference - progress / 100 * circumference;
 
 	useEffect(() => {
-			setSteps((prevSteps) => prevSteps.map((step) => progress === step.level ? { ...step, active: true } : step));
+		setSteps((prevSteps) => prevSteps.map((step) => progress === step.level ? { ...step, active: true } : step));
 	}, [progress]);
 
 	useEffect(() => {
@@ -63,9 +69,56 @@ export default function Processing({ navigation }) {
 		}, time);
 
 		return () => clearInterval(progressId);
+	}, [readyData]);
+
+	useEffect(() => {
+		const currentDate = moment().format('YYYY-MM-DD');
+		const birthDate = moment(settings.person.date, 'DD-MM-YYYY').format('YYYY-MM-DD');
+
+		fetch(`https://api-moon.digitalynx.org/api/moon/special/year?date=${ currentDate }`)
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error('Network response was not ok. Getting months failed');
+				}
+
+				return response.json();
+			})
+			.then((monthsData) => {
+				setMonths(monthsData);
+
+				return fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ currentDate }`);
+			})
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error('Network response was not ok. Getting moon day failed');
+				}
+
+				return response.json();
+			})
+			.then((moonData) => {
+				setMoon(moonData);
+
+				return fetch(`https://api-moon.digitalynx.org/api/moon/register?date=${ birthDate }`);
+			})
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error('Network response was not ok. Getting moon birthday failed');
+				}
+
+				return response.json();
+			})
+			.then((birthdayData) => {
+				setBirthdayMoon(birthdayData);
+				setServerData(true);
+			})
+			.catch((error) => {
+				console.error('There was a problem with your fetch operation:', error);
+			});
 	}, []);
 
 	useEffect(() => {
+		if (!serverData) return;
+
 		const setNotesList = async () => {
 			const notesArray = [];
 
@@ -77,45 +130,33 @@ export default function Processing({ navigation }) {
 				});
 			}
 
-			const moonDay = {
-				phase: 'firstQuarter',
-				details: {
-					moonDay: {
-						day: '5',
-						percent: '33',
-						period: '01:53 20.05 - 23:03 21.05'
-					},
-					moonSign: 'libra'
-				},
-				content: {
-					symbol: 'единорог',
-					title: 'Хороший день для занятия спорта',
-					description: 'Давно выяснено, что при оценке дизайна и композиции читаемый текст мешает сосредоточиться. Lorem Ipsum используют потому, что тот обеспечивает более или менее стандартное заполнение шаблона, а также реальное распределение букв и пробелов в абзацах, которое не получается при простой дубликации "Здесь ваш текст.. Здесь ваш текст.. Здесь ваш текст.." Многие программы электронной вёрстки и редакторы HTML используют Lorem Ipsum в качестве текста по умолчанию, так что поиск по ключевым словам "lorem ipsum" сразу показывает, как много веб-страниц всё ещё дожидаются своего настоящего рождения. За прошедшие годы текст Lorem Ipsum получил много версий. Некоторые версии появились по ошибке, некоторые - намеренно (например, юмористические варианты).'
-				}
-			};
-
 			setSettings({
 				...settings,
 				notesList: notesArray,
-				birthdayMoon: moonDay,
-				registered: true
+				birthdayMoon,
+				registered: true,
+				currentMoonDay: moon,
+				monthsRange: months,
+				background: moon.phase
 			});
 
 			try {
 				const personString = JSON.stringify(settings.person);
 				const notesString = JSON.stringify(notesArray);
-				const birthdayString = JSON.stringify(moonDay);
+				const birthdayString = JSON.stringify(birthdayMoon);
 
 				await AsyncStorage.setItem('person', personString);
 				await AsyncStorage.setItem('notesArray', notesString);
 				await AsyncStorage.setItem('birthdayMoon', birthdayString);
+
+				setReadyData(true);
 			} catch (e) {
 				console.error(e);
 			}
 		};
 
 		setNotesList();
-	}, []);
+	}, [serverData]);
 
 	return (
 		<Container>
@@ -146,7 +187,7 @@ export default function Processing({ navigation }) {
 				<FlatList
 					data={ steps }
 					renderItem={ renderItem }
-					keyExtractor={ item => item.id }
+					keyExtractor={ (item) => item.id }
 					style={ styles.list }
 					contentContainerStyle={{ gap }}
 				/>
