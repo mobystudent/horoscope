@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { StyleSheet, Text, View, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Pressable, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PersonTemplate from '../../components/PersonTemplate';
 import { SettingsContext } from '../../contexts/settings';
@@ -14,6 +14,12 @@ export default function DateScreen({ navigation }) {
 	const [ date, setDate ] = useState(settings.person.date);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
 	const [ dayWidth, setDayWidth ] = useState(0);
+	const [ boardItemSize, setBoardItemSize ] = useState({
+		width: 0,
+		height: 0
+	});
+	const [ showMonthsBoard, setShowMonthsBoard ] = useState(false);
+	const [ showYearsBoard, setShowYearsBoard ] = useState(false);
 	const parseLang = JSON.parse(JSON.stringify(lang));
 	const datePresent = moment();
 	const [ currentDate, setCurrentDate ] = useState({
@@ -62,8 +68,9 @@ export default function DateScreen({ navigation }) {
 	};
 	const monthArray = () => {
 		const daysList = [];
+		const chooseMonth = moment().year(currentDate.year).month(currentDate.month).daysInMonth();
 
-		for (let i = 0; i < datePresent.daysInMonth(); i++) {
+		for (let i = 0; i < chooseMonth; i++) {
 			daysList.push(
 				<Pressable
 					style={[
@@ -87,11 +94,9 @@ export default function DateScreen({ navigation }) {
 			...currentDate,
 			day
 		});
-
-		console.log(currentDate);
 	};
 	const changeViewMonth = (direction) => {
-		const minAgeLimit = currentDate.month === datePresent.month() && currentDate.year <= datePresent.year() - 75;
+		const minAgeLimit = currentDate.month === datePresent.month() && currentDate.year <= datePresent.year() - 74;
 		const maxAgeLimit = currentDate.month === datePresent.month() && currentDate.year >= datePresent.year() - 5;
 		let viewMonth = 0;
 		let viewYear = 0;
@@ -114,6 +119,69 @@ export default function DateScreen({ navigation }) {
 			year: viewYear
 		});
 	};
+	const choiseMonth = (indexMonth) => {
+		setCurrentDate({
+			...currentDate,
+			month: indexMonth
+		});
+		setShowMonthsBoard(false);
+	};
+	const choiseYear = (year) => {
+		setCurrentDate({
+			...currentDate,
+			year
+		});
+		setShowYearsBoard(false);
+	};
+	const monthsNameArray = parseLang.months.map((month, index) => {
+		return (
+			<Pressable
+				style={[
+					styles.boardItem,
+					{
+						width: boardItemSize.width / 3 - 2,
+						height: boardItemSize.height / 4 - 2
+					}
+				]}
+				key={ month.nameNom }
+				onPress={ () => choiseMonth(index) }
+			>
+				<Text style={ styles.itemName }>{ month.nameNom }</Text>
+			</Pressable>
+		);
+	});
+	const yearPeriodArray = () => {
+		const yearsList = [];
+
+		for (let year = datePresent.year() - 74; year < datePresent.year() - 4; year++) {
+			yearsList.push(
+				<Pressable
+					style={[
+						styles.boardItem,
+						{
+							width: boardItemSize.width / 4 - 2.25,
+							height: boardItemSize.height / 5 - 2.5
+						}
+					]}
+					key={ year }
+					onPress={ () => choiseYear(year) }
+				>
+					<Text style={ styles.itemName }>{ year }</Text>
+				</Pressable>
+			);
+		}
+
+		return yearsList;
+	};
+	const contentSize = ({ nativeEvent: { layout } }) => {
+		const contentWidth = layout.width;
+		const contentHeight = layout.height;
+
+		setBoardItemSize({
+			width: contentWidth,
+			height: contentHeight
+		});
+	};
 	const title = 'Когда у вас день рождение?';
 	const description = 'Укажите дату своего рождения, чтобы получить доступ к астрологическому анализу и лунным фазам, влияющим на вас';
 	const btnText = settings.registered ? 'Сохранить' : 'Далее';
@@ -128,10 +196,14 @@ export default function DateScreen({ navigation }) {
 			nextStep={ nextStep }
 		>
 			<View style={ styles.content }>
-				<View style={ styles.calendar }>
+				<View style={ styles.calendar } onLayout={ (event) => contentSize(event) }>
 					<View style={ styles.header }>
-						<Text style={ styles.year }>{ currentDate.year }</Text>
-						<Text style={ styles.month }>{ parseLang.months[currentDate.month].nameNom }</Text>
+						<Pressable style={ styles.yearWrap } onPress={ () => setShowYearsBoard(true) }>
+							<Text style={ styles.year }>{ currentDate.year }</Text>
+						</Pressable>
+						<Pressable style={ styles.monthWrap } onPress={ () => setShowMonthsBoard(true) }>
+							<Text  style={ styles.month }>{ parseLang.months[currentDate.month].nameNom }</Text>
+						</Pressable>
 						<View style={ styles.control }>
 							<Pressable style={ styles.button } onPress={ () => changeViewMonth('prev') }>
 								<View style={ styles.arrowIcon }>
@@ -149,6 +221,18 @@ export default function DateScreen({ navigation }) {
 						{ nameDays }
 						{ monthArray() }
 					</View>
+					{ showMonthsBoard &&
+						<View style={[ styles.monthBoard, { width: boardItemSize.width, height: boardItemSize.height } ]}>
+							{ monthsNameArray }
+						</View>
+					}
+					{ showYearsBoard &&
+						<ScrollView style={[ styles.yearBoard, { width: boardItemSize.width, height: boardItemSize.height } ]} horizontal={ true }>
+							<View style={ styles.boardWrap }>
+								{ yearPeriodArray() }
+							</View>
+						</ScrollView>
+					}
 				</View>
 			</View>
 		</PersonTemplate>
@@ -160,27 +244,33 @@ const styles = StyleSheet.create({
 		flex: 1
 	},
 	calendar: {
+		position: 'relative',
 		padding: 15,
 		borderRadius: 17,
-		backgroundColor: 'rgba(255, 255, 255, .12)'
+		backgroundColor: 'rgba(255, 255, 255, .12)',
+		overflow: 'hidden'
 	},
 	header: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
-		columnGap: 10,
+		columnGap: 20,
 		marginBottom: 15
 	},
+	monthWrap: {
+		flex: 1
+	},
 	month: {
-		flex: 1,
 		fontFamily: 'SFBold',
 		fontSize: 16,
 		lineHeight: 20,
 		color: '#fff',
 		textAlign: 'center'
 	},
+	yearWrap: {
+		width: 65
+	},
 	year: {
-		width: 65,
 		fontFamily: 'SFBold',
 		fontSize: 16,
 		lineHeight: 20,
@@ -229,4 +319,32 @@ const styles = StyleSheet.create({
 		lineHeight: 24,
 		color: '#fff'
 	},
+	monthBoard: {
+		position: 'absolute',
+		flexWrap: 'wrap',
+		flexDirection: 'row',
+		gap: 3,
+		backgroundColor: '#100e24'
+	},
+	yearBoard: {
+		position: 'absolute',
+		backgroundColor: '#100e24'
+	},
+	boardWrap: {
+		flexWrap: 'wrap',
+		flexDirection: 'column',
+		gap: 3,
+		maxWidth: 1163
+	},
+	boardItem: {
+		alignItems: 'center',
+		justifyContent: 'center',
+		backgroundColor: 'rgba(255, 255, 255, .12)'
+	},
+	itemName: {
+		fontFamily: 'SFReg',
+		fontSize: 16,
+		lineHeight: 20,
+		color: '#fff'
+	}
 });

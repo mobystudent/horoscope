@@ -73,19 +73,19 @@ export default function MoonDetails({ type }) {
 
 		return (
 			<View style={
-						type === 'calendar'
-						? styles.detailItem
-						: [
-							styles.detailsBlock,
-							i % 2 && styles.detailItemPair,
-							{
-								width: blockSize.width,
-								height: blockSize.height
-							}
-						]
-					}
-					key={ key }
-				>
+					type === 'calendar'
+					? styles.detailItem
+					: [
+						styles.detailsBlock,
+						i % 2 && styles.detailItemPair,
+						{
+							width: blockSize.width,
+							height: blockSize.height
+						}
+					]
+				}
+				key={ key }
+			>
 				<Text style={[ styles.title, styles.text ]}>{ blocks[key] }</Text>
 				<View style={
 						type === 'calendar'
