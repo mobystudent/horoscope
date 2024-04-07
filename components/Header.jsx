@@ -21,7 +21,15 @@ export default function Header(props) {
 			params = null
 		} = {}
 	} = props;
-	const { settings, setSettings } = useContext(SettingsContext);
+	const {
+		settings: {
+			currentMoonDay: {
+				phase = ''
+			} = {}
+		} = {},
+		settings,
+		setSettings
+	} = useContext(SettingsContext);
 	const iconTypes = [
 		{
 			type: 'back',
@@ -76,6 +84,11 @@ export default function Header(props) {
 			}
 		}
 
+		setSettings({
+			...settings,
+			background: screenLinkLeft === 'moon' ? phase : 'main'
+		});
+
 		navigation.navigate(screenLinkLeft);
 	};
 
@@ -109,6 +122,11 @@ export default function Header(props) {
 		} else {
 			return navigation.navigate(screenLinkRight, { ...params });
 		}
+
+		setSettings({
+			...settings,
+			background: screenLinkLeft === 'moon' ? phase : 'main'
+		});
 	}
 
 	return (

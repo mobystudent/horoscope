@@ -136,8 +136,7 @@ export default function Processing({ navigation }) {
 				birthdayMoon,
 				registered: true,
 				currentMoonDay: moon,
-				monthsRange: months,
-				background: moon.phase
+				monthsRange: months
 			});
 
 			try {
@@ -226,7 +225,7 @@ const styles = StyleSheet.create({
 		color: '#fff',
 	},
 	circle: {
-		stroke: "rgba(255, 255, 255, .12)",
+		stroke: 'rgba(255, 255, 255, .12)',
 		fill: 'none'
 	},
 	circleFill: {
@@ -237,7 +236,7 @@ const styles = StyleSheet.create({
 		display: 'flex',
 		flexDirection: 'row',
 		columnGap: 15,
-		opacity: 0.4
+		opacity: .4
 	},
 	iconWrap: {
 		justifyContent: 'center',

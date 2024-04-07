@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { StyleSheet, View, Text, Pressable, ScrollView } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import Container from '../components/Container';
@@ -26,7 +26,9 @@ export default function Moon({ navigation }) {
 					} = {}
 				} = {}
 			} = {}
-		} = {}
+		} = {},
+		settings,
+		setSettings
 	} = useContext(SettingsContext);
 	const [ activeTab, setActiveTab ] = useState('day');
 	const parseLang = JSON.parse(JSON.stringify(lang));
@@ -57,6 +59,13 @@ export default function Moon({ navigation }) {
 			</Pressable>
 		);
 	});
+
+	useEffect(() => {
+		setSettings({
+			...settings,
+			background: phase
+		});
+	}, []);
 
 	return (
 		<Container>
