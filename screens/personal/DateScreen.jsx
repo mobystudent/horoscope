@@ -47,24 +47,46 @@ export default function DateScreen({ navigation }) {
 			date
 		};
 
-		setSettings({
-			...settings,
-			person: {
-				...userData
-			}
-		});
-
 		if (settings.registered) {
 			try {
 				const personString = JSON.stringify(userData);
+				const birthDate = moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD');
 
 				await AsyncStorage.setItem('person', personString);
+
+				fetch(`https://api-moon.digitalynx.org/api/moon/register?date=${ birthDate }`)
+					.then((response) => {
+						if (!response.ok) {
+							throw new Error('Network response was not ok. Getting moon birthday failed');
+						}
+
+						return response.json();
+					})
+					.then((birthdayData) => {
+						setSettings({
+							...settings,
+							person: {
+								...userData
+							},
+							birthdayMoon: birthdayData
+						});
+					})
+					.catch((error) => {
+						console.error('There was a problem with your fetch operation:', error);
+					});
 			} catch (e) {
 				console.error(e);
 			}
 
 			navigation.navigate('account');
 		} else {
+			setSettings({
+				...settings,
+				person: {
+					...userData
+				}
+			});
+
 			navigation.navigate('time');
 		}
 	};
