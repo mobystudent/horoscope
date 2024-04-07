@@ -100,8 +100,7 @@ export default function Account({ navigation }) {
 		return components;
 	};
 	const countAge = () => {
-		// const birthday = moment(settings.person.date, "DD.MM.YYYY");
-		const birthday = moment("15.07.1999", "DD.MM.YYYY");
+		const birthday = moment(settings.person.date, "DD-MM-YYYY");
 
 		return moment().diff(birthday, 'years');
 	};

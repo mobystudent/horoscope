@@ -72,11 +72,12 @@ export default function StartScreen({ navigation }) {
 
 			setSettings({
 				...settings,
-				person: storagePerson || {},
-				notesList: storageNotesList || [],
-				birthdayMoon: storageBirthdayMoon || {},
+				person: storagePerson,
+				notesList: storageNotesList,
+				birthdayMoon: storageBirthdayMoon,
 				currentMoonDay: moon,
-				monthsRange: months
+				monthsRange: months,
+				registered: true
 			});
 
 			await SplashScreen.hideAsync();
