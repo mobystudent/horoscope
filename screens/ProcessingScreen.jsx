@@ -1,5 +1,5 @@
-import { useState, useEffect, useContext } from 'react';
-import { StyleSheet, Text, View, FlatList, Animated } from 'react-native';
+import { useState, useEffect, useContext, useMemo } from 'react';
+import { StyleSheet, Text, View, Animated } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Svg, { Circle } from 'react-native-svg';
 import Container from '../components/Container';
@@ -12,11 +12,11 @@ import { checkIcon } from '../icons/elements';
 export default function Processing({ navigation }) {
 	const { settings, setSettings } = useContext(SettingsContext);
 	const [ steps, setSteps ] = useState([
-		{ id: 0, level: 20, title: 'Анализируем данные', active: false },
-		{ id: 1, level: 35, title: 'Адаптируем лунные события', active: false },
-		{ id: 2, level: 55, title: 'Учитываем влияние фаз', active: false },
-		{ id: 3, level: 75, title: 'Согласуем с биоритмами', active: false },
-		{ id: 4, level: 90, title: 'Составляем прогноз', active: false }
+		{ level: 20, title: 'Анализируем данные', active: false },
+		{ level: 35, title: 'Адаптируем лунные события', active: false },
+		{ level: 55, title: 'Учитываем влияние фаз', active: false },
+		{ level: 75, title: 'Согласуем с биоритмами', active: false },
+		{ level: 90, title: 'Составляем прогноз', active: false }
 	]);
 	const [ progress, setProgress ] = useState(0);
 	const [ readyData, setReadyData ] = useState(false);
@@ -25,17 +25,18 @@ export default function Processing({ navigation }) {
 	const [ moon, setMoon ] = useState({});
 	const [ birthdayMoon, setBirthdayMoon ] = useState({});
 	const title = 'Создаем ваш профиль';
-	const renderItem = (({ item }) => (
-		<View style={ [ styles.item, item.active && styles.active ] }>
-			<View style={ styles.iconWrap }>
-				<View style={ styles.checkIcon }>
-					{ checkIcon('#fff') }
+	const renderSteps = useMemo(() => {
+		return steps.map((step) => (
+			<View style={ [ styles.step, step.active && styles.active ] } key={ step.title }>
+				<View style={ styles.iconWrap }>
+					<View style={ styles.checkIcon }>
+						{ checkIcon('#fff') }
+					</View>
 				</View>
+				<Text style={ styles.text }>{ step.title }</Text>
 			</View>
-			<Text style={ styles.text }>{ item.title }</Text>
-		</View>
-	));
-	const gap = 25;
+		));
+	}, [steps]);
 	const time = 3000 / 100;
 
 	// const AnimatedCircle = useRef(new Animated.Value(0)).current;
@@ -47,17 +48,23 @@ export default function Processing({ navigation }) {
 	// 	outputRange: [0, Math.PI * 2],
 	// });
 	const circumference = 2 * Math.PI * radius;
-	console.log(progress);
 	const strokeDashoffset = circumference - progress / 100 * circumference;
-
-	useEffect(() => {
-		setSteps((prevSteps) => prevSteps.map((step) => progress === step.level ? { ...step, active: true } : step));
-	}, [progress]);
 
 	useEffect(() => {
 		const progressId = setInterval(() => {
 			setProgress((prevProgress) => {
 				const newProgress = prevProgress < 100 ? prevProgress + 1 : 100;
+				const activateStep = steps.find((step) => {
+					if (newProgress === step.level) {
+						step.active = true;
+
+						return step;
+					}
+				});
+
+				if (activateStep) {
+					setSteps([ ...steps ]);
+				}
 
 				if (newProgress === 100) {
 					clearInterval(progressId);
@@ -183,13 +190,9 @@ export default function Processing({ navigation }) {
 					</Svg>
 					<Text style={ styles.counter }>{ `${ progress }%` }</Text>
 				</View>
-				<FlatList
-					data={ steps }
-					renderItem={ renderItem }
-					keyExtractor={ (item) => item.id }
-					style={ styles.list }
-					contentContainerStyle={{ gap }}
-				/>
+				<View style={ styles.steps }>
+					{ renderSteps }
+				</View>
 			</View>
 		</Container>
 	);
@@ -204,14 +207,14 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		fontFamily: 'SFBold',
 		fontSize: 34,
-		marginBottom: 15
+		marginBottom: 35
 	},
 	wrap: {
 		position: 'relative',
 		justifyContent: 'center',
 		alignItems: 'center',
 		height: 165,
-		marginBottom: 65
+		marginBottom: 35
 	},
 	progress: {
 		marginLeft: 'auto',
@@ -232,7 +235,10 @@ const styles = StyleSheet.create({
 		stroke: '#fff',
 		fill: 'none'
 	},
-	item: {
+	steps: {
+		rowGap: 25
+	},
+	step: {
 		display: 'flex',
 		flexDirection: 'row',
 		columnGap: 15,
