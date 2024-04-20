@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
 		height: 49
 	},
 	text: {
-		fontFamily: 'SFReg',
+		fontWeight: '400',
 		fontSize: 16,
 		lineHeight: 20,
 		textAlign: 'center',

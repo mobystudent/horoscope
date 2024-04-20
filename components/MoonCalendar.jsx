@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
 		marginBottom: 15
 	},
 	month: {
-		fontFamily: 'SFBold',
+		fontWeight: '700',
 		fontSize: 20,
 		lineHeight: 24,
 		color: '#fff',
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
 		marginBottom: 5
 	},
 	weekDay: {
-		fontFamily: 'SFReg',
+		fontWeight: '400',
 		fontSize: 16,
 		lineHeight: 20,
 		color: 'rgba(255, 255, 255, .5)',
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
 		columnGap: 5
 	},
 	day: {
-		fontFamily: 'SFReg',
+		fontWeight: '400',
 		fontSize: 10,
 		lineHeight: 12,
 		color: 'rgba(255, 255, 255, .5)',
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
 		backgroundColor: 'rgba(255, 255, 255, .12)'
 	},
 	number: {
-		fontFamily: 'SFMed',
+		fontWeight: '500',
 		fontSize: 16,
 		lineHeight: 20,
 		color: '#fff'

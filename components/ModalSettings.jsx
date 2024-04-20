@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
 		borderTopColor: 'rgba(255, 255, 255, .1)'
 	},
 	text: {
-		fontFamily: 'SFReg',
+		fontWeight: '400',
 		fontSize: 16,
 		lineHeight: 20,
 		color: '#fff',

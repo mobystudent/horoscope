@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
 	title: {
 		color: '#fff',
 		textAlign: 'center',
-		fontFamily: 'SFBold',
+		fontWeight: '700',
 		fontSize: 34,
 		marginBottom: 35
 	},
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
 	counter: {
 		position: 'absolute',
 		fontSize: 34,
-		fontFamily: 'SFBold',
+		fontWeight: '700',
 		color: '#fff',
 	},
 	circle: {
@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
 		height: 11
 	},
 	text: {
-		fontFamily: 'SFReg',
+		fontWeight: '400',
 		color: '#FFF',
 		fontSize: 20,
 		lineHeight: 26

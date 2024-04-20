@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
 		flex: 1
 	},
 	month: {
-		fontFamily: 'SFBold',
+		fontWeight: '700',
 		fontSize: 16,
 		lineHeight: 20,
 		color: '#fff',
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
 		width: 65
 	},
 	year: {
-		fontFamily: 'SFBold',
+		fontWeight: '700',
 		fontSize: 16,
 		lineHeight: 20,
 		color: '#fff',
@@ -363,7 +363,7 @@ const styles = StyleSheet.create({
 		columnGap: 4
 	},
 	day: {
-		fontFamily: 'SFBold',
+		fontWeight: '700',
 		fontSize: 14,
 		lineHeight: 16,
 		color: 'rgba(255, 255, 255, .5)',
@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
 		backgroundColor: 'rgba(255, 255, 255, .12)'
 	},
 	number: {
-		fontFamily: 'SFMed',
+		fontWeight: '500',
 		fontSize: 20,
 		lineHeight: 24,
 		color: '#fff'
@@ -408,7 +408,7 @@ const styles = StyleSheet.create({
 		backgroundColor: 'rgba(255, 255, 255, .12)'
 	},
 	itemName: {
-		fontFamily: 'SFReg',
+		fontWeight: '400',
 		fontSize: 16,
 		lineHeight: 20,
 		color: '#fff'

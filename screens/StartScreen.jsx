@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
 	title: {
 		color: '#fff',
 		textAlign: 'center',
-		fontFamily: 'SFBold',
+		fontWeight: '700',
 		fontSize: 24,
 		lineHeight: 28
 	},

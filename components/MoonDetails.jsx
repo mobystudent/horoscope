@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
 		opacity: .5
 	},
 	day: {
-		fontFamily: 'SFBold',
+		fontWeight: '700',
 		fontSize: 34,
 		lineHeight: 40,
 		color: '#fff',
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
 		alignItems: 'flex-end'
 	},
 	text: {
-		fontFamily: 'SFReg',
+		fontWeight: '400',
 		fontSize: 12,
 		lineHeight: 14,
 		color: '#fff',

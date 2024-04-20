@@ -69,14 +69,14 @@ const styles = StyleSheet.create({
 	title: {
 		color: '#fff',
 		textAlign: 'center',
-		fontFamily: 'SFBold',
+		fontWeight: '700',
 		fontSize: 34,
 		marginBottom: 15
 	},
 	description: {
 		color: '#fff',
 		textAlign: 'center',
-		fontFamily: 'SFReg',
+		fontWeight: '400',
 		fontSize: 16,
 		lineHeight: 20
 	},
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
 		backgroundColor: '#F2F2F3',
 	},
 	buttonText: {
-		fontFamily: 'SFSbold',
+		fontWeight: '600',
 		textAlign: 'center',
 		fontSize: 17,
 		color: '#1A1E2C',

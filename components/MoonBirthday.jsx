@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
 		backgroundColor: 'rgba(255, 255, 255, .12)'
 	},
 	day: {
-		fontFamily: 'SFMed',
+		fontWeight: '500',
 		fontSize: 20,
 		lineHeight: 26,
 		color: '#fff',
@@ -117,14 +117,14 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	title: {
-		fontFamily: 'SFReg',
+		fontWeight: '400',
 		fontSize: 16,
 		lineHeight: 20,
 		letterSpacing: -.1,
 		color: '#fff'
 	},
 	text: {
-		fontFamily: 'SFReg',
+		fontWeight: '400',
 		fontSize: 14,
 		lineHeight: 20,
 		color: 'rgba(255, 255, 255, .5)'
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
 	},
 	counter: {
 		position: 'absolute',
-		fontFamily: 'SFMed',
+		fontWeight: '500',
 		fontSize: 12,
 		lineHeight: 14,
 		color: '#fff'
