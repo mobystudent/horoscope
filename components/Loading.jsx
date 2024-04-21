@@ -1,23 +1,52 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Navigation from '../Navigation';
+import Modal from './Modal';
+import { SettingsContext } from '../contexts/settings';
 
 export default function Loading() {
-	const [ readyData, setReadyData ] = useState(false);
+	const {
+		settings: {
+			modal = {}
+		} = {},
+		settings,
+		setSettings
+	} = useContext(SettingsContext);
 	const [ firstScreen, setFirstScreen ] = useState('');
+	const [ visibleModal, setVisibleModal ] = useState(false);
 
 	useEffect(() => {
-		const loadData = async () => {
-			const storagePersonString = await AsyncStorage.getItem('person');
+		const storagePersonData = async () => {
+			try {
+				const person = await AsyncStorage.getItem('person');
 
-			setFirstScreen(Boolean(storagePersonString) ? 'start' : 'name');
-			setReadyData(true);
+				setFirstScreen(person === null ? 'name' : 'start');
+			} catch(error) {
+				setSettings({
+					...settings,
+					modal: {
+						visible: true,
+						status: 'error',
+						title: 'Ошибка загрузки данных о пользователе',
+						message: `Проблема с ответом хранилища. ${ error }, попробуйте перезагрузить приложение`
+					}
+				});
+
+				return;
+			}
 		};
 
-		loadData();
+		storagePersonData();
 	}, []);
 
-	if (!readyData) return;
+	useEffect(() => {
+		if (!Object.keys(modal).length) return;
 
-	return <Navigation screen={ firstScreen } />;
+		setVisibleModal(modal.visible);
+	}, [Object.keys(modal).length]);
+
+	return <>
+		<Navigation screen={ firstScreen } />
+		{ visibleModal && <Modal /> }
+	</>;
 };
