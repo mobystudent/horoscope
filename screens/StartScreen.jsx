@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SplashScreen from 'expo-splash-screen';
@@ -11,81 +11,166 @@ import { moonIcons } from '../icons/moon';
 
 export default function StartScreen({ navigation }) {
 	const { settings, setSettings } = useContext(SettingsContext);
-	const [ readyData, setReadyData ] = useState(false);
-	const [ serverData, setServerData ] = useState(false);
+	const [ storagePerson, setStoragePerson ] = useState({});
+	const [ storageNotesList, setStorageNotesList ] = useState({});
+	const [ storageBirthdayMoon, setStorageBirthdayMoon ] = useState({});
 	const [ months, setMonths ] = useState({});
 	const [ moon, setMoon ] = useState({});
 	const time = 2000;
+	const storagePersonData = async () => {
+		try {
+			const person = await AsyncStorage.getItem('person');
 
-	useEffect(() => {
-		if (!readyData) return;
+			if (person === null) {
+				throw new Error('Данных о пользователе нет');
+			}
 
-		setTimeout(() => {
-			navigation.navigate('moon');
-		}, time);
-	}, [readyData]);
-
-	useEffect(() => {
-		const currentDate = moment().format('YYYY-MM-DD');
-
-		fetch(`https://api-moon.digitalynx.org/api/moon/special/year?date=${ currentDate }`)
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error('Network response was not ok. Getting months failed');
+			setStoragePerson(JSON.parse(person));
+		} catch(error) {
+			setSettings({
+				...settings,
+				modal: {
+					visible: true,
+					status: 'error',
+					title: 'Ошибка загрузки данных о пользователе',
+					message: `Проблема с ответом из хранилища. ${ error }, попробуйте перезагрузить приложение`
 				}
-
-				return response.json();
-			})
-			.then((monthsData) => {
-				setMonths(monthsData);
-
-				return fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ currentDate }`);
-			})
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error('Network response was not ok. Getting moon day failed');
-				}
-
-				return response.json();
-			})
-			.then((moonData) => {
-				setMoon(moonData);
-				setServerData(true);
-			})
-			.catch((error) => {
-				console.error('There was a problem with your fetch operation:', error);
 			});
+
+			return;
+		}
+	};
+	const storageNotesListData = async () => {
+		try {
+			const notesList = await AsyncStorage.getItem('notesArray');
+
+			if (notesList === null) {
+				throw new Error('Данных о сохраненных заметках нет');
+			}
+
+			setStorageNotesList(JSON.parse(notesList));
+		} catch(error) {
+			setSettings({
+				...settings,
+				modal: {
+					visible: true,
+					status: 'error',
+					title: 'Ошибка загрузки сохраненных заметок',
+					message: `Проблема с ответом из хранилища. ${ error }, попробуйте перезагрузить приложение`
+				}
+			});
+
+			return;
+		}
+	};
+	const storageBirthdayMoonData = async () => {
+		try {
+			const birthdayMoon = await AsyncStorage.getItem('birthdayMoon');
+
+			if (birthdayMoon === null) {
+				throw new Error('Данных о луне при рождении нет');
+			}
+
+			setStorageBirthdayMoon(JSON.parse(birthdayMoon));
+		} catch(error) {
+			setSettings({
+				...settings,
+				modal: {
+					visible: true,
+					status: 'error',
+					title: 'Ошибка загрузки данных о луне при рождении',
+					message: `Проблема с ответом из хранилища. ${ error }, попробуйте перезагрузить приложение`
+				}
+			});
+
+			return;
+		}
+	};
+	const settingsStatus = useMemo(() => {
+		return [storagePerson, storageNotesList, storageBirthdayMoon].every((object) => Object.keys(object).length);
+	}, [storagePerson, storageNotesList, storageBirthdayMoon]);
+
+	useEffect(() => {
+		const loadServerData = async () => {
+			try {
+				const currentDate = moment().format('YYYY-MM-DD');
+
+				await SplashScreen.preventAutoHideAsync();
+
+				fetch(`https://api-moon.digitalynx.org/api/moon/special/year?date=${ currentDate }`)
+					.then((response) => {
+						if (!response.ok) {
+							throw new Error('Не удалось получить данные о текущем лунном месяце');
+						}
+
+						return response.json();
+					})
+					.then((monthsData) => {
+						setMonths(monthsData);
+
+						return fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ currentDate }`);
+					})
+					.then((response) => {
+						if (!response.ok) {
+							throw new Error('Не удалось получить данные о текущем лунном дне');
+						}
+
+						return response.json();
+					})
+					.then((moonData) => {
+						setMoon(moonData);
+						storagePersonData();
+						storageNotesListData();
+						storageBirthdayMoonData();
+					})
+					.catch((error) => {
+						setSettings({
+							...settings,
+							modal: {
+								visible: true,
+								status: 'error',
+								title: 'Ошибка загрузки данных',
+								message: `Проблема с ответом от сети. ${ error }, попробуйте перезагрузить приложение`
+							}
+						});
+					});
+			} catch (error) {
+				setSettings({
+					...settings,
+					modal: {
+						visible: true,
+						status: 'error',
+						title: 'Ошибка подключения к сети',
+						message: `Не удалось подключиться к сети. ${ error }, попробуйте перезагрузить приложение`
+					}
+				});
+
+				return;
+			}
+		};
+
+		loadServerData();
 	}, []);
 
 	useEffect(() => {
-		if (!serverData) return;
+		if (!settingsStatus) return;
 
-		const loadData = async () => {
-			await SplashScreen.preventAutoHideAsync();
+		setSettings({
+			...settings,
+			person: storagePerson,
+			notesList: storageNotesList,
+			birthdayMoon: storageBirthdayMoon,
+			currentMoonDay: moon,
+			monthsRange: months,
+			registered: true
+		});
 
-			const storagePersonString = await AsyncStorage.getItem('person');
-			const storageNotesString = await AsyncStorage.getItem('notesArray');
-			const storageBirthdayString = await AsyncStorage.getItem('birthdayMoon');
-			const storagePerson = JSON.parse(storagePersonString);
-			const storageNotesList = JSON.parse(storageNotesString);
-			const storageBirthdayMoon = JSON.parse(storageBirthdayString);
-
-			setSettings({
-				...settings,
-				person: storagePerson,
-				notesList: storageNotesList,
-				birthdayMoon: storageBirthdayMoon,
-				currentMoonDay: moon,
-				monthsRange: months,
-				registered: true
-			});
-
+		setTimeout(async () => {
 			await SplashScreen.hideAsync();
-			setReadyData(true);
-		};
 
-		loadData();
-	}, [serverData]);
+			navigation.navigate('moon');
+		}, time);
+	}, [settingsStatus]);
 
 	return (
 		<Container>
