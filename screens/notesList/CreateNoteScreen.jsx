@@ -96,8 +96,18 @@ export default function CreateNote (props) {
 				currentNote: {}
 			});
 			setDescription('');
-		} catch (e) {
-			console.error(e);
+		} catch (error) {
+			setSettings({
+				...settings,
+				modal: {
+					visible: true,
+					status: 'error',
+					title: 'Ошибка сохраненния списка заметок',
+					message: `Проблема с записью в хранилище. ${ error }, попробуйте перезагрузить приложение`
+				}
+			});
+
+			return;
 		}
 	};
 	const header = settings.noteMode === 'new' || settings.noteMode === 'clear' ? 'Новая заметка' : `Заметка от ${settings.currentNote.date}`;

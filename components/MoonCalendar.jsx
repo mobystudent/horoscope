@@ -89,21 +89,50 @@ export default function MoonCalendar({ type }) {
 			day
 		});
 
-		fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ dateFormat }`)
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error('Network response was not ok. Getting months failed');
-				}
+		try {
+			fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ dateFormat }`)
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error('Не удалось получить данные о текущем лунном дне');
+					}
 
-				return response.json();
-			})
-			.then((moonData) => {
-				setSettings({
-					...settings,
-					currentMoonDay: moonData,
-					background: moonData.phase
+					return response.json();
+				})
+				.then((moonData) => {
+					if (!Object.keys(moonData).length) {
+						throw new Error(`Данных о текущем лунном дне на сервере не обнаружено`);
+					}
+
+					setSettings({
+						...settings,
+						currentMoonDay: moonData,
+						background: moonData.phase
+					});
+				})
+				.catch((error) => {
+					setSettings({
+						...settings,
+						modal: {
+							visible: true,
+							status: 'error',
+							title: 'Ошибка загрузки данных',
+							message: `Проблема с ответом от сети. ${ error }, попробуйте перезагрузить приложение`
+						}
+					});
 				});
+		} catch (error) {
+			setSettings({
+				...settings,
+				modal: {
+					visible: true,
+					status: 'error',
+					title: 'Ошибка подключения к сети',
+					message: `Не удалось подключиться к сети. ${ error }, попробуйте перезагрузить приложение`
+				}
 			});
+
+			return;
+		}
 	};
 	const changeViewMonth = (direction) => {
 		let viewMonth = 0;

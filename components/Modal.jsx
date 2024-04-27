@@ -16,9 +16,7 @@ export default function ModalComponent() {
 		settings,
 		setSettings
 	} = useContext(SettingsContext);
-	const [ visibleModal, setVisibleModal ] = useState(visible);
 	const hideModal = () => {
-		setVisibleModal(false);
 		setSettings({
 			...settings,
 			modal: {
@@ -30,21 +28,9 @@ export default function ModalComponent() {
 		});
 	};
 
-	console.log('visibleModal +++++++++++++++++++++++++++++++++++++++++++');
-	console.log(visible);
-	console.log(visibleModal);
-	console.log('visibleModal +++++++++++++++++++++++++++++++++++++++++++');
-
-	useEffect(() => {
-		console.log('RECALL MADAL');
-		if (!visible) return;
-
-		setVisibleModal(visible);
-	}, [visible]);
-
 	return (
 		<Modal
-			isVisible={ visibleModal }
+			isVisible={ visible }
 			avoidKeyboard={ true }
 			style={ styles.component }
 		>
