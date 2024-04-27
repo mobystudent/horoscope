@@ -106,6 +106,10 @@ export default function StartScreen({ navigation }) {
 						return response.json();
 					})
 					.then((monthsData) => {
+						if (!Object.keys(monthsData).length) {
+							throw new Error(`Данных о текущем лунном месяце на сервере не обнаружено`);
+						}
+
 						setMonths(monthsData);
 
 						return fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ currentDate }`);
@@ -118,6 +122,10 @@ export default function StartScreen({ navigation }) {
 						return response.json();
 					})
 					.then((moonData) => {
+						if (!Object.keys(moonData).length) {
+							throw new Error(`Данных о текущем лунном дне на сервере не обнаружено`);
+						}
+
 						setMoon(moonData);
 						storagePersonData();
 						storageNotesListData();

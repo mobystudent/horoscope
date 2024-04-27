@@ -225,6 +225,10 @@ export default function DateScreen({ navigation }) {
 						return response.json();
 					})
 					.then((birthdayData) => {
+						if (!Object.keys(birthdayData).length) {
+							throw new Error(`Данных о лунном дне при рождении на сервере не обнаружено`);
+						}
+
 						setSettings({
 							...settings,
 							person: {

@@ -174,6 +174,10 @@ export default function Processing({ navigation }) {
 					return response.json();
 				})
 				.then((monthsData) => {
+					if (!Object.keys(monthsData).length) {
+						throw new Error(`Данных о текущем лунном месяце на сервере не обнаружено`);
+					}
+
 					setMonths(monthsData);
 
 					return fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ currentDate }`);
@@ -186,6 +190,10 @@ export default function Processing({ navigation }) {
 					return response.json();
 				})
 				.then((moonData) => {
+					if (!Object.keys(moonData).length) {
+						throw new Error(`Данных о текущем лунном дне на сервере не обнаружено`);
+					}
+
 					setMoon(moonData);
 
 					return fetch(`https://api-moon.digitalynx.org/api/moon/register?date=${ birthDate }`);
@@ -198,6 +206,10 @@ export default function Processing({ navigation }) {
 					return response.json();
 				})
 				.then((birthdayData) => {
+					if (!Object.keys(birthdayData).length) {
+						throw new Error(`Данных о лунном дне при рождении на сервере не обнаружено`);
+					}
+
 					setBirthdayMoon(birthdayData);
 					storagePersonData();
 					storageNotesListData();
