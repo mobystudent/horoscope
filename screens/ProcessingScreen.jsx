@@ -20,9 +20,9 @@ export default function Processing({ navigation }) {
 	]);
 	const [ progress, setProgress ] = useState(0);
 	const [ readyData, setReadyData ] = useState(false);
-	const [ serverData, setServerData ] = useState(false);
 	const [ months, setMonths ] = useState({});
 	const [ moon, setMoon ] = useState({});
+	const [ notesList, setNotesList ] = useState([]);
 	const [ birthdayMoon, setBirthdayMoon ] = useState({});
 	const title = 'Создаем ваш профиль';
 	const renderSteps = useMemo(() => {
@@ -49,6 +49,85 @@ export default function Processing({ navigation }) {
 	// });
 	const circumference = 2 * Math.PI * radius;
 	const strokeDashoffset = circumference - progress / 100 * circumference;
+	const storagePersonData = async () => {
+		try {
+			const personString = JSON.stringify(settings.person);
+
+			if (!Object.keys(settings.person).length) {
+				throw new Error('Данных о пользователе нет');
+			}
+
+			await AsyncStorage.setItem('person', personString);
+		} catch(error) {
+			setSettings({
+				...settings,
+				modal: {
+					visible: true,
+					status: 'error',
+					title: 'Ошибка сохранения данных о пользователе',
+					message: `Проблема с записью в хранилище. ${ error }, попробуйте перезагрузить приложение`
+				}
+			});
+
+			return;
+		}
+	};
+	const storageNotesListData = async () => {
+		try {
+			const notesArray = [];
+
+			for (let i = 0; i < 30; i++) {
+				notesArray.push({
+					day: i + 1,
+					date: '',
+					description: ''
+				});
+			}
+			setNotesList(notesArray);
+
+			const notesString = JSON.stringify(notesArray);
+
+			await AsyncStorage.setItem('notesArray', notesString);
+		} catch(error) {
+			setSettings({
+				...settings,
+				modal: {
+					visible: true,
+					status: 'error',
+					title: 'Ошибка сохраненния списка заметок',
+					message: `Проблема с записью в хранилище. ${ error }, попробуйте перезагрузить приложение`
+				}
+			});
+
+			return;
+		}
+	};
+	const storageBirthdayMoonData = async () => {
+		try {
+			const birthdayString = JSON.stringify(birthdayMoon);
+
+			if (!Object.keys(birthdayMoon).length) {
+				throw new Error('Данных о луне при рождении нет');
+			}
+
+			await AsyncStorage.setItem('birthdayMoon', birthdayString);
+		} catch(error) {
+			setSettings({
+				...settings,
+				modal: {
+					visible: true,
+					status: 'error',
+					title: 'Ошибка сохранения данных о луне при рождении',
+					message: `Проблема с записью в хранилище. ${ error }, попробуйте перезагрузить приложение`
+				}
+			});
+
+			return;
+		}
+	};
+	const settingsStatus = useMemo(() => {
+		return [notesList, birthdayMoon].every((object) => Object.keys(object).length);
+	}, [notesList, birthdayMoon]);
 
 	useEffect(() => {
 		const progressId = setInterval(() => {
@@ -68,7 +147,10 @@ export default function Processing({ navigation }) {
 
 				if (newProgress === 100) {
 					clearInterval(progressId);
-					navigation.navigate('moon');
+
+					if (readyData) {
+						navigation.navigate('moon');
+					}
 				}
 
 				return newProgress;
@@ -79,90 +161,88 @@ export default function Processing({ navigation }) {
 	}, [readyData]);
 
 	useEffect(() => {
-		const currentDate = moment().format('YYYY-MM-DD');
-		const birthDate = moment(settings.person.date, 'DD-MM-YYYY').format('YYYY-MM-DD');
+		try {
+			const currentDate = moment().format('YYYY-MM-DD');
+			const birthDate = moment(settings.person.date, 'DD-MM-YYYY').format('YYYY-MM-DD');
 
-		fetch(`https://api-moon.digitalynx.org/api/moon/special/year?date=${ currentDate }`)
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error('Network response was not ok. Getting months failed');
+			fetch(`https://api-moon.digitalynx.org/api/moon/special/year?date=${ currentDate }`)
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error('Не удалось получить данные о текущем лунном месяце');
+					}
+
+					return response.json();
+				})
+				.then((monthsData) => {
+					setMonths(monthsData);
+
+					return fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ currentDate }`);
+				})
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error('Не удалось получить данные о текущем лунном дне');
+					}
+
+					return response.json();
+				})
+				.then((moonData) => {
+					setMoon(moonData);
+
+					return fetch(`https://api-moon.digitalynx.org/api/moon/register?date=${ birthDate }`);
+				})
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error('Не удалось получить данные о лунном дне при рождении');
+					}
+
+					return response.json();
+				})
+				.then((birthdayData) => {
+					setBirthdayMoon(birthdayData);
+					storagePersonData();
+					storageNotesListData();
+					storageBirthdayMoonData();
+				})
+				.catch((error) => {
+					setSettings({
+						...settings,
+						modal: {
+							visible: true,
+							status: 'error',
+							title: 'Ошибка загрузки данных',
+							message: `Проблема с ответом от сети. ${ error }, попробуйте перезагрузить приложение`
+						}
+					});
+				});
+		} catch (error) {
+			setSettings({
+				...settings,
+				modal: {
+					visible: true,
+					status: 'error',
+					title: 'Ошибка подключения к сети',
+					message: `Не удалось подключиться к сети. ${ error }, попробуйте перезагрузить приложение`
 				}
-
-				return response.json();
-			})
-			.then((monthsData) => {
-				setMonths(monthsData);
-
-				return fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ currentDate }`);
-			})
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error('Network response was not ok. Getting moon day failed');
-				}
-
-				return response.json();
-			})
-			.then((moonData) => {
-				setMoon(moonData);
-
-				return fetch(`https://api-moon.digitalynx.org/api/moon/register?date=${ birthDate }`);
-			})
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error('Network response was not ok. Getting moon birthday failed');
-				}
-
-				return response.json();
-			})
-			.then((birthdayData) => {
-				setBirthdayMoon(birthdayData);
-				setServerData(true);
-			})
-			.catch((error) => {
-				console.error('There was a problem with your fetch operation:', error);
 			});
+
+			return;
+		}
 	}, []);
 
 	useEffect(() => {
-		if (!serverData) return;
+		if (!settingsStatus) return;
 
-		const setNotesList = async () => {
-			const notesArray = [];
+		setSettings({
+			...settings,
+			notesList,
+			birthdayMoon,
+			currentMoonDay: moon,
+			monthsRange: months,
+			registered: true
+		});
 
-			for (let i = 0; i < 30; i++) {
-				notesArray.push({
-					day: i + 1,
-					date: '',
-					description: ''
-				});
-			}
-
-			setSettings({
-				...settings,
-				notesList: notesArray,
-				birthdayMoon,
-				registered: true,
-				currentMoonDay: moon,
-				monthsRange: months
-			});
-
-			try {
-				const personString = JSON.stringify(settings.person);
-				const notesString = JSON.stringify(notesArray);
-				const birthdayString = JSON.stringify(birthdayMoon);
-
-				await AsyncStorage.setItem('person', personString);
-				await AsyncStorage.setItem('notesArray', notesString);
-				await AsyncStorage.setItem('birthdayMoon', birthdayString);
-
-				setReadyData(true);
-			} catch (e) {
-				console.error(e);
-			}
-		};
-
-		setNotesList();
-	}, [serverData]);
+		setReadyData(true);
+	}, [settingsStatus]);
 
 	return (
 		<Container>
