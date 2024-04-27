@@ -60,8 +60,18 @@ export default function NameScreen({ navigation }) {
 				const personString = JSON.stringify(userData);
 
 				await AsyncStorage.setItem('person', personString);
-			} catch (e) {
-				console.error(e);
+			} catch (error) {
+				setSettings({
+					...settings,
+					modal: {
+						visible: true,
+						status: 'error',
+						title: 'Ошибка сохранения имени',
+						message: `Проблема с записью в хранилище. ${ error }, попробуйте удалить и ввести имя снова`
+					}
+				});
+
+				return;
 			}
 
 			navigation.navigate('account');

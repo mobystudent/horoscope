@@ -98,8 +98,18 @@ export default function TimeScreen({ navigation }) {
 				const personString = JSON.stringify(userData);
 
 				await AsyncStorage.setItem('person', personString);
-			} catch (e) {
-				console.error(e);
+			} catch (error) {
+				setSettings({
+					...settings,
+					modal: {
+						visible: true,
+						status: 'error',
+						title: 'Ошибка сохранения времени рождения',
+						message: `Проблема с записью в хранилище. ${ error }, попробуйте выбрать время снова`
+					}
+				});
+
+				return;
 			}
 
 			navigation.navigate('account');

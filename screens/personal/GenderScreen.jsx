@@ -46,8 +46,18 @@ export default function GenderScreen({ navigation }) {
 				const personString = JSON.stringify(userData);
 
 				await AsyncStorage.setItem('person', personString);
-			} catch (e) {
-				console.error(e);
+			} catch (error) {
+				setSettings({
+					...settings,
+					modal: {
+						visible: true,
+						status: 'error',
+						title: 'Ошибка сохранения пола',
+						message: `Проблема с записью в хранилище. ${ error }, попробуйте выбрать пол снова`
+					}
+				});
+
+				return;
 			}
 
 			navigation.navigate('account');

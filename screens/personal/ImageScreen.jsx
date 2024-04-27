@@ -61,9 +61,21 @@ export default ({ navigation }) => {
 						setSelectedImage(libraryImage.assets[0].uri);
 						setDisabledBtn(false);
 					}
+				} else {
+					throw new Error('Нет прав доступа к медиабиблиотеке телефона');
 				}
 			} catch (error) {
-				console.error("Ошибка при запросе разрешений в медиабиблиотеку:", error);
+				setSettings({
+					...settings,
+					modal: {
+						visible: true,
+						status: 'error',
+						title: 'Ошибка подключения к медиабиблиотеке',
+						message: `Проблема с доступом к медиабиблиотеке. ${ error }, проверьте настройки доступа к медиабиблиотеке телефона и перезагрузите приложение`
+					}
+				});
+
+				return;
 			}
 		} else if (type === 'selfie') {
 			const options = {
@@ -85,9 +97,21 @@ export default ({ navigation }) => {
 						setSelectedImage(selfieImage.assets[0].uri);
 						setDisabledBtn(false);
 					}
+				} else {
+					throw new Error('Нет прав доступа к фронтальной камере телефона');
 				}
 			} catch (error) {
-				console.error("Ошибка при запросе разрешений к фронтальной камере:", error);
+				setSettings({
+					...settings,
+					modal: {
+						visible: true,
+						status: 'error',
+						title: 'Ошибка подключения к камере',
+						message: `Проблема с доступом к камере. ${ error }, проверьте настройки доступа к камере и перезагрузите приложение`
+					}
+				});
+
+				return;
 			}
 		} else if (type === 'delete') {
 			setSelectedImage('');
@@ -122,8 +146,18 @@ export default ({ navigation }) => {
 			const personString = JSON.stringify(userData);
 
 			await AsyncStorage.setItem('person', personString);
-		} catch (e) {
-			console.error(e);
+		} catch (error) {
+			setSettings({
+				...settings,
+				modal: {
+					visible: true,
+					status: 'error',
+					title: 'Ошибка сохранения изображения',
+					message: `Проблема с записью в хранилище. ${ error }, попробуйте удалить и выбрать изображение снова`
+				}
+			});
+
+			return;
 		}
 
 		navigation.navigate('account');

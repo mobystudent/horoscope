@@ -39,57 +39,6 @@ export default function DateScreen({ navigation }) {
 	const nameDays = parseLang.week.map(({ cropName }) => {
 		return <Text style={[ styles.day, { width: dayWidth } ]} key={ cropName }>{ cropName }</Text>;
 	});
-	const nextStep = async () => {
-		if (disabledBtn) return;
-
-		const userData = {
-			...settings.person,
-			date
-		};
-
-		if (settings.registered) {
-			try {
-				const personString = JSON.stringify(userData);
-				const birthDate = moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD');
-
-				await AsyncStorage.setItem('person', personString);
-
-				fetch(`https://api-moon.digitalynx.org/api/moon/register?date=${ birthDate }`)
-					.then((response) => {
-						if (!response.ok) {
-							throw new Error('Network response was not ok. Getting moon birthday failed');
-						}
-
-						return response.json();
-					})
-					.then((birthdayData) => {
-						setSettings({
-							...settings,
-							person: {
-								...userData
-							},
-							birthdayMoon: birthdayData
-						});
-					})
-					.catch((error) => {
-						console.error('There was a problem with your fetch operation:', error);
-					});
-			} catch (e) {
-				console.error(e);
-			}
-
-			navigation.navigate('account');
-		} else {
-			setSettings({
-				...settings,
-				person: {
-					...userData
-				}
-			});
-
-			navigation.navigate('time');
-		}
-	};
 	const monthArray = () => {
 		const daysList = [];
 		const chooseMonth = moment().year(currentDate.year).month(currentDate.month).daysInMonth();
@@ -236,6 +185,90 @@ export default function DateScreen({ navigation }) {
 			width: contentWidth,
 			height: contentHeight
 		});
+	};
+	const nextStep = async () => {
+		if (disabledBtn) return;
+
+		const userData = {
+			...settings.person,
+			date
+		};
+
+		if (settings.registered) {
+			try {
+				const personString = JSON.stringify(userData);
+
+				await AsyncStorage.setItem('person', personString);
+			} catch (error) {
+				setSettings({
+					...settings,
+					modal: {
+						visible: true,
+						status: 'error',
+						title: 'Ошибка сохранения даты рождения',
+						message: `Проблема с записью в хранилище. ${ error }, попробуйте выбрать дату заново`
+					}
+				});
+
+				return;
+			}
+
+			try {
+				const birthDate = moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD');
+
+				fetch(`https://api-moon.digitalynx.org/api/moon/register?date=${ birthDate }`)
+					.then((response) => {
+						if (!response.ok) {
+							throw new Error('Не удалось получить данные о лунном дне при рождении');
+						}
+
+						return response.json();
+					})
+					.then((birthdayData) => {
+						setSettings({
+							...settings,
+							person: {
+								...userData
+							},
+							birthdayMoon: birthdayData
+						});
+
+						navigation.navigate('account');
+					})
+					.catch((error) => {
+						setSettings({
+							...settings,
+							modal: {
+								visible: true,
+								status: 'error',
+								title: 'Ошибка загрузки данных',
+								message: `Проблема с ответом от сети. ${ error }, попробуйте перезагрузить приложение`
+							}
+						});
+					});
+			} catch (error) {
+				setSettings({
+					...settings,
+					modal: {
+						visible: true,
+						status: 'error',
+						title: 'Ошибка подключения к сети',
+						message: `Не удалось подключиться к сети. ${ error }, попробуйте перезагрузить приложение`
+					}
+				});
+
+				return;
+			}
+		} else {
+			setSettings({
+				...settings,
+				person: {
+					...userData
+				}
+			});
+
+			navigation.navigate('time');
+		}
 	};
 	const title = 'Когда у вас день рождение?';
 	const description = 'Укажите дату своего рождения, чтобы получить доступ к астрологическому анализу и лунным фазам, влияющим на вас';
