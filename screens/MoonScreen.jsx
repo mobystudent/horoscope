@@ -42,7 +42,7 @@ export default function Moon({ navigation }) {
 	};
 	const rightButton = {
 		screenLink: 'createNote',
-		btnAction: 'note',
+		btnAction: 'add',
 		type: 'note',
 	};
 	const getDate = () => {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useContext } from 'react';
 import { StyleSheet, Text, View, Pressable } from 'react-native';
 import Modal from 'react-native-modal';
 import { SettingsContext } from '../contexts/settings';
@@ -9,8 +9,10 @@ export default function ModalComponent() {
 			modal: {
 				visible = false,
 				status = '',
+				type = '',
 				title = '',
-				message = ''
+				message = '',
+				handler = null
 			}
 		} = {},
 		settings,
@@ -19,28 +21,84 @@ export default function ModalComponent() {
 	const hideModal = () => {
 		setSettings({
 			...settings,
-			modal: {
-				visible: false,
-				status: '',
-				title: '',
-				message: ''
-			}
+			modal: {}
 		});
 	};
+	const typeBtns = {
+		photo: [
+			// {
+			// 	title: 'Редактировать',
+			// 	type: 'edit'
+			// },
+			{
+				title: 'Загрузить из альбомов',
+				type: 'library'
+			},
+			{
+				title: 'Сделать селфи',
+				type: 'selfie'
+			},
+			{
+				title: 'Удалить',
+				type: 'delete'
+			},
+		],
+		sort: [
+			{
+				title: 'Сначала новые',
+				type: 'new'
+			},
+			{
+				title: 'Сначала старые',
+				type: 'old'
+			},
+			{
+				title: 'По возрастанию',
+				type: 'asc'
+			},
+			{
+				title: 'По убыванию',
+				type: 'desc'
+			},
+		],
+		note: [
+			{
+				title: 'Редактировать',
+				type: 'edit'
+			},
+			{
+				title: 'Очистить',
+				type: 'clear'
+			}
+		]
+	};
+	const filterButtons = status === 'filter' && typeBtns[type].map((button, i) => {
+		const style = !i ? styles.buttonFilter : [ styles.buttonFilter, styles.buttonLine ];
+
+		return (
+			<Pressable style={ style } key={ i } onPress={ () => handler(button.type) }>
+				<Text style={[ styles.text, { color: '#fff' } ]}>{ button.title }</Text>
+			</Pressable>
+		);
+	});
 
 	return (
 		<Modal
 			isVisible={ visible }
 			avoidKeyboard={ true }
-			style={ styles.component }
+			onBackdropPress={ () => hideModal() }
+			style={ status === 'error' ? styles.componentError : styles.componentFilter }
 		>
-			{ status === 'error' &&
-				<View style={ styles.modal }>
+			{ status === 'error'
+				? <View style={ styles.modal }>
 					<Text style={ styles.title }>{ title }</Text>
 					<Text style={ styles.message }>{ message }</Text>
 					<Pressable style={ styles.button } onPress={ () => hideModal() }>
-						<Text style={ styles.text }>OK</Text>
+						<Text style={[ styles.text, { color: '#000' } ]}>OK</Text>
 					</Pressable>
+				</View>
+				: <View style={ styles.filter }>
+					{ filterButtons }
 				</View>
 			}
 		</Modal>
@@ -48,8 +106,14 @@ export default function ModalComponent() {
 }
 
 const styles = StyleSheet.create({
-	component: {
+	componentError: {
 		paddingHorizontal: 10
+	},
+	componentFilter: {
+		position: 'absolute',
+		left: -10,
+		bottom: -10,
+		width: '100%'
 	},
 	modal: {
 		justifyContent: 'center',
@@ -59,6 +123,11 @@ const styles = StyleSheet.create({
 		padding: 15,
 		borderRadius: 16,
 		backgroundColor: '#fff'
+	},
+	filter: {
+		borderTopLeftRadius: 16,
+		borderTopRightRadius: 16,
+		backgroundColor: '#5a4e59'
 	},
 	title: {
 		fontWeight: '700',
@@ -73,6 +142,11 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		marginBottom: 10
 	},
+	buttonFilter: {
+		justifyContent: 'center',
+		paddingVertical: 12,
+		paddingHorizontal: 15
+	},
 	button: {
 		justifyContent: 'center',
 		paddingVertical: 5,
@@ -80,6 +154,10 @@ const styles = StyleSheet.create({
 		width: 180,
 		borderRadius: 20,
 		backgroundColor: '#ccc'
+	},
+	buttonLine: {
+		borderTopWidth: 1,
+		borderTopColor: 'rgba(255, 255, 255, .1)'
 	},
 	text: {
 		fontWeight: '400',

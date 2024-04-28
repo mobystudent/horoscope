@@ -94,27 +94,34 @@ export default function Header(props) {
 
 	const checkTypeRightButton = () => {
 		if (btnActionRight) {
-			if (btnActionRight === 'more') {
+			if (btnActionRight === 'note') {
 				setSettings({
 					...settings,
-					noteSettings: true
+					modal: {
+						type: btnActionRight
+					}
 				});
-			} else if (btnActionRight === 'filter') {
+			} else if (btnActionRight === 'sort') {
 				setSettings({
 					...settings,
-					noteFilter: true
+					modal: {
+						type: btnActionRight
+					}
 				});
 			} else if (btnActionRight === 'photo') {
 				setSettings({
 					...settings,
-					photoSettings: true
+					modal: {
+						type: btnActionRight
+					}
 				});
-			} else if (btnActionRight === 'note') {
+			} else if (btnActionRight === 'add') {
 				const numberMoonDay = settings.currentMoonDay.details.moonDay.day;
 
 				setSettings({
 					...settings,
-					currentNote: settings.notesList[numberMoonDay]
+					currentNote: settings.notesList[numberMoonDay],
+					background: 'main'
 				});
 
 				navigation.navigate(screenLinkRight);
@@ -122,11 +129,6 @@ export default function Header(props) {
 		} else {
 			return navigation.navigate(screenLinkRight, { ...params });
 		}
-
-		setSettings({
-			...settings,
-			background: screenLinkLeft === 'moon' ? phase : 'main'
-		});
 	}
 
 	return (

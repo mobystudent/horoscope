@@ -1,40 +1,20 @@
-import { useState, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { StyleSheet, View, ScrollView } from 'react-native';
 import Container from '../../components/Container';
 import Header from '../../components/Header';
 import Note from '../../components/Note';
-import ModalSettings from '../../components/ModalSettings';
 import { SettingsContext } from '../../contexts/settings';
 
 export default function Notes({ navigation }) {
 	const { settings, setSettings } = useContext(SettingsContext);
 	const [ notesArr, setNotesArr ] = useState(settings.notesList);
 	const title = 'Все заметки';
-	// const todayMoonDay = 2;
-	const sortBtns = [
-		{
-			title: 'Сначала новые',
-			type: 'new'
-		},
-		{
-			title: 'Сначала старые',
-			type: 'old'
-		},
-		{
-			title: 'По возрастанию',
-			type: 'asc'
-		},
-		{
-			title: 'По убыванию',
-			type: 'desc'
-		},
-	];
 	const leftButton = {
 		screenLink: 'account',
 		type: 'back'
 	};
 	const rightButton = {
-		btnAction: 'filter',
+		btnAction: 'sort',
 		type: 'filter'
 	};
 	const notesArray = notesArr.map((note, i) => {
@@ -89,9 +69,23 @@ export default function Notes({ navigation }) {
 
 		setSettings({
 			...settings,
-			noteFilter: false
+			modal: {}
 		});
 	};
+
+	useEffect(() => {
+		if (settings.modal.type !== 'sort') return;
+
+		setSettings({
+			...settings,
+			modal: {
+				visible: true,
+				status: 'filter',
+				type: 'sort',
+				handler: (type) => sortNotes(type)
+			}
+		});
+	}, [settings.modal.type]);
 
 	// useEffect(() => {
 	// 	setNotesArr(notesArr.sort((a, b) => {
@@ -116,12 +110,6 @@ export default function Notes({ navigation }) {
 					{ notesArray }
 				</View>
 			</ScrollView>
-			<ModalSettings
-				buttons={ sortBtns }
-				settingsFunc={ (type) => sortNotes(type) }
-				settingsProp="noteFilter"
-				alertMess="Модальное окно с фильтром будет закрыто"
-			/>
 		</Container>
 	);
 }

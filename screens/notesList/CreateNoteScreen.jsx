@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef, useContext } from 'react';
-import { StyleSheet, Text, Pressable, View, TextInput, KeyboardAvoidingView, ScrollView, Keyboard } from 'react-native';
+import { StyleSheet, Text, Pressable, View, TextInput, KeyboardAvoidingView, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
 import Container from '../../components/Container';
 import Header from '../../components/Header';
-import ModalSettings from '../../components/ModalSettings';
 import { SettingsContext } from '../../contexts/settings';
 
 export default function CreateNote (props) {
@@ -26,23 +25,13 @@ export default function CreateNote (props) {
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
 	const [ contentActive, setContentActive ] = useState('');
 	const descriptionRef = useRef(null);
-	const settingsBtns = [
-		{
-			title: 'Редактировать',
-			type: 'edit'
-		},
-		{
-			title: 'Очистить',
-			type: 'clear'
-		}
-	];
 	const leftButton = {
 		btnAction: 'back',
 		screenLink: page,
 		type: 'back'
 	};
 	const rightButton = {
-		btnAction: 'more',
+		btnAction: 'note',
 		type: 'more'
 	};
 	const checkText = ({ nativeEvent: { key } }) => {
@@ -116,7 +105,7 @@ export default function CreateNote (props) {
 		setSettings({
 			...settings,
 			noteMode: type,
-			noteSettings: false
+			modal: {}
 		});
 
 		if (type === 'clear') {
@@ -134,6 +123,20 @@ export default function CreateNote (props) {
 	useEffect(() => {
 		setDescription(settings.currentNote.description || '');
 	}, [settings.currentNote]);
+
+	useEffect(() => {
+		if (settings.modal.type !== 'note') return;
+
+		setSettings({
+			...settings,
+			modal: {
+				visible: true,
+				status: 'filter',
+				type: 'note',
+				handler: (type) => changeNote(type)
+			}
+		});
+	}, [settings.modal.type]);
 
 	return (
 		<Container>
@@ -171,12 +174,6 @@ export default function CreateNote (props) {
 					<Text style={[ styles.buttonText, disabledBtn && styles.disabledText ]}>{ btnText }</Text>
 				</Pressable>
 			</KeyboardAvoidingView>
-			<ModalSettings
-				buttons={ settingsBtns }
-				settingsFunc={ (type) => changeNote(type) }
-				settingsProp="noteSettings"
-				alertMess="Модальное окно с настройками будет закрыто"
-			/>
 		</Container>
 	);
 }

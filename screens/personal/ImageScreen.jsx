@@ -1,10 +1,9 @@
-import { useState, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { StyleSheet, Text, View, Pressable, Image, ImageBackground, Dimensions } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import Container from '../../components/Container';
 import Header from '../../components/Header';
-import ModalSettings from '../../components/ModalSettings';
 import { SettingsContext } from '../../contexts/settings';
 
 import { photoIcon } from '../../icons/elements';
@@ -15,31 +14,13 @@ export default ({ navigation }) => {
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
 	const [ heightArea, setHeightArea ] = useState(0);
 	const windowWidth = Dimensions.get('window').width;
-	const settingsBtns = [
-		// {
-		// 	title: 'Редактировать',
-		// 	type: 'edit'
-		// },
-		{
-			title: 'Загрузить из альбомов',
-			type: 'library'
-		},
-		{
-			title: 'Сделать селфи',
-			type: 'selfie'
-		},
-		{
-			title: 'Удалить',
-			type: 'delete'
-		},
-	];
 	const leftButton = {
 		screenLink: 'account',
 		type: 'back'
 	};
 	const rightButton = {
 		btnAction: 'photo',
-		type: 'more',
+		type: 'more'
 	};
 	const changePhoto = async (type) => {
 		if (type === 'library') {
@@ -120,13 +101,15 @@ export default ({ navigation }) => {
 
 		setSettings({
 			...settings,
-			photoSettings: false
+			modal: {}
 		});
-	}
-	const openModalSettins = () => {
+	};
+	const openModal = () => {
 		setSettings({
 			...settings,
-			photoSettings: true
+			modal: {
+				type: 'photo'
+			}
 		});
 	};
 	const save = async () => {
@@ -167,6 +150,20 @@ export default ({ navigation }) => {
 	};
 	const btnText = 'Сохранить';
 
+	useEffect(() => {
+		if (settings.modal.type !== 'photo') return;
+
+		setSettings({
+			...settings,
+			modal: {
+				visible: true,
+				status: 'filter',
+				type: 'photo',
+				handler: (type) => changePhoto(type)
+			}
+		});
+	}, [settings.modal.type]);
+
 	return (
 		<Container>
 			<Header
@@ -175,9 +172,9 @@ export default ({ navigation }) => {
 				rightButton={ rightButton }
 			/>
 			<View style={ styles.body }>
-				<Pressable style={ styles.wrap } onPress={ () => openModalSettins() }>
+				<Pressable style={ styles.wrap } onPress={ () => openModal() }>
 					{ selectedImage ?
-						<View style={[ styles.background, { width: windowWidth }  ]} onLayout={ onLayout }>
+						<View style={[ styles.background, { width: windowWidth } ]} onLayout={ onLayout }>
 							<ImageBackground style={ styles.imageBackground } source={{ uri: selectedImage }} resizeMode="cover">
 								<View style={[
 										styles.cropArea,
@@ -218,12 +215,6 @@ export default ({ navigation }) => {
 					<Text style={[ styles.buttonText, disabledBtn && styles.disabledText ]}>{ btnText }</Text>
 				</Pressable>
 			</View>
-			<ModalSettings
-				buttons={ settingsBtns }
-				settingsFunc={ (type) => changePhoto(type) }
-				settingsProp="photoSettings"
-				alertMess="Модальное окно с настройками будет закрыто"
-			/>
 		</Container>
 	);
 };
