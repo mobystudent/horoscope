@@ -17,14 +17,18 @@ export default function Header(props) {
 		rightButton: {
 			screenLink: screenLinkRight = '',
 			btnAction: btnActionRight = '',
-			type: typeRight = '',
-			params = null
+			type: typeRight = ''
 		} = {}
 	} = props;
 	const {
 		settings: {
 			currentMoonDay: {
-				phase = ''
+				phase = '',
+				details: {
+					moonDay: {
+						day = ''
+					} = {}
+				} = {}
 			} = {}
 		} = {},
 		settings,
@@ -94,40 +98,24 @@ export default function Header(props) {
 
 	const checkTypeRightButton = () => {
 		if (btnActionRight) {
-			if (btnActionRight === 'note') {
+			if (btnActionRight === 'add') {
 				setSettings({
 					...settings,
-					modal: {
-						type: btnActionRight
-					}
-				});
-			} else if (btnActionRight === 'sort') {
-				setSettings({
-					...settings,
-					modal: {
-						type: btnActionRight
-					}
-				});
-			} else if (btnActionRight === 'photo') {
-				setSettings({
-					...settings,
-					modal: {
-						type: btnActionRight
-					}
-				});
-			} else if (btnActionRight === 'add') {
-				const numberMoonDay = settings.currentMoonDay.details.moonDay.day;
-
-				setSettings({
-					...settings,
-					currentNote: settings.notesList[numberMoonDay],
+					currentNote: settings.notesList[day],
 					background: 'main'
 				});
 
-				navigation.navigate(screenLinkRight);
+				navigation.navigate(screenLinkRight, { page: 'moon' });
+			} else {
+				setSettings({
+					...settings,
+					modal: {
+						type: btnActionRight
+					}
+				});
 			}
 		} else {
-			return navigation.navigate(screenLinkRight, { ...params });
+			navigation.navigate(screenLinkRight);
 		}
 	}
 

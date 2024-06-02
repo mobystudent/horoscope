@@ -43,7 +43,7 @@ export default function Moon({ navigation }) {
 	const rightButton = {
 		screenLink: 'createNote',
 		btnAction: 'add',
-		type: 'note',
+		type: 'note'
 	};
 	const getDate = () => {
 		const date = moment(period, 'YYYY-MM-DD');

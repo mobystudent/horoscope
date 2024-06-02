@@ -27,7 +27,7 @@ export default function Container({ children }) {
 				style={ styles.linearGradient }
 			>
 				<View style={ styles.wrapper }>
-					<StatusBar style="auto" />
+					<StatusBar style="inverted" />
 					<SafeAreaView style={ styles.container } >
 						{ children }
 					</SafeAreaView>
