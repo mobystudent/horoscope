@@ -1,28 +1,13 @@
-import { useState, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { StyleSheet, FlatList, TextInput, View, Pressable, Text, KeyboardAvoidingView, Keyboard, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PersonTemplate from '../../components/PersonTemplate';
 import { SettingsContext } from '../../contexts/settings';
 
 export default function CityScreen({ navigation }) {
-	const data = [
-		{ title: 'Париж' },
-		{ title: 'Марсель' },
-		{ title: 'Лион' },
-		{ title: 'Тулуза' },
-		{ title: 'Ницца' },
-		{ title: 'Нант' },
-		{ title: 'Страсбург' },
-		{ title: 'Монпелье' },
-		{ title: 'Бордо' },
-		{ title: 'Лилль' },
-		{ title: 'Рейн' },
-		{ title: 'Реймс' },
-		{ title: 'Рубе' },
-		{ title: 'Туркуэн' }
-	];
 	const { settings, setSettings } = useContext(SettingsContext);
-	const [ city, setCity ] = useState(settings.person.city);
+	const [ city, setCity ] = useState({ id: 0, name: settings.person.city });
+	const [ availableCities, setAvailableCities ] = useState([]);
 	const [ pointer, setPointer ] = useState(0);
 	const [ suggestion, setSuggestion ] = useState([]);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
@@ -33,13 +18,13 @@ export default function CityScreen({ navigation }) {
 		Keyboard.dismiss();
 	};
 	const emptyFilter = ({ nativeEvent: { key } }) => {
-		if (!city) return;
+		if (!city.name) return;
 
 		const regex = new RegExp('[а-яА-Я\-Backspace ]');
 		const check = regex.test(key);
 		const cityChars = key === 'Backspace'
-			? city.slice(0, pointer - 1) + city.slice(pointer)
-			: city.slice(0, pointer) + key + city.slice(pointer);
+			? city.name.slice(0, pointer - 1) + city.name.slice(pointer)
+			: city.name.slice(0, pointer) + key + city.name.slice(pointer);
 		const exceptionLetters = ['k', 'e', 'p', 'c', 'a', 's'];
 
 		if(!check || exceptionLetters.includes(key)) {
@@ -51,8 +36,8 @@ export default function CityScreen({ navigation }) {
 			);
 		} else {
 			if (cityChars.length > 2) {
-				const newSugges = data.filter((item) => item.title.startsWith(cityChars));
-				const filteredCity = data.find((item) => item.title.toLowerCase() === cityChars.toLowerCase());
+				const newSugges = availableCities.filter((obj) => obj.city_ru.startsWith(cityChars));
+				const filteredCity = availableCities.find((obj) => obj.city_ru.toLowerCase() === cityChars.toLowerCase());
 
 				if (key !== 'Backspace') {
 					filteredCity && Keyboard.dismiss();
@@ -67,11 +52,59 @@ export default function CityScreen({ navigation }) {
 	const changeSelection = ({ nativeEvent: { selection: { start } } }) => {
 		setPointer(start);
 	};
-	const renderItem = (({ item }) => (
-		<Pressable onPress={ () => selectItem(item.title) }>
-			<Text style={ styles.item }>{item.title}</Text>
-		</Pressable>
-	));
+	const getCountries = async () => {
+		try {
+			const countryCode = 19;
+
+			fetch(`https://api-moon.digitalynx.org/api/city/${ countryCode }`)
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error('Не удалось получить список городов от сервера');
+					}
+
+					return response.json();
+				})
+				.then((citiesData) => {
+					if (!Object.keys(citiesData).length) {
+						throw new Error(`Данных о городах на сервере не обнаружено`);
+					}
+
+					setAvailableCities(citiesData);
+				})
+				.catch((error) => {
+					setSettings({
+						...settings,
+						modal: {
+							visible: true,
+							status: 'error',
+							title: 'Ошибка загрузки данных',
+							message: `Проблема с ответом от сети. ${ error }, попробуйте перезагрузить приложение`
+						}
+					});
+				});
+		} catch (error) {
+			setSettings({
+				...settings,
+				modal: {
+					visible: true,
+					status: 'error',
+					title: 'Ошибка подключения к сети',
+					message: `Не удалось подключиться к сети. ${ error }, попробуйте перезагрузить приложение`
+				}
+			});
+
+			return;
+		}
+	};
+	const renderItem = (({ item }) => {
+		const { id, city_ru: name } = item;
+
+		return (
+			<Pressable onPress={ () => selectItem({ id, name }) }>
+				<Text style={ styles.item }>{ name }</Text>
+			</Pressable>
+		);
+	});
 	const nextStep = async () => {
 		if (disabledBtn) return;
 
@@ -115,6 +148,10 @@ export default function CityScreen({ navigation }) {
 	const description = 'Укажите место своего рождения, чтобы адаптировать календарь под ваш географический регион и лунные события';
 	const btnText = settings.registered ? 'Сохранить' : 'Далее';
 
+	useEffect(() => {
+		getCountries();
+	}, []);
+
 	return (
 		<PersonTemplate
 			navigation={ navigation }
@@ -130,8 +167,8 @@ export default function CityScreen({ navigation }) {
 						style={ styles.input }
 						placeholder="Ввести город..."
 						placeholderTextColor="rgba(255, 255, 255, 0.5)"
-						value={ city }
-						onChangeText={ setCity }
+						value={ city.name }
+						onChangeText={ (text) => setCity({ ...city, name: text }) }
 						onKeyPress={ (press) => emptyFilter(press) }
 						onSelectionChange={ changeSelection }
 					/>
@@ -139,7 +176,7 @@ export default function CityScreen({ navigation }) {
 				<FlatList
 					data={ suggestion }
 					renderItem={ renderItem }
-					keyExtractor={ item => item.title }
+					keyExtractor={ (item) => item.id }
 					style={ styles.list }
 				/>
 			</KeyboardAvoidingView>
