@@ -6,7 +6,7 @@ import { SettingsContext } from '../../contexts/settings';
 
 export default function CityScreen({ navigation }) {
 	const { settings, setSettings } = useContext(SettingsContext);
-	const [ city, setCity ] = useState({ id: 0, name: settings.person.city });
+	const [ city, setCity ] = useState(settings.person.city || { id: 0, value: '' });
 	const [ availableCities, setAvailableCities ] = useState([]);
 	const [ pointer, setPointer ] = useState(0);
 	const [ suggestion, setSuggestion ] = useState([]);
@@ -18,13 +18,13 @@ export default function CityScreen({ navigation }) {
 		Keyboard.dismiss();
 	};
 	const emptyFilter = ({ nativeEvent: { key } }) => {
-		if (!city.name) return;
+		if (!city.value) return;
 
 		const regex = new RegExp('[а-яА-Я\-Backspace ]');
 		const check = regex.test(key);
 		const cityChars = key === 'Backspace'
-			? city.name.slice(0, pointer - 1) + city.name.slice(pointer)
-			: city.name.slice(0, pointer) + key + city.name.slice(pointer);
+			? city.value.slice(0, pointer - 1) + city.value.slice(pointer)
+			: city.value.slice(0, pointer) + key + city.value.slice(pointer);
 		const exceptionLetters = ['k', 'e', 'p', 'c', 'a', 's'];
 
 		if(!check || exceptionLetters.includes(key)) {
@@ -97,11 +97,11 @@ export default function CityScreen({ navigation }) {
 		}
 	};
 	const renderItem = (({ item }) => {
-		const { id, city_ru: name } = item;
+		const { id, city_ru: value } = item;
 
 		return (
-			<Pressable onPress={ () => selectItem({ id, name }) }>
-				<Text style={ styles.item }>{ name }</Text>
+			<Pressable onPress={ () => selectItem({ id, value }) }>
+				<Text style={ styles.item }>{ value }</Text>
 			</Pressable>
 		);
 	});
@@ -167,8 +167,8 @@ export default function CityScreen({ navigation }) {
 						style={ styles.input }
 						placeholder="Ввести город..."
 						placeholderTextColor="rgba(255, 255, 255, 0.5)"
-						value={ city.name }
-						onChangeText={ (text) => setCity({ ...city, name: text }) }
+						value={ city.value }
+						onChangeText={ (text) => setCity({ ...city, value: text }) }
 						onKeyPress={ (press) => emptyFilter(press) }
 						onSelectionChange={ changeSelection }
 					/>

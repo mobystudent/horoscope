@@ -214,7 +214,7 @@ export default function DateScreen({ navigation }) {
 			}
 
 			try {
-				const birthDate = moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD');
+				const birthDate = moment(date.data, 'DD-MM-YYYY').format('YYYY-MM-DD');
 
 				fetch(`https://api-moon.digitalynx.org/api/moon/register?date=${ birthDate }`)
 					.then((response) => {
@@ -282,7 +282,10 @@ export default function DateScreen({ navigation }) {
 		const dayFormat = currentDate.day < 10 ? `0${ currentDate.day }` : currentDate.day;
 		const monthFormat = currentDate.month < 10 ? `0${ currentDate.month + 1 }` : currentDate.month + 1;
 
-		setDate(`${ dayFormat }-${ monthFormat }-${ currentDate.year }`);
+		setDate({
+			data: `${ dayFormat }-${ monthFormat }-${ currentDate.year }`,
+			value: `${ dayFormat }.${ monthFormat }.${ currentDate.year }`
+		});
 		setDisabledBtn(false);
 	}, [currentDate]);
 

@@ -56,11 +56,14 @@ export default function Account({ navigation }) {
 	};
 	const userDataArray = userData.map((data, i) => {
 		const style = !i ? styles.button : [ styles.button, styles.buttonLine ];
+		const personValue = settings.person[data.screen].value || settings.person[data.screen];
 
-		return <Pressable style={ style } key={ i } onPress={ () => navigation.navigate(data.screen) }>
-			<Text style={ styles.text }>{ data.title }</Text>
-			<Text style={ styles.text }>{ settings.person[data.screen] }</Text>
-		</Pressable>;
+		return (
+			<Pressable style={ style } key={ i } onPress={ () => navigation.navigate(data.screen) }>
+				<Text style={ styles.text }>{ data.title }</Text>
+				<Text style={ styles.text }>{ personValue }</Text>
+			</Pressable>
+		);
 	});
 	const documentsArray = Object.keys(documents).map((key, i) => {
 		const style = !i ? styles.button : [ styles.button, styles.buttonLine ];
@@ -100,7 +103,7 @@ export default function Account({ navigation }) {
 		return components;
 	};
 	const countAge = () => {
-		const birthday = moment(settings.person.date, "DD-MM-YYYY");
+		const birthday = moment(settings.person.date.data, "DD-MM-YYYY");
 
 		return moment().diff(birthday, 'years');
 	};

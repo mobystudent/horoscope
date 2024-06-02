@@ -163,7 +163,7 @@ export default function Processing({ navigation }) {
 	useEffect(() => {
 		try {
 			const currentDate = moment().format('YYYY-MM-DD');
-			const birthDate = moment(settings.person.date, 'DD-MM-YYYY').format('YYYY-MM-DD');
+			const birthDate = moment(settings.person.date.data, 'DD-MM-YYYY').format('YYYY-MM-DD');
 
 			fetch(`https://api-moon.digitalynx.org/api/moon/special/year?date=${ currentDate }`)
 				.then((response) => {
