@@ -22,8 +22,20 @@ export default function Moon({ navigation }) {
 				slogan = '',
 				details: {
 					sunDay: {
-						period = ''
-					} = {}
+						period: sunPeriod = '',
+						durations = [{
+							day: 29,
+							time: '00:00'
+						},
+						{
+							day: 30,
+							time: '05:14'
+						},
+						{
+							day: 1,
+							time: '14:52'
+						}]
+					} = {},
 				} = {}
 			} = {}
 		} = {},
@@ -46,12 +58,23 @@ export default function Moon({ navigation }) {
 		type: 'note'
 	};
 	const getDate = () => {
-		const date = moment(period, 'YYYY-MM-DD');
+		const date = moment(sunPeriod, 'YYYY-MM-DD');
 
 		return `${ date.date() } ${ parseLang.months[date.month()].nameGen }`
 	};
-	const title = activeTab === "day" ? parseLang.phase[phase].title : 'Календарь';
-	const subtitle = activeTab === "day" ? parseLang.phase[phase].type : getDate();
+	const moonDurations = durations.map(({ day, time }, i) => {
+		const prefix = durations.length > 1 ? i === 0 ? 'Продолжается' : 'Начинается' : 'Продолжается';
+		const text = `${ prefix } ${ day }-й лунный день`;
+
+		return (
+			<View style={[ styles.row, styles.rowLine ]}>
+				<Text style={[ styles.cell, styles.time ]}>{ time }</Text>
+				<Text style={[ styles.cell, styles.text ]}>{ text }</Text>
+			</View>
+		);
+	});
+	const title = activeTab === 'day' ? parseLang.phase[phase].title : 'Календарь';
+	const subtitle = activeTab === 'day' ? parseLang.phase[phase].type : getDate();
 	const tabslist = Object.keys(tabs).map((key) => {
 		return (
 			<Pressable style={[ styles.button, activeTab === key && styles.activeButton ]} key={ key } onPress={ () => setActiveTab(key) }>
@@ -82,12 +105,21 @@ export default function Moon({ navigation }) {
 				</View>
 				<MoonCalendar type={ activeTab } />
 				{ activeTab === "day"
-					? <View style={ styles.slogan }>
-						<View style={ styles.personIcon }>
-							{ personIcon('#fff', .5) }
+					? <>
+						<View style={ styles.slogan }>
+							<View style={ styles.personIcon }>
+								{ personIcon('#fff', .5) }
+							</View>
+							<Text style={ styles.sloganText }>{ slogan }</Text>
 						</View>
-						<Text style={ styles.sloganText }>{ slogan }</Text>
-					</View>
+						<View style={ styles.moonDuration }>
+							<View style={ styles.row }>
+								<Text style={[ styles.cell, styles.time ]}>Время</Text>
+								<Text style={[ styles.cell, styles.text ]}>Лунный день</Text>
+							</View>
+							{ moonDurations }
+						</View>
+					</>
 					: <View style={ styles.moonPhase }>
 						<SvgXml xml={ moonIcons(phase) } width={ 48 } height={ 48 } />
 						<View style={ styles.moonWrap }>
@@ -114,7 +146,7 @@ const styles = StyleSheet.create({
 		columnGap: 20,
 		paddingVertical: 10,
 		paddingHorizontal: 20,
-		marginBottom: 30,
+		marginBottom: 15,
 		borderRadius: 16,
 		backgroundColor: 'rgba(255, 255, 255, .12)'
 	},
@@ -129,6 +161,38 @@ const styles = StyleSheet.create({
 		lineHeight: 20,
 		color: '#fff',
 		letterSpacing: -.1
+	},
+	moonDuration: {
+		paddingHorizontal: 20,
+		marginBottom: 30,
+		borderRadius: 16,
+		backgroundColor: 'rgba(255, 255, 255, .12)'
+	},
+	row: {
+		flexDirection: 'row',
+		flexWrap: 'wrap',
+		alignItems: 'center',
+		paddingVertical: 10,
+		columnGap: 10
+	},
+	rowLine: {
+		borderTopWidth: 1,
+		borderTopColor: 'rgba(255, 255, 255, .1)'
+	},
+	cell: {
+		fontSize: 16,
+		lineHeight: 20,
+		color: '#fff'
+	},
+	time: {
+		flexGrow: 0,
+		fontWeight: '700',
+		width: 50
+	},
+	text: {
+		flexGrow: 1,
+		flexShrink: 1,
+		fontWeight: '700'
 	},
 	tabs: {
 		flexDirection: 'row',
