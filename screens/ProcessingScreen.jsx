@@ -76,20 +76,20 @@ export default function Processing({ navigation }) {
 	};
 	const storageNotesListData = async () => {
 		try {
-			const notesArray = [];
+			const notesList = [];
 
-			for (let i = 0; i < 30; i++) {
-				notesArray.push({
-					day: i + 1,
+			for (let i = 1; i <= 30; i++) {
+				notesList.push({
+					day: i,
 					date: '',
 					description: ''
 				});
 			}
-			setNotesList(notesArray);
+			setNotesList(notesList);
 
-			const notesString = JSON.stringify(notesArray);
+			const notesString = JSON.stringify(notesList);
 
-			await AsyncStorage.setItem('notesArray', notesString);
+			await AsyncStorage.setItem('notesList', notesString);
 		} catch(error) {
 			setSettings({
 				...settings,

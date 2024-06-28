@@ -76,7 +76,7 @@ export default function CreateNote (props) {
 		try {
 			const notesString = JSON.stringify(updatedNotesList);
 
-			await AsyncStorage.setItem('notesArray', notesString);
+			await AsyncStorage.setItem('notesList', notesString);
 
 			navigation.navigate(page);
 			setSettings({

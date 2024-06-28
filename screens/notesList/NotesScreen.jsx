@@ -6,8 +6,17 @@ import Note from '../../components/Note';
 import { SettingsContext } from '../../contexts/settings';
 
 export default function Notes({ navigation }) {
-	const { settings, setSettings } = useContext(SettingsContext);
-	const [ notesArr, setNotesArr ] = useState(settings.notesList);
+	const {
+		settings: {
+			notesList = {},
+			modal: {
+				type: modalType = ''
+			} = {}
+		} = {},
+		settings,
+		setSettings
+	} = useContext(SettingsContext);
+	const [ list, setList ] = useState(notesList);
 	const title = 'Все заметки';
 	const leftButton = {
 		screenLink: 'account',
@@ -17,53 +26,53 @@ export default function Notes({ navigation }) {
 		btnAction: 'sort',
 		type: 'filter'
 	};
-	const notesArray = notesArr.map((note, i) => {
-		return <Note navigation={ navigation } key={ i } note={ note } />
+	const allNotes = list.map((note) => {
+		return <Note navigation={ navigation } key={ note.day } note={ note } />
 	});
 	const sortNotes = (type) => {
-		let createdNotes = [];
+		let filledNotes = [];
 		let emptyNotes = [];
 
 		switch(type) {
 			case 'new':
-				for(const note of notesArr) {
+				for(const note of list) {
 					if (note.date) {
-						createdNotes.push(note);
+						filledNotes.push(note);
 					} else {
 						emptyNotes.push(note);
 					}
 				}
-				createdNotes.sort((a, b) => {
+				filledNotes.sort((a, b) => {
 					const dateA = new Date(`20${a.date.split('.').reverse().join('-')}`);
 					const dateB = new Date(`20${b.date.split('.').reverse().join('-')}`);
 
 					return dateA - dateB;
 				});
 				emptyNotes.sort((a, b) => a.day - b.day);
-				setNotesArr(createdNotes.concat(emptyNotes));
+				setList(filledNotes.concat(emptyNotes));
 				break;
 			case 'old':
-				for(const note of notesArr) {
+				for(const note of list) {
 					if (note.date) {
-						createdNotes.push(note);
+						filledNotes.push(note);
 					} else {
 						emptyNotes.push(note);
 					}
 				}
-				createdNotes.sort((a, b) => {
+				filledNotes.sort((a, b) => {
 					const dateA = new Date(`20${a.date.split('.').reverse().join('-')}`);
 					const dateB = new Date(`20${b.date.split('.').reverse().join('-')}`);
 
 					return dateB - dateA;
 				});
 				emptyNotes.sort((a, b) => b.day - a.day);
-				setNotesArr(createdNotes.concat(emptyNotes));
+				setList(filledNotes.concat(emptyNotes));
 				break;
 			case 'asc':
-				setNotesArr(notesArr.sort((a, b) => a.day - b.day));
+				setList(list.sort((a, b) => a.day - b.day));
 				break;
 			case 'desc':
-				setNotesArr(notesArr.sort((a, b) => b.day - a.day));
+				setList(list.sort((a, b) => b.day - a.day));
 				break;
 		}
 
@@ -74,7 +83,7 @@ export default function Notes({ navigation }) {
 	};
 
 	useEffect(() => {
-		if (settings.modal.type !== 'sort') return;
+		if (modalType !== 'sort') return;
 
 		setSettings({
 			...settings,
@@ -85,10 +94,10 @@ export default function Notes({ navigation }) {
 				handler: (type) => sortNotes(type)
 			}
 		});
-	}, [settings.modal.type]);
+	}, [modalType]);
 
 	// useEffect(() => {
-	// 	setNotesArr(notesArr.sort((a, b) => {
+	// 	setList(list.sort((a, b) => {
 	// 		if (a.day === todayMoonDay) return -1;
 	// 		if (b.day === todayMoonDay) return 1;
 	//
@@ -107,7 +116,7 @@ export default function Notes({ navigation }) {
 			/>
 			<ScrollView contentContainerStyle={ styles.body } showsVerticalScrollIndicator={ false }>
 				<View style={ styles.list }>
-					{ notesArray }
+					{ allNotes }
 				</View>
 			</ScrollView>
 		</Container>

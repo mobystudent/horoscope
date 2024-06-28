@@ -42,7 +42,7 @@ export default function StartScreen({ navigation }) {
 	};
 	const storageNotesListData = async () => {
 		try {
-			const notesList = await AsyncStorage.getItem('notesArray');
+			const notesList = await AsyncStorage.getItem('notesList');
 
 			if (notesList === null) {
 				throw new Error('Данных о сохраненных заметках нет');

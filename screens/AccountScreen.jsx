@@ -11,7 +11,21 @@ import { SettingsContext } from '../contexts/settings';
 import { arrowRightIcon, photoIcon } from '../icons/elements';
 
 export default function Account({ navigation }) {
-	const { settings, setSettings } = useContext(SettingsContext);
+	const {
+		settings: {
+			currentMoonDay: {
+				details: {
+					moonDay: {
+						day: moonDay = ''
+					} = {},
+				} = {}
+			} = {},
+			notesList = {},
+			person = {}
+		} = {},
+		settings,
+		setSettings
+	} = useContext(SettingsContext);
 	const title = 'Мой профиль';
 	const leftButton = {
 		screenLink: 'moon',
@@ -56,7 +70,7 @@ export default function Account({ navigation }) {
 	};
 	const userDataArray = userData.map((data, i) => {
 		const style = !i ? styles.button : [ styles.button, styles.buttonLine ];
-		const personValue = settings.person[data.screen].value || settings.person[data.screen];
+		const personValue = person[data.screen].value || person[data.screen];
 
 		return (
 			<Pressable style={ style } key={ i } onPress={ () => navigation.navigate(data.screen) }>
@@ -78,32 +92,32 @@ export default function Account({ navigation }) {
 		</Pressable>;
 	});
 	const lastNotes = () => {
-		const createdArr = [];
+		const filledNotes = [];
 		const components = [];
 
-		for (const note of settings.notesList) {
-			if (note.day === settings.currentMoonDay.details.moonDay.day) {
+		for (const note of notesList) {
+			if (note.day === moonDay) {
 				components.push(<Note navigation={ navigation } key={ note.day } note={ note } />);
 			} else if (note.date) {
-				createdArr.push(note);
+				filledNotes.push(note);
 			}
 		}
 
-		createdArr.sort((a, b) => {
+		filledNotes.sort((a, b) => {
 			const dateA = new Date(`20${a.date.split('.').reverse().join('-')}`);
 			const dateB = new Date(`20${b.date.split('.').reverse().join('-')}`);
 
 			return dateA - dateB;
 		});
 
-		for (const note of createdArr.slice(0, 2)) {
+		for (const note of filledNotes.slice(0, 2)) {
 			components.push(<Note navigation={ navigation } key={ note.day } note={ note } />);
 		}
 
 		return components;
 	};
 	const countAge = () => {
-		const birthday = moment(settings.person.date.data, "DD-MM-YYYY");
+		const birthday = moment(person.date.data, "DD-MM-YYYY");
 
 		return moment().diff(birthday, 'years');
 	};
@@ -118,15 +132,15 @@ export default function Account({ navigation }) {
 			<ScrollView contentContainerStyle={ styles.body } showsVerticalScrollIndicator={ false }>
 				<View style={ styles.block }>
 					<Pressable style={ styles.circle } onPress={ () => navigation.navigate('image') }>
-						{ settings.person.image ?
-							<Image style={ styles.photo } source={{ uri: settings.person.image }} />
+						{ person.image ?
+							<Image style={ styles.photo } source={{ uri: person.image }} />
 							: <View style={ styles.photoIcon }>
 								{ photoIcon('#fff') }
 							</View>
 						}
 					</Pressable>
 					<Pressable onPress={ () => navigation.navigate('name') }>
-						<Text style={ styles.name }>{ settings.person.name }, { countAge() }</Text>
+						<Text style={ styles.name }>{ person.name }, { countAge() }</Text>
 					</Pressable>
 				</View>
 				<MoonMinder navigation={ navigation } />

@@ -56,7 +56,7 @@ export default function Moon({ navigation }) {
 		const text = `${ prefix } ${ day }-й лунный день`;
 
 		return (
-			<View style={[ styles.row, styles.rowLine ]}>
+			<View style={[ styles.row, styles.rowLine ]} key={ day }>
 				<Text style={[ styles.cell, styles.time ]}>{ time }</Text>
 				<Text style={[ styles.cell, styles.text ]}>{ text }</Text>
 			</View>
