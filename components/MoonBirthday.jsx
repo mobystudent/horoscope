@@ -41,13 +41,11 @@ export default function MoonBirthday({ navigation }) {
 		navigation.navigate('content');
 	};
 	const setPeriod = () => {
-		const splitPeriod = moonDay.period.split(' ');
-
 		return (
 			<View style={ styles.data }>
-				<Text style={ styles.text }>{ splitPeriod[1] }</Text>
-				<Text style={ [ styles.text, styles.moonMark ] }>{ `${ splitPeriod[0] } - ${ splitPeriod[3] }` }</Text>
-				<Text style={ styles.text }>{ splitPeriod[4] }</Text>
+				<Text style={ styles.text }>{ moonDay.period[0].date }</Text>
+				<Text style={ [ styles.text, styles.moonMark ] }>{ `${ moonDay.period[0].time } - ${ moonDay.period[1].time }` }</Text>
+				<Text style={ styles.text }>{ moonDay.period[1].date }</Text>
 			</View>
 		);
 	};

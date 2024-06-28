@@ -15,7 +15,7 @@ export default function MoonCalendar({ type }) {
 			currentMoonDay: {
 				details: {
 					sunDay: {
-						period = ''
+						date: sunDate = ''
 					} = {}
 				} = {}
 			} = {},
@@ -26,7 +26,7 @@ export default function MoonCalendar({ type }) {
 	} = useContext(SettingsContext);
 	const [ dayWidth, setDayWidth ] = useState(0);
 	const parseLang = JSON.parse(JSON.stringify(lang));
-	const date = moment(period, 'YYYY-MM-DD');
+	const date = moment(sunDate, 'YYYY-MM-DD');
 	const numberDay = date.date();
 	const numberWeekDay = date.isoWeekday();
 	const [ currentDate, setCurrentDate ] = useState({

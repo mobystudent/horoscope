@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext, useMemo } from 'react';
 import { StyleSheet, Text, View, Animated } from 'react-native';
+import { getCalendars } from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Svg, { Circle } from 'react-native-svg';
 import Container from '../components/Container';
@@ -24,6 +25,7 @@ export default function Processing({ navigation }) {
 	const [ moon, setMoon ] = useState({});
 	const [ notesList, setNotesList ] = useState([]);
 	const [ birthdayMoon, setBirthdayMoon ] = useState({});
+	const timezone = getCalendars()[0].timeZone;
 	const title = 'Создаем ваш профиль';
 	const renderSteps = useMemo(() => {
 		return steps.map((step) => (
@@ -164,6 +166,8 @@ export default function Processing({ navigation }) {
 		try {
 			const currentDate = moment().format('YYYY-MM-DD');
 			const birthDate = moment(settings.person.date.data, 'DD-MM-YYYY').format('YYYY-MM-DD');
+			const lat = settings.cityCoords.lat;
+			const lng = settings.cityCoords.lng;
 
 			fetch(`https://api-moon.digitalynx.org/api/moon/special/year?date=${ currentDate }`)
 				.then((response) => {
@@ -180,7 +184,7 @@ export default function Processing({ navigation }) {
 
 					setMonths(monthsData);
 
-					return fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ currentDate }`);
+					return fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ currentDate }&time=00:44&lat=${ lat }&lng=${ lng }&tz=${ timezone }`);
 				})
 				.then((response) => {
 					if (!response.ok) {
@@ -196,7 +200,7 @@ export default function Processing({ navigation }) {
 
 					setMoon(moonData);
 
-					return fetch(`https://api-moon.digitalynx.org/api/moon/register?date=${ birthDate }`);
+					return fetch(`https://api-moon.digitalynx.org/api/moon/register?date=${ birthDate }&time="00:44"&lat=${ lat }&lng=${ lng }&tz=${ timezone }`);
 				})
 				.then((response) => {
 					if (!response.ok) {

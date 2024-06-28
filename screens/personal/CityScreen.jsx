@@ -11,10 +11,17 @@ export default function CityScreen({ navigation }) {
 	const [ pointer, setPointer ] = useState(0);
 	const [ suggestion, setSuggestion ] = useState([]);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
-	const selectItem = (item) => {
-		setCity(item);
+	const selectItem = ({ id, value, lat, lng }) => {
+		setCity({ id, value });
 		setSuggestion([]);
 		setDisabledBtn(false);
+		setSettings({
+			...settings,
+			cityCoords: {
+				lat,
+				lng
+			}
+		});
 		Keyboard.dismiss();
 	};
 	const emptyFilter = ({ nativeEvent: { key } }) => {
@@ -97,10 +104,10 @@ export default function CityScreen({ navigation }) {
 		}
 	};
 	const renderItem = (({ item }) => {
-		const { id, city_ru: value } = item;
+		const { city_ru: value } = item;
 
 		return (
-			<Pressable onPress={ () => selectItem({ id, value }) }>
+			<Pressable onPress={ () => selectItem({ ...item, value }) }>
 				<Text style={ styles.item }>{ value }</Text>
 			</Pressable>
 		);

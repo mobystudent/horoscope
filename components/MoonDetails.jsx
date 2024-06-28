@@ -32,23 +32,13 @@ export default function MoonDetails({ type }) {
 		let textLower = '';
 
 		if (name === 'sunDay') {
-			const date = moment(obj.period, 'YYYY-MM-DD');
+			const date = moment(obj.date, 'YYYY-MM-DD');
 
 			textUpper = parseLang.months[date.month()].nameGen;
 			textLower = date.year();
 		} else {
-			const parsePeriod = obj.period.split(' - ');
-
-			if (type === 'calendar') {
-				textUpper = `С ${parsePeriod[0]}`;
-				textLower = `до ${parsePeriod[1]}`;
-			} else {
-				const periodStart = parsePeriod[0];
-				const lastIndent = periodStart.lastIndexOf(' ');
-
-				textUpper = periodStart.slice(0, lastIndent);
-				textLower = periodStart.slice(lastIndent + 1);;
-			}
+			textUpper = `С ${ obj.period[0].time }`;
+			textLower = `до ${ obj.period[1].time }`;
 		}
 
 		return (

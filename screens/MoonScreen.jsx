@@ -22,19 +22,8 @@ export default function Moon({ navigation }) {
 				slogan = '',
 				details: {
 					sunDay: {
-						period: sunPeriod = '',
-						durations = [{
-							day: 29,
-							time: '00:00'
-						},
-						{
-							day: 30,
-							time: '05:14'
-						},
-						{
-							day: 1,
-							time: '14:52'
-						}]
+						date: sunDate = '',
+						period = []
 					} = {},
 				} = {}
 			} = {}
@@ -58,12 +47,12 @@ export default function Moon({ navigation }) {
 		type: 'note'
 	};
 	const getDate = () => {
-		const date = moment(sunPeriod, 'YYYY-MM-DD');
+		const date = moment(sunDate, 'YYYY-MM-DD');
 
 		return `${ date.date() } ${ parseLang.months[date.month()].nameGen }`
 	};
-	const moonDurations = durations.map(({ day, time }, i) => {
-		const prefix = durations.length > 1 ? i === 0 ? 'Продолжается' : 'Начинается' : 'Продолжается';
+	const moonDurations = period.map(({ day, time }, i) => {
+		const prefix = period.length > 1 ? i === 0 ? 'Продолжается' : 'Начинается' : 'Продолжается';
 		const text = `${ prefix } ${ day }-й лунный день`;
 
 		return (
