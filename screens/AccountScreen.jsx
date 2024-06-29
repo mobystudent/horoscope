@@ -96,7 +96,7 @@ export default function Account({ navigation }) {
 		const components = [];
 
 		for (const note of notesList) {
-			if (note.day === moonDay) {
+			if (note.day === +moonDay) {
 				components.push(<Note navigation={ navigation } key={ note.day } note={ note } />);
 			} else if (note.date) {
 				filledNotes.push(note);

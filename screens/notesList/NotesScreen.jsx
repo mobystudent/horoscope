@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useMemo } from 'react';
 import { StyleSheet, View, ScrollView } from 'react-native';
 import Container from '../../components/Container';
 import Header from '../../components/Header';
@@ -26,16 +26,13 @@ export default function Notes({ navigation }) {
 		btnAction: 'sort',
 		type: 'filter'
 	};
-	const allNotes = list.map((note) => {
-		return <Note navigation={ navigation } key={ note.day } note={ note } />
-	});
 	const sortNotes = (type) => {
 		let filledNotes = [];
 		let emptyNotes = [];
 
 		switch(type) {
 			case 'new':
-				for(const note of list) {
+				for(const note of notesList) {
 					if (note.date) {
 						filledNotes.push(note);
 					} else {
@@ -49,10 +46,10 @@ export default function Notes({ navigation }) {
 					return dateA - dateB;
 				});
 				emptyNotes.sort((a, b) => a.day - b.day);
-				setList(filledNotes.concat(emptyNotes));
+				setList([...filledNotes, ...emptyNotes]);
 				break;
 			case 'old':
-				for(const note of list) {
+				for(const note of notesList) {
 					if (note.date) {
 						filledNotes.push(note);
 					} else {
@@ -66,13 +63,13 @@ export default function Notes({ navigation }) {
 					return dateB - dateA;
 				});
 				emptyNotes.sort((a, b) => b.day - a.day);
-				setList(filledNotes.concat(emptyNotes));
+				setList([...filledNotes, ...emptyNotes]);
 				break;
 			case 'asc':
-				setList(list.sort((a, b) => a.day - b.day));
+				setList([...notesList].sort((a, b) => a.day - b.day));
 				break;
 			case 'desc':
-				setList(list.sort((a, b) => b.day - a.day));
+				setList([...notesList].sort((a, b) => b.day - a.day));
 				break;
 		}
 
@@ -81,6 +78,11 @@ export default function Notes({ navigation }) {
 			modal: {}
 		});
 	};
+	const allNotes = useMemo(() => {
+		return list.map((note) => {
+			return <Note navigation={ navigation } key={ note.day } note={ note } />
+		});
+	}, [list]);
 
 	useEffect(() => {
 		if (modalType !== 'sort') return;
@@ -96,15 +98,10 @@ export default function Notes({ navigation }) {
 		});
 	}, [modalType]);
 
-	// useEffect(() => {
-	// 	setList(list.sort((a, b) => {
-	// 		if (a.day === todayMoonDay) return -1;
-	// 		if (b.day === todayMoonDay) return 1;
-	//
-	// 		else return a.day - b.day;
-	// 	}));
-	// 	console.log('SORT');
-	// }, []);
+	useEffect(() => {
+		setList(notesList);
+		sortNotes('new');
+	}, [notesList]);
 
 	return (
 		<Container>
