@@ -15,11 +15,22 @@ export default function CreateNote (props) {
 			} = {}
 		} = {}
 	} = props;
-	const { settings, setSettings } = useContext(SettingsContext);
+	const {
+		settings: {
+			noteMode = '',
+			currentNote = {},
+			notesList = [],
+			modal: {
+				type: modalType = ''
+			} = {}
+		} = {},
+		settings,
+		setSettings
+	} = useContext(SettingsContext);
 	const [ description, setDescription ] = useState('');
 	console.log('settings -----------------------------');
-	console.log(settings.currentNote);
-	console.log(settings.notesList);
+	console.log(currentNote);
+	console.log(notesList);
 	console.log('settings -----------------------------');
 	const [ pointer, setPointer ] = useState(0);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
@@ -61,17 +72,13 @@ export default function CreateNote (props) {
 	const checkFocus = () => setContentActive(styles.contentActive);
 	const checkBlur = () => setContentActive('');
 	const save = async () => {
-		const updatedNotesList = settings.notesList.map((noteItem) => {
-			return noteItem.day === settings.currentNote.day ? {
-				day: settings.currentNote.day,
-				date: settings.noteMode !== 'clear' && moment().format("DD.MM.YYYY"),
+		const updatedNotesList = notesList.map((noteItem) => {
+			return noteItem.day === currentNote.day ? {
+				day: currentNote.day,
+				date: description && moment().format("DD.MM.YYYY"),
 				description
 			} : noteItem;
 		});
-
-		console.log('updatedNotesList ==========================');
-		console.log(updatedNotesList);
-		console.log('updatedNotesList ==========================');
 
 		try {
 			const notesString = JSON.stringify(updatedNotesList);
@@ -99,7 +106,7 @@ export default function CreateNote (props) {
 			return;
 		}
 	};
-	const header = settings.noteMode === 'new' || settings.noteMode === 'clear' ? 'Новая заметка' : `Заметка от ${settings.currentNote.date}`;
+	const header = noteMode === 'new' ? 'Новая заметка' : `Заметка от ${ currentNote.date }`;
 	const btnText = 'Сохранить';
 	const changeNote = (type) => {
 		setSettings({
@@ -115,17 +122,19 @@ export default function CreateNote (props) {
 	};
 
 	useEffect(() => {
-		if (settings.noteMode === 'edit') {
-			descriptionRef.current.focus();
+		if (noteMode === 'edit') {
+			setTimeout(() => {
+				descriptionRef.current.focus();
+			}, 0);
 		}
-	}, [settings.noteMode]);
+	}, [noteMode]);
 
 	useEffect(() => {
-		setDescription(settings.currentNote.description || '');
-	}, [settings.currentNote]);
+		setDescription(currentNote.description || '');
+	}, [currentNote]);
 
 	useEffect(() => {
-		if (settings.modal.type !== 'note') return;
+		if (modalType !== 'note') return;
 
 		setSettings({
 			...settings,
@@ -136,7 +145,7 @@ export default function CreateNote (props) {
 				handler: (type) => changeNote(type)
 			}
 		});
-	}, [settings.modal.type]);
+	}, [modalType]);
 
 	return (
 		<Container>
@@ -144,11 +153,11 @@ export default function CreateNote (props) {
 				navigation={ navigation }
 				title={ header }
 				leftButton={ leftButton }
-				rightButton={ settings.noteMode === 'view' && rightButton }
+				rightButton={ (noteMode === 'view' || noteMode === 'edit') && rightButton }
 			/>
 			<KeyboardAvoidingView style={[ styles.content, contentActive ]} behavior={ Platform.OS === 'ios' ? 'padding' : 'height' } >
 				<ScrollView contentContainerStyle={ styles.body } showsVerticalScrollIndicator={ false }>
-					<Text style={ styles.title }>{ settings.currentNote.day }-й лунный день</Text>
+					<Text style={ styles.title }>{ currentNote.day }-й лунный день</Text>
 					<View style={ styles.textareaWrap }>
 						<TextInput
 							multiline
@@ -156,7 +165,7 @@ export default function CreateNote (props) {
 							placeholder="Начните свою запись или вставьте текст"
 							placeholderTextColor="rgba(255, 255, 255, .5)"
 							value={ description }
-							readOnly={ settings.noteMode === 'view' }
+							editable={ noteMode !== 'view' }
 							onChangeText={ (text) => setDescription(text) }
 							onKeyPress={ (event) => checkText(event) }
 							onSelectionChange={ (event) => changeSelection(event) }

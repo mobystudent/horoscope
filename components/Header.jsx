@@ -29,7 +29,8 @@ export default function Header(props) {
 						day = ''
 					} = {}
 				} = {}
-			} = {}
+			} = {},
+			notesList = []
 		} = {},
 		settings,
 		setSettings
@@ -101,7 +102,7 @@ export default function Header(props) {
 			if (btnActionRight === 'add') {
 				setSettings({
 					...settings,
-					currentNote: settings.notesList[day],
+					currentNote: notesList[day - 1],
 					background: 'main'
 				});
 
