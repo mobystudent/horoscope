@@ -175,6 +175,7 @@ export default function Processing({ navigation }) {
 	useEffect(() => {
 		try {
 			const currentDate = moment().format('YYYY-MM-DD');
+			const currentTime = moment().format('HH:mm');
 			const birthDate = moment(settings.person.date.data, 'DD-MM-YYYY').format('YYYY-MM-DD');
 			const lat = settings.cityCoords.lat;
 			const lng = settings.cityCoords.lng;
@@ -194,7 +195,7 @@ export default function Processing({ navigation }) {
 
 					setMonths(monthsData);
 
-					return fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ currentDate }&time=00:44&lat=${ lat }&lng=${ lng }&tz=${ timezone }`);
+					return fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ currentDate }&time=${ currentTime }&lat=${ lat }&lng=${ lng }&tz=${ timezone }`);
 				})
 				.then((response) => {
 					if (!response.ok) {

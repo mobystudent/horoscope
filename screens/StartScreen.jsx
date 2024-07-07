@@ -95,9 +95,9 @@ export default function StartScreen({ navigation }) {
 		const loadServerData = async () => {
 			try {
 				const currentDate = moment().format('YYYY-MM-DD');
+				const currentTime = moment().format('HH:mm');
 				const lat = 56.946;
 				const lng = 24.10589;
-				const time = '00:44';
 
 				fetch(`https://api-moon.digitalynx.org/api/moon/special/year?date=${ currentDate }`)
 					.then((response) => {
@@ -114,7 +114,7 @@ export default function StartScreen({ navigation }) {
 
 						setMonths(monthsData);
 
-						return fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ currentDate }&time=${ time }&lat=${ lat }&lng=${ lng }&tz=${ timezone }`);
+						return fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ currentDate }&time=${ currentTime }&lat=${ lat }&lng=${ lng }&tz=${ timezone }`);
 					})
 					.then((response) => {
 						if (!response.ok) {

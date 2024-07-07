@@ -40,10 +40,10 @@ export default function Loading() {
 	}, []);
 
 	useEffect(() => {
-		if (!Object.keys(modal).length) return;
+		// if (!Object.keys(modal).length) return;
 
 		setVisibleModal(modal.visible);
-	}, [Object.keys(modal).length]);
+	}, [Object.keys(modal).length, modal.visible]);
 
 	return <>
 		<Navigation screen={ firstScreen } />
