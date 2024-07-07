@@ -8,7 +8,7 @@ import { SettingsContext } from '../../contexts/settings';
 
 export default function TimeScreen({ navigation }) {
 	const { settings, setSettings } = useContext(SettingsContext);
-	const [ time, setTime ] = useState(settings.person.time);
+	const [ time, setTime ] = useState(settings.person.time || '12:00');
 	// const date = new Date();
 	// const noon = date.setHours(12, 0, 0, 0);
 	// const [value, setValue] = useState(dayjs());
@@ -49,23 +49,23 @@ export default function TimeScreen({ navigation }) {
 		let timeLine = '';
 
 		if (type === 'hours') {
-			timeLine = time ? `${value}${time.slice(2)}` : `${value}H00`;
+			timeLine = time ? `${ value }${ time.slice(2) }` : `${ value }:00`;
 		} else if (type === 'minutes') {
-			timeLine = time ? time.slice(0, 3) + value + time.slice(5) : `12H${value}M`;
+			timeLine = time ? `${ time.slice(0, 3) }${ value }` : `12:${ value }`;
 		} else if (type === 'midday') {
 			const hoursValue = +time.slice(0, 2);
 
 			if (value === 'pm') {
 				if (hoursValue > 12 || hoursValue < 1) return;
 
-				timeLine = `${hoursValue === 12 ? '00' : hoursValue + 12}${time.slice(2)}`;
+				timeLine = `${ hoursValue === 12 ? '00' : hoursValue + 12 }${ time.slice(2) }`;
 			} else {
 				if (hoursValue < 13 && hoursValue > 0) return;
 
 				if (hoursValue === 0) {
-					timeLine = `12${time.slice(2)}`;
+					timeLine = `12${ time.slice(2) }`;
 				} else {
-					timeLine = `${hoursValue - 12 < 10 ? '0' : ''}${hoursValue - 12}${time.slice(2)}`;
+					timeLine = `${ hoursValue - 12 < 10 ? '0' : '' }${ hoursValue - 12 }${ time.slice(2) }`;
 				}
 			}
 		}

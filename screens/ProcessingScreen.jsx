@@ -210,7 +210,7 @@ export default function Processing({ navigation }) {
 
 					setMoon(moonData);
 
-					return fetch(`https://api-moon.digitalynx.org/api/moon/register?date=${ birthDate }&time="00:44"&lat=${ lat }&lng=${ lng }&tz=${ timezone }`);
+					return fetch(`https://api-moon.digitalynx.org/api/moon/register?date=${ birthDate }&time=${ settings.person.time }&lat=${ lat }&lng=${ lng }&tz=${ timezone }`);
 				})
 				.then((response) => {
 					if (!response.ok) {
