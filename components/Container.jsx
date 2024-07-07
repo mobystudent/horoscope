@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SettingsContext } from '../contexts/settings';
 
-import { backgroundsList } from '../assets/elements/backgrounds';
+import { backgroundsList } from '../elements/backgrounds';
 
 export default function Container({ children }) {
 	const {

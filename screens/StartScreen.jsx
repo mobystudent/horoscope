@@ -2,7 +2,6 @@ import { useState, useEffect, useContext, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { getCalendars } from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as SplashScreen from 'expo-splash-screen';
 import Container from '../components/Container';
 import { SvgXml } from 'react-native-svg';
 import { SettingsContext } from '../contexts/settings';
@@ -100,8 +99,6 @@ export default function StartScreen({ navigation }) {
 				const lng = 24.10589;
 				const time = '00:44';
 
-				await SplashScreen.preventAutoHideAsync();
-
 				fetch(`https://api-moon.digitalynx.org/api/moon/special/year?date=${ currentDate }`)
 					.then((response) => {
 						if (!response.ok) {
@@ -178,9 +175,7 @@ export default function StartScreen({ navigation }) {
 			registered: true
 		});
 
-		setTimeout(async () => {
-			await SplashScreen.hideAsync();
-
+		setTimeout(() => {
 			navigation.navigate('moon');
 		}, time);
 	}, [settingsStatus]);

@@ -1,7 +1,7 @@
 import { Dimensions } from 'react-native';
 
-import starsBackground from '../images/starsBackground.png';
-import halfMoonBg from '../images/halfMoonBg.png';
+import starsBackground from '../assets/images/starsBackground.png';
+import halfMoonBg from '../assets/images/halfMoonBg.png';
 
 const windowHeight = Dimensions.get('window').height;
 const starsHeignt = (windowHeight / 100) * 46;
