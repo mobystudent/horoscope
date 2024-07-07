@@ -19,6 +19,8 @@ import StartScreen from './screens/StartScreen';
 const Stack = createStackNavigator();
 
 export default function Navigation({ screen }) {
+	if (!screen) return;
+
 	return (
 		<NavigationContainer>
 			<Stack.Navigator

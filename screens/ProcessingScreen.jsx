@@ -128,8 +128,18 @@ export default function Processing({ navigation }) {
 		}
 	};
 	const settingsStatus = useMemo(() => {
+		if (!notesList.length && !Object.keys(birthdayMoon).length) return;
+
 		return [notesList, birthdayMoon].every((object) => Object.keys(object).length);
 	}, [notesList, birthdayMoon]);
+
+	useEffect(() => {
+		if (!Object.keys(birthdayMoon).length) return;
+
+		storagePersonData();
+		storageNotesListData();
+		storageBirthdayMoonData();
+	}, [birthdayMoon]);
 
 	useEffect(() => {
 		const progressId = setInterval(() => {
@@ -215,9 +225,6 @@ export default function Processing({ navigation }) {
 					}
 
 					setBirthdayMoon(birthdayData);
-					storagePersonData();
-					storageNotesListData();
-					storageBirthdayMoonData();
 				})
 				.catch((error) => {
 					setSettings({
