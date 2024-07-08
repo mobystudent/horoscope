@@ -76,18 +76,18 @@ export default function Processing({ navigation }) {
 	};
 	const storageNotesListData = async () => {
 		try {
-			const notesList = [];
+			const notesArray = [];
 
 			for (let i = 1; i <= 30; i++) {
-				notesList.push({
+				notesArray.push({
 					day: i,
 					date: '',
 					description: ''
 				});
 			}
-			setNotesList(notesList);
+			setNotesList(notesArray);
 
-			const notesString = JSON.stringify(notesList);
+			const notesString = JSON.stringify(notesArray);
 
 			await AsyncStorage.setItem('notesList', notesString);
 		} catch(error) {
@@ -144,33 +144,34 @@ export default function Processing({ navigation }) {
 	useEffect(() => {
 		const progressId = setInterval(() => {
 			setProgress((prevProgress) => {
-				const newProgress = prevProgress < 100 ? prevProgress + 1 : 100;
-				const activateStep = steps.find((step) => {
-					if (newProgress === step.level) {
-						step.active = true;
+				const counter = prevProgress < 100 ? prevProgress + 1 : 100;
 
-						return step;
-					}
-				});
-
-				if (activateStep) {
-					setSteps([ ...steps ]);
-				}
-
-				if (newProgress === 100) {
+				if (counter === 100) {
 					clearInterval(progressId);
-
-					if (readyData) {
-						navigation.navigate('moon');
-					}
 				}
 
-				return newProgress;
+				return counter;
 			});
 		}, time);
 
 		return () => clearInterval(progressId);
 	}, [readyData]);
+
+	useEffect(() => {
+		setSteps(steps.map((step) => {
+			if (progress === step.level) {
+				step.active = true;
+			}
+
+			return step;
+		}));
+	}, [progress]);
+
+	useEffect(() => {
+		if (progress === 100 && readyData) {
+			navigation.navigate('moon');
+		}
+	}, [progress, readyData]);
 
 	useEffect(() => {
 		try {
