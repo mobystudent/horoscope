@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { StyleSheet, Text, View, Pressable, ScrollView } from 'react-native';
+import { getCalendars } from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PersonTemplate from '../../components/PersonTemplate';
 import { SettingsContext } from '../../contexts/settings';
@@ -27,6 +28,7 @@ export default function DateScreen({ navigation }) {
 		month: datePresent.month(),
 		year: datePresent.year() - 5
 	});
+	const timezone = getCalendars()[0].timeZone;
 	const minAgeLimit = currentDate.month === datePresent.month() && currentDate.year <= datePresent.year() - 74;
 	const maxAgeLimit = currentDate.month === datePresent.month() && currentDate.year >= datePresent.year() - 5;
 	const numberFirstDay = moment(`01-${ currentDate.month + 1 }-${ currentDate.year }`, 'DD-MM-YYYY').isoWeekday();
@@ -215,8 +217,10 @@ export default function DateScreen({ navigation }) {
 
 			try {
 				const birthDate = moment(date.data, 'DD-MM-YYYY').format('YYYY-MM-DD');
+				const lat = settings.cityCoords.lat;
+				const lng = settings.cityCoords.lng;
 
-				fetch(`https://api-moon.digitalynx.org/api/moon/register?date=${ birthDate }`)
+				fetch(`https://api-moon.digitalynx.org/api/moon/register?date=${ birthDate }&time=${ settings.person.time }&lat=${ lat }&lng=${ lng }&tz=${ timezone }`)
 					.then((response) => {
 						if (!response.ok) {
 							throw new Error('Не удалось получить данные о лунном дне при рождении');

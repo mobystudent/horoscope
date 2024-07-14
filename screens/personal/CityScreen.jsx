@@ -46,15 +46,38 @@ export default function CityScreen({ navigation }) {
 				const newSugges = availableCities.filter((obj) => obj.city_ru.startsWith(cityChars));
 				const filteredCity = availableCities.find((obj) => obj.city_ru.toLowerCase() === cityChars.toLowerCase());
 
-				if (key !== 'Backspace') {
-					filteredCity && Keyboard.dismiss();
+				if (key !== 'Backspace' && filteredCity) {
+					const { city_ru: value } = filteredCity;
+
+					Keyboard.dismiss();
+					selectItem({ ...filteredCity, value });
+				} else {
+					setDisabledBtn(true);
 				}
 
-				setSuggestion(newSugges);
+				filteredCity || setSuggestion(newSugges);
 			} else if (cityChars.length < 3 && key === 'Backspace') {
 				setSuggestion([]);
 			}
 		}
+	};
+	const checkPastedText = (name) => {
+		if (pointer + 2 <= name.length) {
+			const lastChar = name[name.length - 1];
+			const nameWithoutSpace = lastChar === ' ' ? name.slice(0, name.length - 1) : name;
+			const filteredCity = availableCities.find((obj) => obj.city_ru.toLowerCase() === nameWithoutSpace.toLowerCase());
+
+			if (filteredCity) {
+				const { city_ru: value } = filteredCity;
+
+				selectItem({ ...filteredCity, value });
+			}
+
+			setCity({ ...city, value: nameWithoutSpace });
+		} else {
+			setCity({ ...city, value: name });
+		}
+
 	};
 	const changeSelection = ({ nativeEvent: { selection: { start } } }) => {
 		setPointer(start);
@@ -175,7 +198,7 @@ export default function CityScreen({ navigation }) {
 						placeholder="Ввести город..."
 						placeholderTextColor="rgba(255, 255, 255, 0.5)"
 						value={ city.value }
-						onChangeText={ (text) => setCity({ ...city, value: text }) }
+						onChangeText={ (name) => checkPastedText(name) }
 						onKeyPress={ (press) => emptyFilter(press) }
 						onSelectionChange={ changeSelection }
 					/>

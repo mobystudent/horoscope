@@ -34,8 +34,16 @@ export default function NameScreen({ navigation }) {
 	const checkNameLength = (name) => {
 		if (name.length > maxLengthName) return;
 
-		setName(name);
-		setCountInputWords(maxLengthName - name.length);
+		if (pointer + 2 <= name.length) {
+			const lastChar = name[name.length - 1];
+			const nameWithoutSpace = lastChar === ' ' ? name.slice(0, name.length - 1) : name;
+
+			setName(nameWithoutSpace);
+			setCountInputWords(maxLengthName - nameWithoutSpace.length);
+		} else {
+			setName(name);
+			setCountInputWords(maxLengthName - name.length);
+		}
 	};
 	const changeSelection = ({ nativeEvent: { selection: { start } } }) => {
 		setPointer(start);
