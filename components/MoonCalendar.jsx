@@ -1,5 +1,6 @@
 import { useState, useContext } from 'react';
 import { StyleSheet, View, Text, Pressable } from 'react-native';
+import { getCalendars } from 'expo-localization';
 import { SettingsContext } from '../contexts/settings';
 import moment from 'moment';
 
@@ -25,6 +26,7 @@ export default function MoonCalendar({ type }) {
 		setSettings
 	} = useContext(SettingsContext);
 	const [ dayWidth, setDayWidth ] = useState(0);
+	const timezone = getCalendars()[0].timeZone;
 	const parseLang = JSON.parse(JSON.stringify(lang));
 	const date = moment(sunDate, 'YYYY-MM-DD');
 	const numberDay = date.date();
@@ -37,7 +39,7 @@ export default function MoonCalendar({ type }) {
 	const numberFirstDay = moment(`01-${ currentDate.month + 1 }-${ currentDate.year }`, 'DD-MM-YYYY').isoWeekday();
 	const calendarWidth = ({ nativeEvent: { layout } }) => {
 		const columnGap = 5;
-		const bodyWidth = layout.width - columnGap * 6;
+		const bodyWidth = Math.floor(layout.width) - columnGap * 6;
 
 		setDayWidth(bodyWidth / 7);
 	};
@@ -83,6 +85,9 @@ export default function MoonCalendar({ type }) {
 		const dayFormat = day < 10 ? `0${ day }` : day;
 		const monthFormat = currentDate.month < 10 ? `0${ currentDate.month + 1 }` : currentDate.month + 1;
 		const dateFormat = `${ currentDate.year }-${ monthFormat }-${ dayFormat }`;
+		const currentTime = moment().format('HH:mm');
+		const lat = settings.cityCoords.lat;
+		const lng = settings.cityCoords.lng;
 
 		setCurrentDate({
 			...currentDate,
@@ -90,7 +95,7 @@ export default function MoonCalendar({ type }) {
 		});
 
 		try {
-			fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ dateFormat }`)
+			fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ dateFormat }&time=${ currentTime }&lat=${ lat }&lng=${ lng }&tz=${ timezone }`)
 				.then((response) => {
 					if (!response.ok) {
 						throw new Error('Не удалось получить данные о текущем лунном дне');
@@ -238,7 +243,9 @@ const styles = StyleSheet.create({
 	item: {
 		alignItems: 'center',
 		rowGap: 10,
-		padding: 5,
+		paddingTop: 5,
+		paddingHorizontal: 7,
+		paddingBottom: 8,
 		borderRadius: 10,
 		borderWidth: 1,
 		borderColor: 'rgba(255, 255, 255, .1)',

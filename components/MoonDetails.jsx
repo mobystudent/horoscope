@@ -49,7 +49,7 @@ export default function MoonDetails({ type }) {
 		);
 	};
 	const detailsSize = ({ nativeEvent: { layout } }) => {
-		const width = (layout.width - 10) / 2;
+		const width = (Math.floor(layout.width) - 10) / 2;
 
 		setBlockSize({
 			width,

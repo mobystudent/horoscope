@@ -175,8 +175,9 @@ const styles = StyleSheet.create({
 	},
 	time: {
 		flexGrow: 0,
+		flexShrink: 0,
 		fontWeight: '700',
-		width: 50
+		width: 55
 	},
 	text: {
 		flexGrow: 1,
