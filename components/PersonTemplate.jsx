@@ -17,6 +17,7 @@ export default function PersonTemplate(props) {
 	const { settings } = useContext(SettingsContext);
 	const leftButton = {
 		screenLink: 'account',
+		btnAction: 'back',
 		type: 'back'
 	};
 

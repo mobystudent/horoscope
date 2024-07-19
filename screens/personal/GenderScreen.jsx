@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { StyleSheet, Text, View, Pressable } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PersonTemplate from '../../components/PersonTemplate';
@@ -80,6 +80,12 @@ export default function GenderScreen({ navigation }) {
 			</View>
 		);
 	});
+
+	useEffect(() => {
+		if (gender !== settings.person.gender) {
+			setGender(settings.person.gender);
+		}
+	}, [settings]);
 
 	return (
 		<PersonTemplate

@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { StyleSheet, Text, Pressable, View } from 'react-native';
+import { StyleSheet, Text, Pressable, View, Keyboard } from 'react-native';
 import { SettingsContext } from '../contexts/settings';
 
 import * as svg from '../icons/elements';
@@ -82,6 +82,7 @@ export default function Header(props) {
 					background: 'main'
 				});
 			} else if (btnActionLeft === 'back') {
+				Keyboard.dismiss();
 				setSettings({
 					...settings,
 					currentNote: {}

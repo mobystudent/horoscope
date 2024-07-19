@@ -37,8 +37,8 @@ export default function CreateNote (props) {
 	const [ contentActive, setContentActive ] = useState('');
 	const descriptionRef = useRef(null);
 	const leftButton = {
-		btnAction: 'back',
 		screenLink: page,
+		btnAction: 'back',
 		type: 'back'
 	};
 	const rightButton = {

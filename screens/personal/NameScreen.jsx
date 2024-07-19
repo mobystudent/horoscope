@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { StyleSheet, Text, TextInput, View, KeyboardAvoidingView, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PersonTemplate from '../../components/PersonTemplate';
@@ -90,6 +90,12 @@ export default function NameScreen({ navigation }) {
 	const title = 'Как вас зовут?';
 	const description = 'Введите своё имя, чтобы создать персональный профиль и получать индивидуальные рекомендации лунного календаря';
 	const btnText = settings.registered ? 'Сохранить' : 'Далее';
+
+	useEffect(() => {
+		if (name !== settings.person.name) {
+			setName(settings.person.name);
+		}
+	}, [settings]);
 
 	return (
 		<PersonTemplate
