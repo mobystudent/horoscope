@@ -12,18 +12,11 @@ export default function CityScreen({ navigation }) {
 	const [ suggestion, setSuggestion ] = useState([]);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
 	const [ focusedInput, setFocusedInput ] = useState(false);
-	const selectItem = ({ id, value, lat, lng }) => {
-		setCity({ id, value });
+	const selectItem = ({ id, city_ru: value, lat, lng }) => {
+		Keyboard.dismiss();
+		setCity({ id, value, lat, lng });
 		setSuggestion([]);
 		setDisabledBtn(false);
-		setSettings({
-			...settings,
-			cityCoords: {
-				lat,
-				lng
-			}
-		});
-		Keyboard.dismiss();
 	};
 	const emptyFilter = ({ nativeEvent: { key } }) => {
 		if (!city.value) return;
@@ -48,10 +41,8 @@ export default function CityScreen({ navigation }) {
 				const filteredCity = availableCities.find((obj) => obj.city_ru.toLowerCase() === cityChars.toLowerCase());
 
 				if (key !== 'Backspace' && filteredCity) {
-					const { city_ru: value } = filteredCity;
-
 					Keyboard.dismiss();
-					selectItem({ ...filteredCity, value });
+					selectItem(filteredCity);
 				} else {
 					setDisabledBtn(true);
 				}
@@ -69,9 +60,7 @@ export default function CityScreen({ navigation }) {
 			const filteredCity = availableCities.find((obj) => obj.city_ru.toLowerCase() === nameWithoutSpace.toLowerCase());
 
 			if (filteredCity) {
-				const { city_ru: value } = filteredCity;
-
-				selectItem({ ...filteredCity, value });
+				selectItem(filteredCity);
 			}
 
 			setCity({ ...city, value: nameWithoutSpace });
@@ -131,7 +120,7 @@ export default function CityScreen({ navigation }) {
 		const { city_ru: value } = item;
 
 		return (
-			<Pressable onPress={ () => selectItem({ ...item, value }) }>
+			<Pressable onPress={ () => selectItem(item) }>
 				<Text style={ styles.item }>{ value }</Text>
 			</Pressable>
 		);

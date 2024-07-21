@@ -14,6 +14,7 @@ export default function StartScreen({ navigation }) {
 	const [ storagePerson, setStoragePerson ] = useState({});
 	const [ storageNotesList, setStorageNotesList ] = useState({});
 	const [ storageBirthdayMoon, setStorageBirthdayMoon ] = useState({});
+	const [ storageBasicSettings, setStorageBasicSettings ] = useState({});
 	const [ months, setMonths ] = useState({});
 	const [ moon, setMoon ] = useState({});
 	const timezone = getCalendars()[0].timeZone;
@@ -87,6 +88,29 @@ export default function StartScreen({ navigation }) {
 			return;
 		}
 	};
+	const storageBasicSettingsData = async () => {
+		try {
+			const basicSettings = await AsyncStorage.getItem('basicSettings');
+
+			if (basicSettings === null) {
+				throw new Error('Данных об основных настройках приложения нет');
+			}
+
+			setStorageBasicSettings(JSON.parse(basicSettings));
+		} catch(error) {
+			setSettings({
+				...settings,
+				modal: {
+					visible: true,
+					status: 'error',
+					title: 'Ошибка загрузки данных основных настроек приложения',
+					message: `Проблема с ответом из хранилища. ${ error }, попробуйте перезагрузить приложение`
+				}
+			});
+
+			return;
+		}
+	};
 	const settingsStatus = useMemo(() => {
 		return [storagePerson, storageNotesList, storageBirthdayMoon].every((object) => Object.keys(object).length);
 	}, [storagePerson, storageNotesList, storageBirthdayMoon]);
@@ -95,9 +119,6 @@ export default function StartScreen({ navigation }) {
 		const loadServerData = async () => {
 			try {
 				const currentDate = moment().format('YYYY-MM-DD');
-				const currentTime = moment().format('HH:mm');
-				const lat = 56.946;
-				const lng = 24.10589;
 
 				fetch(`https://api-moon.digitalynx.org/api/moon/special/year?date=${ currentDate }`)
 					.then((response) => {
@@ -113,9 +134,54 @@ export default function StartScreen({ navigation }) {
 						}
 
 						setMonths(monthsData);
-
-						return fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ currentDate }&time=${ currentTime }&lat=${ lat }&lng=${ lng }&tz=${ timezone }`);
+						storageBasicSettingsData();
 					})
+					.catch((error) => {
+						setSettings({
+							...settings,
+							modal: {
+								visible: true,
+								status: 'error',
+								title: 'Ошибка загрузки данных',
+								message: `Проблема с ответом от сети. ${ error }, попробуйте перезагрузить приложение`
+							}
+						});
+					});
+			} catch (error) {
+				setSettings({
+					...settings,
+					modal: {
+						visible: true,
+						status: 'error',
+						title: 'Ошибка подключения к сети',
+						message: `Не удалось подключиться к сети. ${ error }, попробуйте перезагрузить приложение`
+					}
+				});
+
+				return;
+			}
+		};
+
+		loadServerData();
+	}, []);
+
+	useEffect(() => {
+		if (!Object.keys(storageBasicSettings).length) return;
+
+		const loadServerData = async () => {
+			try {
+				const currentDate = moment().format('YYYY-MM-DD');
+				const currentTime = moment().format('HH:mm');
+				const {
+					city: {
+						lat: currentLat,
+						lng: currentLng,
+						timezone: currentTimezone
+					} = {}
+				} = storageBasicSettings;
+
+
+				fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ currentDate }&time=${ currentTime }&lat=${ currentLat }&lng=${ currentLng }&tz=${ currentTimezone }`)
 					.then((response) => {
 						if (!response.ok) {
 							throw new Error('Не удалось получить данные о текущем лунном дне');
@@ -160,7 +226,7 @@ export default function StartScreen({ navigation }) {
 		};
 
 		loadServerData();
-	}, []);
+	}, [storageBasicSettings]);
 
 	useEffect(() => {
 		if (!settingsStatus) return;

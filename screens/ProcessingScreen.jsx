@@ -1,6 +1,5 @@
 import { useState, useEffect, useContext, useMemo } from 'react';
 import { StyleSheet, Text, View, Animated } from 'react-native';
-import { getCalendars } from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Svg, { Circle } from 'react-native-svg';
 import Container from '../components/Container';
@@ -11,7 +10,27 @@ import moment from 'moment';
 import { checkIcon } from '../icons/elements';
 
 export default function Processing({ navigation }) {
-	const { settings, setSettings } = useContext(SettingsContext);
+	const {
+		settings: {
+			person: {
+				date: personDate,
+				time: birthTime,
+				city: {
+					lat: birthLat,
+					lng: birthLng
+				} = {}
+			} = {},
+			basicSettings: {
+				city: {
+					lat: currentLat,
+					lng: currentLng,
+					timezone: currentTimezone
+				}
+			} = {}
+		},
+		settings,
+		setSettings
+	} = useContext(SettingsContext);
 	const [ steps, setSteps ] = useState([
 		{ level: 20, title: 'Анализируем данные', active: false },
 		{ level: 35, title: 'Адаптируем лунные события', active: false },
@@ -25,7 +44,6 @@ export default function Processing({ navigation }) {
 	const [ moon, setMoon ] = useState({});
 	const [ notesList, setNotesList ] = useState([]);
 	const [ birthdayMoon, setBirthdayMoon ] = useState({});
-	const timezone = getCalendars()[0].timeZone;
 	const title = 'Создаем ваш профиль';
 	const renderSteps = useMemo(() => {
 		return steps.map((step) => (
@@ -127,6 +145,29 @@ export default function Processing({ navigation }) {
 			return;
 		}
 	};
+	const storageBasicSettingsData = async () => {
+		try {
+			const basicString = JSON.stringify(settings.basicSettings);
+
+			if (!Object.keys(settings.basicSettings).length) {
+				throw new Error('Данных об основных настройках приложения нет');
+			}
+
+			await AsyncStorage.setItem('basicSettings', basicString);
+		} catch(error) {
+			setSettings({
+				...settings,
+				modal: {
+					visible: true,
+					status: 'error',
+					title: 'Ошибка сохранения данных об основных настройках приложения',
+					message: `Проблема с записью в хранилище. ${ error }, попробуйте перезагрузить приложение`
+				}
+			});
+
+			return;
+		}
+	};
 	const settingsStatus = useMemo(() => {
 		if (!notesList.length && !Object.keys(birthdayMoon).length) return;
 
@@ -139,6 +180,7 @@ export default function Processing({ navigation }) {
 		storagePersonData();
 		storageNotesListData();
 		storageBirthdayMoonData();
+		storageBasicSettingsData();
 	}, [birthdayMoon]);
 
 	useEffect(() => {
@@ -177,9 +219,7 @@ export default function Processing({ navigation }) {
 		try {
 			const currentDate = moment().format('YYYY-MM-DD');
 			const currentTime = moment().format('HH:mm');
-			const birthDate = moment(settings.person.date.data, 'DD-MM-YYYY').format('YYYY-MM-DD');
-			const lat = settings.cityCoords.lat;
-			const lng = settings.cityCoords.lng;
+			const birthDate = moment(personDate.data, 'DD-MM-YYYY').format('YYYY-MM-DD');
 
 			fetch(`https://api-moon.digitalynx.org/api/moon/special/year?date=${ currentDate }`)
 				.then((response) => {
@@ -196,7 +236,7 @@ export default function Processing({ navigation }) {
 
 					setMonths(monthsData);
 
-					return fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ currentDate }&time=${ currentTime }&lat=${ lat }&lng=${ lng }&tz=${ timezone }`);
+					return fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ currentDate }&time=${ currentTime }&lat=${ currentLat }&lng=${ currentLng }&tz=${ currentTimezone }`);
 				})
 				.then((response) => {
 					if (!response.ok) {
@@ -212,7 +252,7 @@ export default function Processing({ navigation }) {
 
 					setMoon(moonData);
 
-					return fetch(`https://api-moon.digitalynx.org/api/moon/register?date=${ birthDate }&time=${ settings.person.time }&lat=${ lat }&lng=${ lng }&tz=${ timezone }`);
+					return fetch(`https://api-moon.digitalynx.org/api/moon/register?date=${ birthDate }&time=${ birthTime }&lat=${ birthLat }&lng=${ birthLng }`);
 				})
 				.then((response) => {
 					if (!response.ok) {
