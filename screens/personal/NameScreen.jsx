@@ -9,6 +9,7 @@ export default function NameScreen({ navigation }) {
 	const [ name, setName ] = useState(settings.person.name);
 	const [ pointer, setPointer ] = useState(0);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
+	const [ focusedInput, setFocusedInput ] = useState(false);
 	const maxLengthName = 16;
 	const [ countInputWords, setCountInputWords ] = useState(maxLengthName);
 	const checkText = ({ nativeEvent: { key } }) => {
@@ -105,6 +106,7 @@ export default function NameScreen({ navigation }) {
 			btnText={ btnText }
 			disabledBtn={ disabledBtn }
 			nextStep={ nextStep }
+			focusedInput={ focusedInput }
 		>
 			<KeyboardAvoidingView style={ styles.content } behavior={ Platform.OS === 'ios' ? 'padding' : 'height' } >
 				<View style={ styles.inputWrap }>
@@ -116,6 +118,8 @@ export default function NameScreen({ navigation }) {
 						onChangeText={ (name) => checkNameLength(name) }
 						onKeyPress={ (event) => checkText(event) }
 						onSelectionChange={ changeSelection }
+						onFocus={ () => setFocusedInput(true) }
+						onBlur={ () => setFocusedInput(false) }
 					/>
 					<Text style={ styles.hint }>Осталось { countInputWords } символов</Text>
 				</View>

@@ -334,7 +334,7 @@ export default function DateScreen({ navigation }) {
 						</View>
 					}
 					{ showYearsBoard &&
-						<ScrollView style={[ styles.yearBoard, { width: boardItemSize.width, height: boardItemSize.height } ]} horizontal={ true }>
+						<ScrollView contentContainerStyle={[ styles.yearBoard, { width: boardItemSize.width, height: boardItemSize.height } ]} horizontal={ true }>
 							<View style={ styles.boardWrap }>
 								{ yearPeriodArray() }
 							</View>

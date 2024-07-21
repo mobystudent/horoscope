@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import { StyleSheet, Text, Pressable, View, Keyboard, ScrollView } from 'react-native';
+import { useRoute } from '@react-navigation/native';
 import Container from './Container';
 import Header from './Header';
 import { SettingsContext } from '../contexts/settings';
@@ -12,7 +13,8 @@ export default function PersonTemplate(props) {
 		description,
 		btnText,
 		disabledBtn,
-		nextStep
+		nextStep,
+		focusedInput = false
 	} = props;
 	const { settings } = useContext(SettingsContext);
 	const leftButton = {
@@ -20,6 +22,7 @@ export default function PersonTemplate(props) {
 		btnAction: 'back',
 		type: 'back'
 	};
+	const screenName = useRoute().name;
 
 	return (
 		<Container>
@@ -27,23 +30,31 @@ export default function PersonTemplate(props) {
 				navigation={ settings.registered && navigation }
 				leftButton={ settings.registered && leftButton }
 			/>
-			<Pressable style={ styles.body } onPress={ () => Keyboard.dismiss() }>
-				<ScrollView contentContainerStyle={ styles.bodyWrapper } showsVerticalScrollIndicator={ false }>
-					<View style={ styles.header }>
-						<Text style={ styles.title }>{ title }</Text>
-						<Text style={ styles.description }>{ description }</Text>
-					</View>
-					<View style={ styles.wrap }>
-						{ children }
-					</View>
-					<Pressable
-						style={[ styles.button, disabledBtn && styles.disabledButton ]}
-						onPress={ () => nextStep() }
-						disabled={ disabledBtn }
-					>
-						<Text style={[ styles.buttonText, disabledBtn && styles.disabledText ]}>{ btnText }</Text>
-					</Pressable>
-				</ScrollView>
+			<Pressable
+				style={[ styles.body, focusedInput && styles.bodyFocused ]}
+				onPress={ () => Keyboard.dismiss() }
+			>
+				<Text style={[ styles.title, focusedInput && styles.titleFocused ]}>{ title }</Text>
+				{ screenName === 'date'
+					? (
+						<ScrollView showsVerticalScrollIndicator={ false }>
+							{ !focusedInput && <Text style={ styles.description }>{ description }</Text> }
+							{ children }
+						</ScrollView>
+					) : (
+						<View style={ styles.wrap }>
+							{ !focusedInput && <Text style={ styles.description }>{ description }</Text> }
+							{ children }
+						</View>
+					)
+				}
+				<Pressable
+					style={[ styles.button, disabledBtn && styles.disabledButton ]}
+					onPress={ () => nextStep() }
+					disabled={ disabledBtn }
+				>
+					<Text style={[ styles.buttonText, disabledBtn && styles.disabledText ]}>{ btnText }</Text>
+				</Pressable>
 			</Pressable>
 		</Container>
 	);
@@ -55,35 +66,36 @@ const styles = StyleSheet.create({
 		paddingTop: 15,
 		paddingBottom: 45
 	},
-	bodyWrapper: {
-		flex: 1
-	},
-	header: {
-		minHeight: 165,
-		marginBottom: 25
+	bodyFocused: {
+		paddingTop: 0,
+		paddingBottom: 15
 	},
 	wrap: {
-		flex: 1,
-		marginBottom: 40,
-		minHeight: 120
+		flex: 1
 	},
 	title: {
+		minHeight: 85,
 		color: '#fff',
 		textAlign: 'center',
 		fontWeight: '700',
 		fontSize: 34,
 		marginBottom: 15
 	},
+	titleFocused: {
+		minHeight: 'inherit'
+	},
 	description: {
 		color: '#fff',
 		textAlign: 'center',
 		fontWeight: '400',
 		fontSize: 16,
-		lineHeight: 20
+		lineHeight: 20,
+		marginBottom: 25
 	},
 	button: {
+		marginTop: 25,
 		borderRadius: 17,
-		backgroundColor: '#F2F2F3',
+		backgroundColor: '#F2F2F3'
 	},
 	buttonText: {
 		fontWeight: '600',

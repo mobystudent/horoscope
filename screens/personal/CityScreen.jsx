@@ -11,6 +11,7 @@ export default function CityScreen({ navigation }) {
 	const [ pointer, setPointer ] = useState(0);
 	const [ suggestion, setSuggestion ] = useState([]);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
+	const [ focusedInput, setFocusedInput ] = useState(false);
 	const selectItem = ({ id, value, lat, lng }) => {
 		setCity({ id, value });
 		setSuggestion([]);
@@ -190,6 +191,7 @@ export default function CityScreen({ navigation }) {
 			btnText={ btnText }
 			disabledBtn={ disabledBtn }
 			nextStep={ nextStep }
+			focusedInput={ focusedInput }
 		>
 			<KeyboardAvoidingView style={ styles.content } behavior={ Platform.OS === 'ios' ? 'padding' : 'height' } >
 				<View style={ styles.inputWrap }>
@@ -201,13 +203,14 @@ export default function CityScreen({ navigation }) {
 						onChangeText={ (name) => checkPastedText(name) }
 						onKeyPress={ (press) => emptyFilter(press) }
 						onSelectionChange={ changeSelection }
+						onFocus={ () => setFocusedInput(true) }
+						onBlur={ () => setFocusedInput(false) }
 					/>
 				</View>
 				<FlatList
 					data={ suggestion }
 					renderItem={ renderItem }
 					keyExtractor={ (item) => item.id }
-					style={ styles.list }
 				/>
 			</KeyboardAvoidingView>
 		</PersonTemplate>
@@ -216,6 +219,9 @@ export default function CityScreen({ navigation }) {
 
 const styles = StyleSheet.create({
 	content: {
+		flexGrow: 1,
+		flexShrink: 1,
+		flexBasis: 'auto',
 		rowGap: 25
 	},
 	inputWrap: {
