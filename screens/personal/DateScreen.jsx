@@ -143,8 +143,8 @@ export default function DateScreen({ navigation }) {
 				style={[
 					styles.boardItem,
 					{
-						width: boardItemSize.width / 3 - 2,
-						height: boardItemSize.height / 4 - 2
+						width: (Math.ceil(boardItemSize.width) - 6) / 3,
+						height: '25%'
 					}
 				]}
 				key={ month.nameNom }
@@ -155,8 +155,8 @@ export default function DateScreen({ navigation }) {
 				style={[
 					styles.boardItem,
 					{
-						width: boardItemSize.width / 3 - 2,
-						height: boardItemSize.height / 4 - 2
+						width: (Math.ceil(boardItemSize.width) - 6) / 3,
+						height: '25%'
 					}
 				]}
 				key={ month.nameNom }
@@ -175,8 +175,8 @@ export default function DateScreen({ navigation }) {
 					style={[
 						styles.boardItem,
 						{
-							width: boardItemSize.width / 4 - 2.25,
-							height: boardItemSize.height / 5 - 2.5
+							width: (Math.ceil(boardItemSize.width) - 6) / 4,
+							height: '20%'
 						}
 					]}
 					key={ year }
@@ -342,7 +342,7 @@ export default function DateScreen({ navigation }) {
 						</View>
 					}
 					{ showYearsBoard &&
-						<ScrollView contentContainerStyle={[ styles.yearBoard, { width: boardItemSize.width, height: boardItemSize.height } ]} horizontal={ true }>
+						<ScrollView style={[ styles.yearBoard, { width: boardItemSize.width, height: boardItemSize.height } ]} horizontal={ true }>
 							<View style={ styles.boardWrap }>
 								{ yearPeriodArray() }
 							</View>
@@ -451,12 +451,18 @@ const styles = StyleSheet.create({
 	boardWrap: {
 		flexWrap: 'wrap',
 		flexDirection: 'column',
-		gap: 3,
+		columnGap: 2,
 		maxWidth: 1163
 	},
 	boardItem: {
 		alignItems: 'center',
 		justifyContent: 'center',
+		borderTopWidth: 1,
+		borderTopStyle: 'style',
+		borderTopColor : '#100e24',
+		borderBottomWidth: 1,
+		borderBottomStyle: 'style',
+		borderBottomColor : '#100e24',
 		backgroundColor: 'rgba(255, 255, 255, .12)'
 	},
 	itemName: {
