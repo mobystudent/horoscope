@@ -1,6 +1,5 @@
 import { useState, useContext } from 'react';
 import { StyleSheet, View, Text, Pressable } from 'react-native';
-import { getCalendars } from 'expo-localization';
 import { SettingsContext } from '../contexts/settings';
 import moment from 'moment';
 
@@ -20,23 +19,27 @@ export default function MoonCalendar({ type }) {
 					} = {}
 				} = {}
 			} = {},
-			monthsRange = {}
+			monthsRange = {},
+			basicSettings: {
+				city: {
+					lat: currentLat,
+					lng: currentLng,
+					timezone: currentTimezone
+				}
+			} = {}
 		} = {},
 		settings,
 		setSettings
 	} = useContext(SettingsContext);
 	const [ dayWidth, setDayWidth ] = useState(0);
-	const timezone = getCalendars()[0].timeZone;
 	const parseLang = JSON.parse(JSON.stringify(lang));
 	const date = moment(sunDate, 'YYYY-MM-DD');
-	const numberDay = date.date();
 	const numberWeekDay = date.isoWeekday();
 	const [ currentDate, setCurrentDate ] = useState({
 		day: date.date(),
-		month: date.month(),
+		month: date.month() + 1,
 		year: date.year()
 	});
-	const numberFirstDay = moment(`01-${ currentDate.month + 1 }-${ currentDate.year }`, 'DD-MM-YYYY').isoWeekday();
 	const calendarWidth = ({ nativeEvent: { layout } }) => {
 		const columnGap = 5;
 		const bodyWidth = Math.floor(layout.width) - columnGap * 6;
@@ -46,56 +49,92 @@ export default function MoonCalendar({ type }) {
 	const nameDays = parseLang.week.map(({ cropName }) => {
 		return <Text style={[ styles.day, { width: dayWidth } ]} key={ cropName }>{ cropName }</Text>;
 	});
-	const currentMonth = monthsRange[currentDate.month + 1];
-	const filterWeek = () => {
+	const currentMonth = monthsRange[currentDate.month];
+	const visibleMonth = () => {
+		const monthArray = [];
+
+		for (let i = 1; i <= Object.keys(currentMonth).length; i++) {
+			monthArray.push({
+				day: i,
+				month: currentDate.month,
+				year: currentDate.year
+			});
+		}
+
+		return monthArray;
+	};
+	const visibleWeek = () => {
+		const numberDay = date.date();
 		const firstDayWeek = numberWeekDay - 1;
 		const firstDay = numberDay - firstDayWeek;
-		const firstDayOfWeek = firstDay < 0 ? 0 : firstDay - 1;
-		const countDaysOfMonth = Object.keys(currentMonth).length;
-		const lastDayOfWeek = firstDay + 6 > countDaysOfMonth ? countDaysOfMonth : firstDay + 6;
+		const getWeek = visibleMonth().filter((item) => item.day >= firstDay && item.day < firstDay + 7);
 
-		return Object.keys(currentMonth).slice(firstDayOfWeek, lastDayOfWeek);
+		if (getWeek.length === 7) {
+			return getWeek;
+		} else {
+			const sublingMonth = [];
+
+			if (firstDay > 0) {
+				for (let i = 1; i <= 7 - getWeek.length; i++) {
+					sublingMonth.push({
+						day: i,
+						month: currentDate.month + 1 > 12 ? 1 : currentDate.month + 1,
+						year: currentDate.month + 1 > 12 ? currentDate.year + 1 : currentDate.year
+					});
+				}
+
+				return [ ...getWeek, ...sublingMonth ];
+			} else {
+				const prevMonth = monthsRange[currentDate.month - 1 < 1 ? 12 : currentDate.month - 1];
+				const countDaysOfPrevMonth = Object.keys(prevMonth).length;
+				const lastDaysPrevMonth = countDaysOfPrevMonth + firstDay;
+
+				for (let i = lastDaysPrevMonth; i <= lastDaysPrevMonth + 6 - getWeek.length; i++) {
+					sublingMonth.push({
+						day: i,
+						month: currentDate.month - 1 < 1 ? 12 : currentDate.month - 1,
+						year: currentDate.month - 1 < 1 ? currentDate.year - 1 : currentDate.year
+					});
+				}
+
+				return [ ...sublingMonth, ...getWeek ];
+			}
+		}
 	};
-	const visibleDays = type === 'calendar' ? Object.keys(currentMonth) : filterWeek();
-	const monthArray = visibleDays.map((key) => {
+	const visibleDays = type === 'calendar' ? visibleMonth() : visibleWeek();
+	const monthArray = visibleDays.map((item) => {
 		return (
 			<Pressable
 				style={[
 					styles.item,
-					currentDate.day === +key && styles.itemActive,
-					{ width: dayWidth },
-					key === '1' && { marginLeft: (numberFirstDay - 1) * (dayWidth + 5) }
+					currentDate.day === item.day && styles.itemActive,
+					{ width: dayWidth }
 				]}
-				key={ key }
-				onPress={ () => chooseDay(+key) }
+				key={ item.day }
+				onPress={ () => chooseDay(item) }
 			>
-				<Text style={ styles.number }>{ key }</Text>
+				<Text style={ styles.number }>{ item.day }</Text>
 				<View style={ styles.wrap }>
 					<View style={ styles.itemIcon }>
-						{ phaseIcons('#fff')[currentMonth[key].phase] }
+						{ phaseIcons('#fff')[currentMonth[item.day].phase] }
 					</View>
 					<View style={ styles.itemIcon }>
-						{ zodiacIcons('#fff')[currentMonth[key].sign] }
+						{ zodiacIcons('#fff')[currentMonth[item.day].sign] }
 					</View>
 				</View>
 			</Pressable>
 		);
 	});
-	const chooseDay = (day) => {
-		const dayFormat = day < 10 ? `0${ day }` : day;
-		const monthFormat = currentDate.month < 10 ? `0${ currentDate.month + 1 }` : currentDate.month + 1;
-		const dateFormat = `${ currentDate.year }-${ monthFormat }-${ dayFormat }`;
+	const chooseDay = (item) => {
+		const dayFormat = item.day < 10 ? `0${ item.day }` : item.day;
+		const monthFormat = item.month < 10 ? `0${ item.month }` : item.month;
+		const dateFormat = `${ item.year }-${ monthFormat }-${ dayFormat }`;
 		const currentTime = moment().format('HH:mm');
-		const lat = settings.cityCoords.lat;
-		const lng = settings.cityCoords.lng;
 
-		setCurrentDate({
-			...currentDate,
-			day
-		});
+		setCurrentDate(item);
 
 		try {
-			fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ dateFormat }&time=${ currentTime }&lat=${ lat }&lng=${ lng }&tz=${ timezone }`)
+			fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ dateFormat }&time=${ currentTime }&lat=${ currentLat }&lng=${ currentLng }&tz=${ currentTimezone }`)
 				.then((response) => {
 					if (!response.ok) {
 						throw new Error('Не удалось получить данные о текущем лунном дне');
@@ -144,11 +183,11 @@ export default function MoonCalendar({ type }) {
 		let viewYear = 0;
 
 		if (direction === 'next') {
-			viewMonth = currentDate.month + 1 > 11 ? 0 : currentDate.month + 1;
-			viewYear = currentDate.month === 0 ? currentDate.year + 1 : currentDate.year;
+			viewMonth = currentDate.month + 1 > 12 ? 1 : currentDate.month + 1;
+			viewYear = viewMonth === 1 ? currentDate.year + 1 : currentDate.year;
 		} else {
-			viewMonth = currentDate.month - 1 < 0 ? 11 : currentDate.month - 1;
-			viewYear = viewMonth === 11 ? currentDate.year - 1 : currentDate.year;
+			viewMonth = currentDate.month - 1 < 1 ? 12 : currentDate.month - 1;
+			viewYear = viewMonth === 12 ? currentDate.year - 1 : currentDate.year;
 		}
 
 		setCurrentDate({
@@ -162,7 +201,7 @@ export default function MoonCalendar({ type }) {
 		<View style={ styles.calendar }>
 			{ type === 'calendar' && <View style={ styles.header }>
 				<View>
-					<Text style={ styles.month }>{ parseLang.months[currentDate.month].nameNom }</Text>
+					<Text style={ styles.month }>{ parseLang.months[currentDate.month - 1].nameNom }</Text>
 					<Text style={ styles.weekDay }>{ parseLang.week[numberWeekDay - 1].fullName }</Text>
 				</View>
 				<View style={ styles.control }>
