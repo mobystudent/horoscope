@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import NameScreen from './screens/personal/NameScreen';
 import DateScreen from './screens/personal/DateScreen';
 import TimeScreen from './screens/personal/TimeScreen';
-import CityScreen from './screens/personal/CityScreen';
+import PlaceScreen from './screens/personal/PlaceScreen';
 import GenderScreen from './screens/personal/GenderScreen';
 import ImageScreen from './screens/personal/ImageScreen';
 import ProcessingScreen from './screens/ProcessingScreen';
@@ -32,7 +32,7 @@ export default function Navigation({ screen }) {
 				<Stack.Screen name="name" component={ NameScreen } />
 				<Stack.Screen name="date" component={ DateScreen } />
 				<Stack.Screen name="time" component={ TimeScreen } />
-				<Stack.Screen name="city" component={ CityScreen } />
+				<Stack.Screen name="place" component={ PlaceScreen } />
 				<Stack.Screen name="gender" component={ GenderScreen } />
 				<Stack.Screen name="processing" component={ ProcessingScreen } />
 				<Stack.Screen name="moon" component={ MoonScreen } />

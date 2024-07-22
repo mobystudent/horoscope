@@ -4,51 +4,51 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import PersonTemplate from '../../components/PersonTemplate';
 import { SettingsContext } from '../../contexts/settings';
 
-export default function CityScreen({ navigation }) {
+export default function PlaceScreen({ navigation }) {
 	const { settings, setSettings } = useContext(SettingsContext);
-	const [ city, setCity ] = useState(settings.person.city || { id: 0, value: '' });
+	const [ place, setPlace ] = useState(settings.person.place || { id: 0, value: '' });
 	const [ availableCities, setAvailableCities ] = useState([]);
 	const [ pointer, setPointer ] = useState(0);
 	const [ suggestion, setSuggestion ] = useState([]);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
 	const [ focusedInput, setFocusedInput ] = useState(false);
 	const selectItem = ({ id, city_ru: value, lat, lng }) => {
-		Keyboard.dismiss();
-		setCity({ id, value, lat, lng });
+		Keyboard.dismiss(); 
+		setPlace({ id, value, lat, lng });
 		setSuggestion([]);
 		setDisabledBtn(false);
 	};
 	const emptyFilter = ({ nativeEvent: { key } }) => {
-		if (!city.value) return;
+		if (!place.value) return;
 
 		const regex = new RegExp('[а-яА-Я\-Backspace ]');
 		const check = regex.test(key);
-		const cityChars = key === 'Backspace'
-			? city.value.slice(0, pointer - 1) + city.value.slice(pointer)
-			: city.value.slice(0, pointer) + key + city.value.slice(pointer);
+		const placeChars = key === 'Backspace'
+			? place.value.slice(0, pointer - 1) + place.value.slice(pointer)
+			: place.value.slice(0, pointer) + key + place.value.slice(pointer);
 		const exceptionLetters = ['k', 'e', 'p', 'c', 'a', 's'];
 
 		if(!check || exceptionLetters.includes(key)) {
 			Alert.alert('Не корректный символ', 'Город должен содержать только буквенные символы кириллицы или дефис!', [{
 					text: 'OK',
-					onPress: () => setCity(city),
+					onPress: () => setPlace(place),
 					style: 'cancel',
 				}]
 			);
 		} else {
-			if (cityChars.length > 2) {
-				const newSugges = availableCities.filter((obj) => obj.city_ru.startsWith(cityChars));
-				const filteredCity = availableCities.find((obj) => obj.city_ru.toLowerCase() === cityChars.toLowerCase());
+			if (placeChars.length > 2) {
+				const newSugges = availableCities.filter((obj) => obj.city_ru.startsWith(placeChars));
+				const filteredPlace = availableCities.find((obj) => obj.city_ru.toLowerCase() === placeChars.toLowerCase());
 
-				if (key !== 'Backspace' && filteredCity) {
+				if (key !== 'Backspace' && filteredPlace) {
 					Keyboard.dismiss();
-					selectItem(filteredCity);
+					selectItem(filteredPlace);
 				} else {
 					setDisabledBtn(true);
 				}
 
-				filteredCity || setSuggestion(newSugges);
-			} else if (cityChars.length < 3 && key === 'Backspace') {
+				filteredPlace || setSuggestion(newSugges);
+			} else if (placeChars.length < 3 && key === 'Backspace') {
 				setSuggestion([]);
 			}
 		}
@@ -57,15 +57,15 @@ export default function CityScreen({ navigation }) {
 		if (pointer + 2 <= name.length) {
 			const lastChar = name[name.length - 1];
 			const nameWithoutSpace = lastChar === ' ' ? name.slice(0, name.length - 1) : name;
-			const filteredCity = availableCities.find((obj) => obj.city_ru.toLowerCase() === nameWithoutSpace.toLowerCase());
+			const filteredPlace = availableCities.find((obj) => obj.city_ru.toLowerCase() === nameWithoutSpace.toLowerCase());
 
-			if (filteredCity) {
-				selectItem(filteredCity);
+			if (filteredPlace) {
+				selectItem(filteredPlace);
 			}
 
-			setCity({ ...city, value: nameWithoutSpace });
+			setPlace({ ...place, value: nameWithoutSpace });
 		} else {
-			setCity({ ...city, value: name });
+			setPlace({ ...place, value: name });
 		}
 
 	};
@@ -130,7 +130,7 @@ export default function CityScreen({ navigation }) {
 
 		const userData = {
 			...settings.person,
-			city
+			place
 		};
 
 		setSettings({
@@ -188,7 +188,7 @@ export default function CityScreen({ navigation }) {
 						style={ styles.input }
 						placeholder="Ввести город..."
 						placeholderTextColor="rgba(255, 255, 255, 0.5)"
-						value={ city.value }
+						value={ place.value }
 						onChangeText={ (name) => checkPastedText(name) }
 						onKeyPress={ (press) => emptyFilter(press) }
 						onSelectionChange={ changeSelection }

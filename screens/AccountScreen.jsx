@@ -42,7 +42,7 @@ export default function Account({ navigation }) {
 		},
 		{
 			title: 'Город',
-			screen: 'city'
+			screen: 'place'
 		},
 		{
 			title: 'Пол',

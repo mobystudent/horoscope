@@ -14,7 +14,7 @@ export default function DateScreen({ navigation }) {
 		settings: {
 			person: {
 				time: birthTime,
-				city: {
+				place: {
 					lat: birthLat,
 					lng: birthLng
 				} = {}

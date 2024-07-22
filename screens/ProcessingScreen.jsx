@@ -15,7 +15,7 @@ export default function Processing({ navigation }) {
 			person: {
 				date: personDate,
 				time: birthTime,
-				city: {
+				place: {
 					lat: birthLat,
 					lng: birthLng
 				} = {}

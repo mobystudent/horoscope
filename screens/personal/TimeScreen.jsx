@@ -114,7 +114,7 @@ export default function TimeScreen({ navigation }) {
 
 			navigation.navigate('account');
 		} else {
-			navigation.navigate('city');
+			navigation.navigate('place');
 		}
 	}
 	const title = 'Во сколько вы родились?';
