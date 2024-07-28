@@ -49,7 +49,7 @@ export default function Moon({ navigation }) {
 	const getDate = () => {
 		const date = moment(sunDate, 'YYYY-MM-DD');
 
-		return `${ date.date() } ${ parseLang.months[date.month()].nameGen }`
+		return `${ date.date() } ${ parseLang.months[date.month()].nameGen } ${ date.year() }`;
 	};
 	const moonDurations = period.map(({ day, time }, i) => {
 		const prefix = period.length > 1 ? i === 0 ? 'Продолжается' : 'Начинается' : 'Продолжается';

@@ -32,6 +32,7 @@ export default function MoonCalendar({ type }) {
 		setSettings
 	} = useContext(SettingsContext);
 	const [ dayWidth, setDayWidth ] = useState(0);
+	const [ monthsRangeData, setMonthsRangeData ] = useState(monthsRange);
 	const parseLang = JSON.parse(JSON.stringify(lang));
 	const date = moment(sunDate, 'YYYY-MM-DD');
 	const numberWeekDay = date.isoWeekday();
@@ -40,6 +41,7 @@ export default function MoonCalendar({ type }) {
 		month: date.month() + 1,
 		year: date.year()
 	});
+	const numberFirstDay = moment(`01-${ currentDate.month }-${ currentDate.year }`, 'DD-MM-YYYY').isoWeekday();
 	const calendarWidth = ({ nativeEvent: { layout } }) => {
 		const columnGap = 5;
 		const bodyWidth = Math.floor(layout.width) - columnGap * 6;
@@ -49,11 +51,12 @@ export default function MoonCalendar({ type }) {
 	const nameDays = parseLang.week.map(({ cropName }) => {
 		return <Text style={[ styles.day, { width: dayWidth } ]} key={ cropName }>{ cropName }</Text>;
 	});
-	const currentMonth = monthsRange[currentDate.month];
+	const currentMonth = Object.keys(monthsRangeData).find((item) => item === `${ currentDate.year }-${ currentDate.month }`);
+	const daysCurrentMonth = monthsRangeData[currentMonth];
 	const visibleMonth = () => {
 		const monthArray = [];
 
-		for (let i = 1; i <= Object.keys(currentMonth).length; i++) {
+		for (let i = 1; i <= Object.keys(daysCurrentMonth).length; i++) {
 			monthArray.push({
 				day: i,
 				month: currentDate.month,
@@ -85,7 +88,7 @@ export default function MoonCalendar({ type }) {
 
 				return [ ...getWeek, ...sublingMonth ];
 			} else {
-				const prevMonth = monthsRange[currentDate.month - 1 < 1 ? 12 : currentDate.month - 1];
+				const prevMonth = monthsRangeData[currentDate.month - 1 < 1 ? 12 : currentDate.month - 1];
 				const countDaysOfPrevMonth = Object.keys(prevMonth).length;
 				const lastDaysPrevMonth = countDaysOfPrevMonth + firstDay;
 
@@ -108,7 +111,8 @@ export default function MoonCalendar({ type }) {
 				style={[
 					styles.item,
 					currentDate.day === item.day && styles.itemActive,
-					{ width: dayWidth }
+					{ width: dayWidth },
+					item.day === 1 && { marginLeft: (numberFirstDay - 1) * (dayWidth + 5) }
 				]}
 				key={ item.day }
 				onPress={ () => chooseDay(item) }
@@ -116,10 +120,10 @@ export default function MoonCalendar({ type }) {
 				<Text style={ styles.number }>{ item.day }</Text>
 				<View style={ styles.wrap }>
 					<View style={ styles.itemIcon }>
-						{ phaseIcons('#fff')[currentMonth[item.day].phase] }
+						{ phaseIcons('#fff')[daysCurrentMonth[item.day].phase] }
 					</View>
 					<View style={ styles.itemIcon }>
-						{ zodiacIcons('#fff')[currentMonth[item.day].sign] }
+						{ zodiacIcons('#fff')[daysCurrentMonth[item.day].sign] }
 					</View>
 				</View>
 			</Pressable>
@@ -178,16 +182,91 @@ export default function MoonCalendar({ type }) {
 			return;
 		}
 	};
+	const chooseMonth = (item, direction) => {
+		const monthFormat = item.month < 10 ? `0${ item.month }` : item.month;
+		const dateFormat = `${ item.year }-${ monthFormat }`;
+
+		try {
+			fetch(`https://api-moon.digitalynx.org/api/moon/special/six-month?date=${ dateFormat }&direction=${ direction }`)
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error('Не удалось получить данные о полугодии лунных дней');
+					}
+
+					return response.json();
+				})
+				.then((halfYearData) => {
+					if (!Object.keys(halfYearData).length) {
+						throw new Error(`Данных о полугодии лунных дней на сервере не обнаружено`);
+					}
+
+					const nearMonth = Object.keys(halfYearData)[0].split('-');
+
+					setMonthsRangeData({
+						...monthsRangeData,
+						...halfYearData
+					});
+					setCurrentDate({
+						...currentDate,
+						month: +nearMonth[1],
+						year: +nearMonth[0]
+					});
+				})
+				.catch((error) => {
+					setSettings({
+						...settings,
+						modal: {
+							visible: true,
+							status: 'error',
+							title: 'Ошибка загрузки данных',
+							message: `Проблема с ответом от сети. ${ error }, попробуйте перезагрузить приложение`
+						}
+					});
+				});
+		} catch (error) {
+			setSettings({
+				...settings,
+				modal: {
+					visible: true,
+					status: 'error',
+					title: 'Ошибка подключения к сети',
+					message: `Не удалось подключиться к сети. ${ error }, попробуйте перезагрузить приложение`
+				}
+			});
+
+			return;
+		}
+	};
 	const changeViewMonth = (direction) => {
 		let viewMonth = 0;
 		let viewYear = 0;
 
 		if (direction === 'next') {
-			viewMonth = currentDate.month + 1 > 12 ? 1 : currentDate.month + 1;
-			viewYear = viewMonth === 1 ? currentDate.year + 1 : currentDate.year;
+			const nextMonth = Object.keys(monthsRangeData).some((item) => {
+				viewMonth = currentDate.month + 1 > 12 ? 1 : currentDate.month + 1;
+				viewYear = viewMonth === 1 ? currentDate.year + 1 : currentDate.year;
+
+				return item === `${ viewYear }-${ viewMonth }`;
+			});
+
+			if (!nextMonth) {
+				chooseMonth(currentDate, direction);
+
+				return;
+			}
 		} else {
-			viewMonth = currentDate.month - 1 < 1 ? 12 : currentDate.month - 1;
-			viewYear = viewMonth === 12 ? currentDate.year - 1 : currentDate.year;
+			const prevMonth = Object.keys(monthsRangeData).some((item) => {
+				viewMonth = currentDate.month - 1 < 1 ? 12 : currentDate.month - 1;
+				viewYear = viewMonth === 12 ? currentDate.year - 1 : currentDate.year;
+
+				return item === `${ viewYear }-${ viewMonth }`;
+			});
+
+			if (!prevMonth) {
+				chooseMonth(currentDate, direction);
+
+				return;
+			}
 		}
 
 		setCurrentDate({
@@ -201,7 +280,10 @@ export default function MoonCalendar({ type }) {
 		<View style={ styles.calendar }>
 			{ type === 'calendar' && <View style={ styles.header }>
 				<View>
-					<Text style={ styles.month }>{ parseLang.months[currentDate.month - 1].nameNom }</Text>
+					<View style={ styles.period }>
+						<Text style={ styles.periodItem }>{ parseLang.months[currentDate.month - 1].nameNom }</Text>
+						<Text style={ styles.periodItem }>{ currentDate.year }</Text>
+					</View>
 					<Text style={ styles.weekDay }>{ parseLang.week[numberWeekDay - 1].fullName }</Text>
 				</View>
 				<View style={ styles.control }>
@@ -235,13 +317,17 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		marginBottom: 15
 	},
-	month: {
+	period: {
+		flexDirection: 'row',
+		columnGap: 5,
+		marginBottom: 5
+	},
+	periodItem: {
 		fontWeight: '700',
 		fontSize: 20,
 		lineHeight: 24,
 		color: '#fff',
-		letterSpacing: -.12,
-		marginBottom: 5
+		letterSpacing: -.12
 	},
 	weekDay: {
 		fontWeight: '400',
