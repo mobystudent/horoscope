@@ -21,7 +21,8 @@ export default function Account({ navigation }) {
 				} = {}
 			} = {},
 			notesList = {},
-			person = {}
+			person = {},
+			basic = {}
 		} = {},
 		settings,
 		setSettings
@@ -48,6 +49,12 @@ export default function Account({ navigation }) {
 			title: 'Пол',
 			screen: 'gender'
 		}
+	];
+	const basicData = [
+		{
+			title: 'Город',
+			screen: 'city'
+		},
 	];
 	const documents = {
 		help: 'Помощь + поддержка',
@@ -76,6 +83,17 @@ export default function Account({ navigation }) {
 			<Pressable style={ style } key={ i } onPress={ () => navigation.navigate(data.screen) }>
 				<Text style={ styles.text }>{ data.title }</Text>
 				<Text style={ styles.text }>{ personValue }</Text>
+			</Pressable>
+		);
+	});
+	const basicDataArray = basicData.map((data, i) => {
+		const style = !i ? styles.button : [ styles.button, styles.buttonLine ];
+		const basicValue = basic[data.screen].value || basic[data.screen];
+
+		return (
+			<Pressable style={ style } key={ i } onPress={ () => navigation.navigate(data.screen) }>
+				<Text style={ styles.text }>{ data.title }</Text>
+				<Text style={ styles.text }>{ basicValue }</Text>
 			</Pressable>
 		);
 	});
@@ -145,9 +163,15 @@ export default function Account({ navigation }) {
 				</View>
 				<MoonMinder navigation={ navigation } />
 				<View style={ styles.block }>
-					<Text style={ styles.title }>День рождения</Text>
+					<Text style={ styles.title }>Данные рождения</Text>
 					<View style={ styles.groupData }>
 						{ userDataArray }
+					</View>
+				</View>
+				<View style={ styles.block }>
+					<Text style={ styles.title }>Основные настройки</Text>
+					<View style={ styles.groupData }>
+						{ basicDataArray }
 					</View>
 				</View>
 				<View style={ styles.block }>

@@ -12,7 +12,9 @@ import { arrowRightIcon, arrowLeftIcon } from '../../icons/elements';
 export default function DateScreen({ navigation }) {
 	const {
 		settings: {
+			registered = false,
 			person: {
+				date: birthDate,
 				time: birthTime,
 				place: {
 					lat: birthLat,
@@ -23,7 +25,7 @@ export default function DateScreen({ navigation }) {
 		settings,
 		setSettings
 	} = useContext(SettingsContext);
-	const [ date, setDate ] = useState(settings.person.date);
+	const [ date, setDate ] = useState(birthDate);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
 	const [ dayWidth, setDayWidth ] = useState(0);
 	const [ boardItemSize, setBoardItemSize ] = useState({
@@ -206,7 +208,7 @@ export default function DateScreen({ navigation }) {
 			date
 		};
 
-		if (settings.registered) {
+		if (registered) {
 			try {
 				const personString = JSON.stringify(userData);
 
@@ -288,7 +290,7 @@ export default function DateScreen({ navigation }) {
 	};
 	const title = 'Когда у вас день рождение?';
 	const description = 'Укажите дату своего рождения, чтобы получить доступ к астрологическому анализу и лунным фазам, влияющим на вас';
-	const btnText = settings.registered ? 'Сохранить' : 'Далее';
+	const btnText = registered ? 'Сохранить' : 'Далее';
 
 	useEffect(() => {
 		const dayFormat = currentDate.day < 10 ? `0${ currentDate.day }` : currentDate.day;

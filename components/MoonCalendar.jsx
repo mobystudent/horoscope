@@ -20,7 +20,7 @@ export default function MoonCalendar({ type }) {
 				} = {}
 			} = {},
 			monthsRange = {},
-			basicSettings: {
+			basic: {
 				city: {
 					lat: currentLat,
 					lng: currentLng,

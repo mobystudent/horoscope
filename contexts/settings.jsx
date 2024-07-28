@@ -16,13 +16,7 @@ export default function SettingsProvider({ children }) {
 		displayDocument: {}, // Данные о документе который будет отображен в ContentScreen
 		monthsRange: {}, // Данные для отображения дней в календаре (число, знак зодиака и фаза луны)
 		modal: {}, // Хранит в себе настройки модального окна которое будет отображаться
-		basicSettings: {
-			city: {
-				lat: 56.946,
-				lng: 24.10589,
-				timezone: 'Europe/Riga'
-			}
-		} // Основные настройки приложения
+		basic: {} // Основные настройки приложения
 	});
 
 	return (

@@ -85,7 +85,7 @@ export default function NameScreen({ navigation }) {
 
 			navigation.navigate('account');
 		} else {
-			navigation.navigate('date');
+			navigation.navigate('city');
 		}
 	}
 	const title = 'Как вас зовут?';

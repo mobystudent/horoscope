@@ -14,7 +14,7 @@ export default function StartScreen({ navigation }) {
 	const [ storagePerson, setStoragePerson ] = useState({});
 	const [ storageNotesList, setStorageNotesList ] = useState({});
 	const [ storageBirthdayMoon, setStorageBirthdayMoon ] = useState({});
-	const [ storageBasicSettings, setStorageBasicSettings ] = useState({});
+	const [ storageBasic, setStorageBasic ] = useState({});
 	const [ months, setMonths ] = useState({});
 	const [ moon, setMoon ] = useState({});
 	const timezone = getCalendars()[0].timeZone;
@@ -88,15 +88,15 @@ export default function StartScreen({ navigation }) {
 			return;
 		}
 	};
-	const storageBasicSettingsData = async () => {
+	const storageBasicData = async () => {
 		try {
-			const basicSettings = await AsyncStorage.getItem('basicSettings');
+			const basic = await AsyncStorage.getItem('basic');
 
-			if (basicSettings === null) {
+			if (basic === null) {
 				throw new Error('Данных об основных настройках приложения нет');
 			}
 
-			setStorageBasicSettings(JSON.parse(basicSettings));
+			setStorageBasic(JSON.parse(basic));
 		} catch(error) {
 			setSettings({
 				...settings,
@@ -134,7 +134,7 @@ export default function StartScreen({ navigation }) {
 						}
 
 						setMonths(monthsData);
-						storageBasicSettingsData();
+						storageBasicData();
 					})
 					.catch((error) => {
 						setSettings({
@@ -166,7 +166,7 @@ export default function StartScreen({ navigation }) {
 	}, []);
 
 	useEffect(() => {
-		if (!Object.keys(storageBasicSettings).length) return;
+		if (!Object.keys(storageBasic).length) return;
 
 		const loadServerData = async () => {
 			try {
@@ -178,7 +178,7 @@ export default function StartScreen({ navigation }) {
 						lng: currentLng,
 						timezone: currentTimezone
 					} = {}
-				} = storageBasicSettings;
+				} = storageBasic;
 
 
 				fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ currentDate }&time=${ currentTime }&lat=${ currentLat }&lng=${ currentLng }&tz=${ currentTimezone }`)
@@ -226,7 +226,7 @@ export default function StartScreen({ navigation }) {
 		};
 
 		loadServerData();
-	}, [storageBasicSettings]);
+	}, [storageBasic]);
 
 	useEffect(() => {
 		if (!settingsStatus) return;

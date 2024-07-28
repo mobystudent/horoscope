@@ -20,7 +20,7 @@ export default function Processing({ navigation }) {
 					lng: birthLng
 				} = {}
 			} = {},
-			basicSettings: {
+			basic: {
 				city: {
 					lat: currentLat,
 					lng: currentLng,
@@ -145,15 +145,15 @@ export default function Processing({ navigation }) {
 			return;
 		}
 	};
-	const storageBasicSettingsData = async () => {
+	const storageBasicData = async () => {
 		try {
-			const basicString = JSON.stringify(settings.basicSettings);
+			const basicString = JSON.stringify(settings.basic);
 
-			if (!Object.keys(settings.basicSettings).length) {
+			if (!Object.keys(settings.basic).length) {
 				throw new Error('Данных об основных настройках приложения нет');
 			}
 
-			await AsyncStorage.setItem('basicSettings', basicString);
+			await AsyncStorage.setItem('basic', basicString);
 		} catch(error) {
 			setSettings({
 				...settings,
@@ -180,7 +180,7 @@ export default function Processing({ navigation }) {
 		storagePersonData();
 		storageNotesListData();
 		storageBirthdayMoonData();
-		storageBasicSettingsData();
+		storageBasicData();
 	}, [birthdayMoon]);
 
 	useEffect(() => {

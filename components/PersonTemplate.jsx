@@ -16,7 +16,11 @@ export default function PersonTemplate(props) {
 		nextStep,
 		focusedInput = false
 	} = props;
-	const { settings } = useContext(SettingsContext);
+	const {
+		settings: {
+			registered = false
+		}
+	} = useContext(SettingsContext);
 	const leftButton = {
 		screenLink: 'account',
 		btnAction: 'back',
@@ -27,8 +31,8 @@ export default function PersonTemplate(props) {
 	return (
 		<Container>
 			<Header
-				navigation={ settings.registered && navigation }
-				leftButton={ settings.registered && leftButton }
+				navigation={ registered && navigation }
+				leftButton={ registered && leftButton }
 			/>
 			<Pressable
 				style={[ styles.body, focusedInput && styles.bodyFocused ]}
