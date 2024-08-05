@@ -17,77 +17,135 @@ export default function CityScreen({ navigation }) {
 		settings,
 		setSettings
 	} = useContext(SettingsContext);
-	const [ city, setCity ] = useState(basicCity || { id: 0, value: '' });
-	const [ availableCities, setAvailableCities ] = useState([]);
+	const [ city, setCity ] = useState(basicCity);
+	const [ country, setCountry ] = useState({});
+	const [ timezone, setTimezone ] = useState('');
+	const [ availableItems, setAvailableItems ] = useState([]);
 	const [ pointer, setPointer ] = useState(0);
 	const [ suggestion, setSuggestion ] = useState([]);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
 	const [ focusedInput, setFocusedInput ] = useState(false);
+	const [ editableInput, setEditableInput ] = useState(true);
 	const selectItem = (item) => {
 		Keyboard.dismiss();
-		setCity(item);
+		!('id' in country) ? setCountry(item) : setCity(item);
 		setSuggestion([]);
-		setDisabledBtn(false);
 	};
-	const emptyFilter = ({ nativeEvent: { key } }) => {
-		if (!city.value) return;
+	const checkPress = ({ nativeEvent: { key } }) => {
+		const field = !('id' in country) ? country : city;
+		if (!field.value) return;
 
 		const regex = new RegExp('[а-яА-Я\-Backspace ]');
 		const check = regex.test(key);
-		const cityChars = key === 'Backspace'
-			? city.value.slice(0, pointer - 1) + city.value.slice(pointer)
-			: city.value.slice(0, pointer) + key + city.value.slice(pointer);
+		const fieldChars = key === 'Backspace'
+			? field.value.slice(0, pointer - 1) + field.value.slice(pointer)
+			: field.value.slice(0, pointer) + key + field.value.slice(pointer);
 		const exceptionLetters = ['k', 'e', 'p', 'c', 'a', 's'];
 
 		if(!check || exceptionLetters.includes(key)) {
-			Alert.alert('Не корректный символ', 'Город должен содержать только буквенные символы кириллицы или дефис!', [{
+			const text = !('id' in country) ? 'Страна должна' : 'Город должен';
+			const setStateField = !('id' in country) ? setCountry : setCity;
+
+			Alert.alert('Не корректный символ', `${ text } содержать только буквенные символы кириллицы или дефис!`, [{
 					text: 'OK',
-					onPress: () => setCity(city),
+					onPress: () => setStateField(field),
 					style: 'cancel',
 				}]
 			);
-		} else {
-			if (cityChars.length > 2) {
-				const newSugges = availableCities.filter((obj) => obj.city_ru.startsWith(cityChars));
-				const filteredCity = availableCities.find((obj) => obj.city_ru.toLowerCase() === cityChars.toLowerCase());
+		}
 
-				if (key !== 'Backspace' && filteredCity) {
-					Keyboard.dismiss();
-					getTimezone(filteredCity);
-				} else {
-					setDisabledBtn(true);
-				}
+		if (fieldChars.length > 2) {
+			const newSugges = availableItems.filter((obj) => obj.value.startsWith(fieldChars));
+			const filteredItem = newSugges.find((obj) => obj.value.toLowerCase() === fieldChars.toLowerCase());
 
-				filteredCity || setSuggestion(newSugges);
-			} else if (cityChars.length < 3 && key === 'Backspace') {
-				setSuggestion([]);
+			if (filteredItem) {
+				Keyboard.dismiss();
+				setSelectItem(filteredItem)
+			} else {
+				setDisabledBtn(true);
 			}
+
+			filteredItem || setSuggestion(newSugges);
+		} else if (fieldChars.length < 3 && key === 'Backspace') {
+			setSuggestion([]);
 		}
 	};
 	const checkPastedText = (name) => {
 		if (pointer + 2 <= name.length) {
 			const lastChar = name[name.length - 1];
 			const nameWithoutSpace = lastChar === ' ' ? name.slice(0, name.length - 1) : name;
-			const filteredCity = availableCities.find((obj) => obj.city_ru.toLowerCase() === nameWithoutSpace.toLowerCase());
+			const filteredItem = suggestion.find((obj) => obj.value.toLowerCase() === nameWithoutSpace.toLowerCase());
 
-			if (filteredCity) {
-				getTimezone(filteredCity);
-			}
+			if (!filteredItem) return;
 
-			setCity({ ...city, value: nameWithoutSpace });
+			setSelectItem({ ...filteredItem, value: nameWithoutSpace });
 		} else {
-			setCity({ ...city, value: name });
+			if ('id' in country && editableInput) return;
+
+			const setStateField = !('id' in country) ? setCountry : setCity;
+
+			setStateField({ value: name });
 		}
 
 	};
 	const changeSelection = ({ nativeEvent: { selection: { start } } }) => {
 		setPointer(start);
 	};
-	const getCities = async () => {
+	const setSelectItem = (item) => {
+		selectItem(item);
+		!('id' in country) ? getCities(item) : getTimezone(item);
+	};
+	const getCountries = async () => {
 		try {
-			const countryCode = 19;
+			fetch(`https://api-moon.digitalynx.org/api/country/`)
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error('Не удалось получить список стран от сервера');
+					}
 
-			fetch(`https://api-moon.digitalynx.org/api/city/${ countryCode }`)
+					return response.json();
+				})
+				.then((countriesData) => {
+					if (!Object.keys(countriesData).length) {
+						throw new Error(`Данных о странах на сервере не обнаружено`);
+					}
+
+					const updatedCountriesData = countriesData.map((item) => {
+						const { country_ru, ...rest } = item;
+
+						return { ...rest, value: country_ru };
+					});
+
+					setAvailableItems(updatedCountriesData);
+				})
+				.catch((error) => {
+					setSettings({
+						...settings,
+						modal: {
+							visible: true,
+							status: 'error',
+							title: 'Ошибка загрузки данных',
+							message: `Проблема с ответом от сети. ${ error }, попробуйте перезагрузить приложение`
+						}
+					});
+				});
+		} catch (error) {
+			setSettings({
+				...settings,
+				modal: {
+					visible: true,
+					status: 'error',
+					title: 'Ошибка подключения к сети',
+					message: `Не удалось подключиться к сети. ${ error }, попробуйте перезагрузить приложение`
+				}
+			});
+
+			return;
+		}
+	};
+	const getCities = async (item) => {
+		try {
+			fetch(`https://api-moon.digitalynx.org/api/city/${ item.id }`)
 				.then((response) => {
 					if (!response.ok) {
 						throw new Error('Не удалось получить список городов от сервера');
@@ -100,7 +158,14 @@ export default function CityScreen({ navigation }) {
 						throw new Error(`Данных о городах на сервере не обнаружено`);
 					}
 
-					setAvailableCities(citiesData);
+					const updatedCitiesData = citiesData.map((item) => {
+						const { city_ru, ...rest } = item;
+
+						return { ...rest, value: city_ru };
+					});
+
+					setEditableInput(false);
+					setAvailableItems([ ...updatedCitiesData ]);
 				})
 				.catch((error) => {
 					setSettings({
@@ -127,7 +192,7 @@ export default function CityScreen({ navigation }) {
 			return;
 		}
 	};
-	const getTimezone = async ({ id, city_ru: value, lat, lng }) => {
+	const getTimezone = async ({ lat, lng }) => {
 		const timestamp = Math.floor(Date.now() / 1000);
 
 		try {
@@ -139,12 +204,12 @@ export default function CityScreen({ navigation }) {
 
 					return response.data.timeZoneId;
 				})
-				.then((timezone) => {
-					if (!timezone) {
+				.then((timezoneData) => {
+					if (!timezoneData) {
 						throw new Error(`Данных о таймзоне на сервере не обнаружено`);
 					}
 
-					selectItem({ id, value, lat, lng, timezone: timezone });
+					setTimezone(timezoneData);
 				})
 				.catch((error) => {
 					setSettings({
@@ -171,15 +236,13 @@ export default function CityScreen({ navigation }) {
 			return;
 		}
 	};
-	const renderItem = (({ item }) => {
-		const { city_ru: value } = item;
-
+	const renderItem = ({ item }) => {
 		return (
-			<Pressable onPress={ () => getTimezone(item) }>
-				<Text style={ styles.item }>{ value }</Text>
+			<Pressable onPress={ () => setSelectItem(item) }>
+				<Text style={ styles.item }>{ item.value }</Text>
 			</Pressable>
 		);
-	});
+	};
 	const nextStep = async () => {
 		if (disabledBtn) return;
 
@@ -224,8 +287,15 @@ export default function CityScreen({ navigation }) {
 	const btnText = registered ? 'Сохранить' : 'Далее';
 
 	useEffect(() => {
-		getCities();
+		getCountries();
 	}, []);
+
+	useEffect(() => {
+		if (!city.id || !timezone) return;
+
+		setCity({ ...city, timezone: timezone });
+		setDisabledBtn(false);
+	}, [city.id, timezone]);
 
 	return (
 		<PersonTemplate
@@ -238,18 +308,36 @@ export default function CityScreen({ navigation }) {
 			focusedInput={ focusedInput }
 		>
 			<KeyboardAvoidingView style={ styles.content } behavior={ Platform.OS === 'ios' ? 'padding' : 'height' } >
-				<View style={ styles.inputWrap }>
-					<TextInput
-						style={ styles.input }
-						placeholder="Ввести город..."
-						placeholderTextColor="rgba(255, 255, 255, 0.5)"
-						value={ city.value }
-						onChangeText={ (name) => checkPastedText(name) }
-						onKeyPress={ (press) => emptyFilter(press) }
-						onSelectionChange={ changeSelection }
-						onFocus={ () => setFocusedInput(true) }
-						onBlur={ () => setFocusedInput(false) }
-					/>
+				<View style={ styles.wrap }>
+					<View style={ styles.inputWrap }>
+						<TextInput
+							style={[ styles.input, editableInput || styles.inputDisabled ]}
+							placeholder="Ввести страну..."
+							placeholderTextColor="rgba(255, 255, 255, .5)"
+							value={ country.value }
+							onChangeText={ (name) => checkPastedText(name) }
+							onKeyPress={ (press) => checkPress(press) }
+							onSelectionChange={ changeSelection }
+							onFocus={ () => setFocusedInput(true) }
+							onBlur={ () => setFocusedInput(false) }
+							editable={ editableInput }
+						/>
+					</View>
+					{ !editableInput &&
+						<View style={ styles.inputWrap }>
+							<TextInput
+								style={ styles.input }
+								placeholder="Ввести город..."
+								placeholderTextColor="rgba(255, 255, 255, .5)"
+								value={ city.value }
+								onChangeText={ (name) => checkPastedText(name) }
+								onKeyPress={ (press) => checkPress(press) }
+								onSelectionChange={ changeSelection }
+								onFocus={ () => setFocusedInput(true) }
+								onBlur={ () => setFocusedInput(false) }
+							/>
+						</View>
+					}
 				</View>
 				<FlatList
 					data={ suggestion }
@@ -268,6 +356,9 @@ const styles = StyleSheet.create({
 		flexBasis: 'auto',
 		rowGap: 25
 	},
+	wrap: {
+		rowGap: 10
+	},
 	inputWrap: {
 		flexShrink: 0,
 	},
@@ -281,6 +372,9 @@ const styles = StyleSheet.create({
 		lineHeight: 20,
 		textAlignVertical: 'center',
 		backgroundColor: 'rgba(255, 255, 255, .12)'
+	},
+	inputDisabled: {
+		backgroundColor: 'rgba(255, 255, 255, .5)'
 	},
 	item: {
 		borderRadius: 17,

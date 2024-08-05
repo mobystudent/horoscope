@@ -110,10 +110,10 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 65,
 	},
 	disabledButton: {
-		backgroundColor: 'rgba(255, 255, 255, 0.12)'
+		backgroundColor: 'rgba(255, 255, 255, .12)'
 	},
 	disabledText: {
 		color: "#fff",
-		opacity: 0.5
+		opacity: .5
 	}
 });
