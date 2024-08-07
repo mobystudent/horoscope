@@ -7,8 +7,17 @@ import { SettingsContext } from '../../contexts/settings';
 import { maleIcon, femaleIcon } from '../../icons/elements';
 
 export default function GenderScreen({ navigation }) {
-	const { settings, setSettings } = useContext(SettingsContext);
-	const [ gender, setGender ] = useState(settings.person.gender);
+	const {
+		settings: {
+			registered,
+			person: {
+				gender: personGender = null
+			}
+		},
+		settings,
+		setSettings
+	} = useContext(SettingsContext);
+	const [ gender, setGender ] = useState(personGender);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
 	const genderBtns = [
 		{
@@ -41,7 +50,7 @@ export default function GenderScreen({ navigation }) {
 			}
 		});
 
-		if (settings.registered) {
+		if (registered) {
 			try {
 				const personString = JSON.stringify(userData);
 
@@ -82,8 +91,8 @@ export default function GenderScreen({ navigation }) {
 	});
 
 	useEffect(() => {
-		if (gender !== settings.person.gender) {
-			setGender(settings.person.gender);
+		if (gender !== personGender) {
+			setGender(personGender);
 		}
 	}, [settings]);
 

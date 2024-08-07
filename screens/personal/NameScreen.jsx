@@ -5,8 +5,17 @@ import PersonTemplate from '../../components/PersonTemplate';
 import { SettingsContext } from '../../contexts/settings';
 
 export default function NameScreen({ navigation }) {
-	const { settings, setSettings } = useContext(SettingsContext);
-	const [ name, setName ] = useState(settings.person.name);
+	const {
+		settings: {
+			registered,
+			person: {
+				name: personName = ''
+			}
+		},
+		settings,
+		setSettings
+	} = useContext(SettingsContext);
+	const [ name, setName ] = useState(personName);
 	const [ pointer, setPointer ] = useState(0);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
 	const [ focusedInput, setFocusedInput ] = useState(false);
@@ -64,7 +73,7 @@ export default function NameScreen({ navigation }) {
 			}
 		});
 
-		if (settings.registered) {
+		if (registered) {
 			try {
 				const personString = JSON.stringify(userData);
 
@@ -90,11 +99,11 @@ export default function NameScreen({ navigation }) {
 	}
 	const title = 'Как вас зовут?';
 	const description = 'Введите своё имя, чтобы создать персональный профиль и получать индивидуальные рекомендации лунного календаря';
-	const btnText = settings.registered ? 'Сохранить' : 'Далее';
+	const btnText = registered ? 'Сохранить' : 'Далее';
 
 	useEffect(() => {
-		if (name !== settings.person.name) {
-			setName(settings.person.name);
+		if (name !== personName) {
+			setName(personName);
 		}
 	}, [settings]);
 

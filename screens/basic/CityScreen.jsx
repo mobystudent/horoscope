@@ -27,8 +27,10 @@ export default function CityScreen({ navigation }) {
 	const [ focusedInput, setFocusedInput ] = useState(false);
 	const [ editableInput, setEditableInput ] = useState(true);
 	const selectItem = (item) => {
+		const setStateField = !('id' in country) ? setCountry : setCity;
+
 		Keyboard.dismiss();
-		!('id' in country) ? setCountry(item) : setCity(item);
+		setStateField(item);
 		setSuggestion([]);
 	};
 	const checkPress = ({ nativeEvent: { key } }) => {
@@ -60,7 +62,7 @@ export default function CityScreen({ navigation }) {
 
 			if (filteredItem) {
 				Keyboard.dismiss();
-				setSelectItem(filteredItem)
+				setSelectItem(filteredItem);
 			} else {
 				setDisabledBtn(true);
 			}
@@ -74,13 +76,13 @@ export default function CityScreen({ navigation }) {
 		if (pointer + 2 <= name.length) {
 			const lastChar = name[name.length - 1];
 			const nameWithoutSpace = lastChar === ' ' ? name.slice(0, name.length - 1) : name;
-			const filteredItem = suggestion.find((obj) => obj.value.toLowerCase() === nameWithoutSpace.toLowerCase());
+			const filteredItem = availableItems.find((obj) => obj.value.toLowerCase() === nameWithoutSpace.toLowerCase());
 
 			if (!filteredItem) return;
 
 			setSelectItem({ ...filteredItem, value: nameWithoutSpace });
 		} else {
-			if ('id' in country && editableInput) return;
+			if (('id' in country && editableInput) || ('id' in city && !disabledBtn)) return;
 
 			const setStateField = !('id' in country) ? setCountry : setCity;
 

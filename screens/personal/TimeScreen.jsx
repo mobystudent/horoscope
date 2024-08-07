@@ -7,8 +7,17 @@ import { SettingsContext } from '../../contexts/settings';
 // import dayjs from 'dayjs';
 
 export default function TimeScreen({ navigation }) {
-	const { settings, setSettings } = useContext(SettingsContext);
-	const [ time, setTime ] = useState(settings.person.time || '12:00');
+	const {
+		settings: {
+			registered,
+			person: {
+				time: personTime = ''
+			}
+		},
+		settings,
+		setSettings
+	} = useContext(SettingsContext);
+	const [ time, setTime ] = useState(personTime || '12:00');
 	// const date = new Date();
 	// const noon = date.setHours(12, 0, 0, 0);
 	// const [value, setValue] = useState(dayjs());
@@ -93,7 +102,7 @@ export default function TimeScreen({ navigation }) {
 			}
 		});
 
-		if (settings.registered) {
+		if (registered) {
 			try {
 				const personString = JSON.stringify(userData);
 
@@ -119,7 +128,7 @@ export default function TimeScreen({ navigation }) {
 	}
 	const title = 'Во сколько вы родились?';
 	const description = 'Введите время своего рождения, чтобы получить более точные прогнозы лунного влияния на различные сферы вашей жизни';
-	const btnText = settings.registered ? 'Сохранить' : 'Далее';
+	const btnText = registered ? 'Сохранить' : 'Далее';
 
 	return (
 		<PersonTemplate

@@ -14,7 +14,7 @@ export default function Processing({ navigation }) {
 		settings: {
 			person: {
 				date: personDate,
-				time: birthTime,
+				time: personTime,
 				place: {
 					lat: birthLat,
 					lng: birthLng
@@ -252,7 +252,7 @@ export default function Processing({ navigation }) {
 
 					setMoon(moonData);
 
-					return fetch(`https://api-moon.digitalynx.org/api/moon/register?date=${ birthDate }&time=${ birthTime }&lat=${ birthLat }&lng=${ birthLng }`);
+					return fetch(`https://api-moon.digitalynx.org/api/moon/register?date=${ birthDate }&time=${ personTime }&lat=${ birthLat }&lng=${ birthLng }`);
 				})
 				.then((response) => {
 					if (!response.ok) {

@@ -9,8 +9,19 @@ import { SettingsContext } from '../../contexts/settings';
 import { photoIcon } from '../../icons/elements';
 
 export default ({ navigation }) => {
-	const { settings, setSettings } = useContext(SettingsContext);
-	const [ selectedImage, setSelectedImage ] = useState(settings.person.image);
+	const {
+		settings: {
+			person: {
+				image: personImage
+			},
+			modal: {
+				type: modalType
+			}
+		},
+		settings,
+		setSettings
+	} = useContext(SettingsContext);
+	const [ selectedImage, setSelectedImage ] = useState(personImage);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
 	const [ heightArea, setHeightArea ] = useState(0);
 	const windowWidth = Dimensions.get('window').width;
@@ -151,7 +162,7 @@ export default ({ navigation }) => {
 	const btnText = 'Сохранить';
 
 	useEffect(() => {
-		if (settings.modal.type !== 'photo') return;
+		if (modalType !== 'photo') return;
 
 		setSettings({
 			...settings,
@@ -162,7 +173,7 @@ export default ({ navigation }) => {
 				handler: (type) => changePhoto(type)
 			}
 		});
-	}, [settings.modal.type]);
+	}, [modalType]);
 
 	return (
 		<Container>

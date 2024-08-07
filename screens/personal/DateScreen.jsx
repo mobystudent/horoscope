@@ -14,8 +14,8 @@ export default function DateScreen({ navigation }) {
 		settings: {
 			registered = false,
 			person: {
-				date: birthDate,
-				time: birthTime,
+				date: personDate,
+				time: personTime,
 				place: {
 					lat: birthLat,
 					lng: birthLng
@@ -25,7 +25,7 @@ export default function DateScreen({ navigation }) {
 		settings,
 		setSettings
 	} = useContext(SettingsContext);
-	const [ date, setDate ] = useState(birthDate);
+	const [ date, setDate ] = useState(personDate);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
 	const [ dayWidth, setDayWidth ] = useState(0);
 	const [ boardItemSize, setBoardItemSize ] = useState({
@@ -230,7 +230,7 @@ export default function DateScreen({ navigation }) {
 			try {
 				const birthDate = moment(date.data, 'DD-MM-YYYY').format('YYYY-MM-DD');
 
-				fetch(`https://api-moon.digitalynx.org/api/moon/register?date=${ birthDate }&time=${ birthTime }&lat=${ birthLat }&lng=${ birthLng }`)
+				fetch(`https://api-moon.digitalynx.org/api/moon/register?date=${ birthDate }&time=${ personTime }&lat=${ birthLat }&lng=${ birthLng }`)
 					.then((response) => {
 						if (!response.ok) {
 							throw new Error('Не удалось получить данные о лунном дне при рождении');

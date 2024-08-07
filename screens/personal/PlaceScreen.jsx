@@ -5,15 +5,24 @@ import PersonTemplate from '../../components/PersonTemplate';
 import { SettingsContext } from '../../contexts/settings';
 
 export default function PlaceScreen({ navigation }) {
-	const { settings, setSettings } = useContext(SettingsContext);
-	const [ place, setPlace ] = useState(settings.person.place || { id: 0, value: '' });
+	const {
+		settings: {
+			registered,
+			person: {
+				place: personPlace = {}
+			}
+		},
+		settings,
+		setSettings
+	} = useContext(SettingsContext);
+	const [ place, setPlace ] = useState(personPlace || { id: 0, value: '' });
 	const [ availableCities, setAvailableCities ] = useState([]);
 	const [ pointer, setPointer ] = useState(0);
 	const [ suggestion, setSuggestion ] = useState([]);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
 	const [ focusedInput, setFocusedInput ] = useState(false);
 	const selectItem = ({ id, city_ru: value, lat, lng }) => {
-		Keyboard.dismiss(); 
+		Keyboard.dismiss();
 		setPlace({ id, value, lat, lng });
 		setSuggestion([]);
 		setDisabledBtn(false);
@@ -60,10 +69,9 @@ export default function PlaceScreen({ navigation }) {
 			const filteredPlace = availableCities.find((obj) => obj.city_ru.toLowerCase() === nameWithoutSpace.toLowerCase());
 
 			if (filteredPlace) {
+				setPlace({ ...place, value: nameWithoutSpace });
 				selectItem(filteredPlace);
 			}
-
-			setPlace({ ...place, value: nameWithoutSpace });
 		} else {
 			setPlace({ ...place, value: name });
 		}
@@ -140,7 +148,7 @@ export default function PlaceScreen({ navigation }) {
 			}
 		});
 
-		if (settings.registered) {
+		if (registered) {
 			try {
 				const personString = JSON.stringify(userData);
 
@@ -166,7 +174,7 @@ export default function PlaceScreen({ navigation }) {
 	}
 	const title = 'Где вы родились?';
 	const description = 'Укажите место своего рождения, чтобы адаптировать календарь под ваш географический регион и лунные события';
-	const btnText = settings.registered ? 'Сохранить' : 'Далее';
+	const btnText = registered ? 'Сохранить' : 'Далее';
 
 	useEffect(() => {
 		getCountries();
