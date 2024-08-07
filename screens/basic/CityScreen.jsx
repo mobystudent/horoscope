@@ -6,6 +6,8 @@ import PersonTemplate from '../../components/PersonTemplate';
 import { SettingsContext } from '../../contexts/settings';
 import axios from 'axios';
 
+import { closeIcon } from '../../icons/elements';
+
 export default function CityScreen({ navigation }) {
 	const {
 		settings: {
@@ -245,6 +247,12 @@ export default function CityScreen({ navigation }) {
 			</Pressable>
 		);
 	};
+	const clearCountry = () => {
+		setEditableInput(true);
+		setCountry({});
+		setCity({});
+		getCountries();
+	};
 	const nextStep = async () => {
 		if (disabledBtn) return;
 
@@ -324,6 +332,16 @@ export default function CityScreen({ navigation }) {
 							onBlur={ () => setFocusedInput(false) }
 							editable={ editableInput }
 						/>
+						{ !editableInput &&
+							<Pressable
+								style={ styles.button }
+								onPress={ () => clearCountry() }
+							>
+								<View style={ styles.closeIcon }>
+									{ closeIcon('#f00') }
+								</View>
+							</Pressable>
+						}
 					</View>
 					{ !editableInput &&
 						<View style={ styles.inputWrap }>
@@ -362,6 +380,7 @@ const styles = StyleSheet.create({
 		rowGap: 10
 	},
 	inputWrap: {
+		position: 'relative',
 		flexShrink: 0,
 	},
 	input: {
@@ -376,6 +395,7 @@ const styles = StyleSheet.create({
 		backgroundColor: 'rgba(255, 255, 255, .12)'
 	},
 	inputDisabled: {
+		paddingRight: 45,
 		backgroundColor: 'rgba(255, 255, 255, .5)'
 	},
 	item: {
@@ -388,5 +408,13 @@ const styles = StyleSheet.create({
 		lineHeight: 20,
 		marginVertical: 3,
 		backgroundColor: 'rgba(255, 255, 255, .12)'
+	},
+	button: {
+		position: 'absolute',
+		top: 5,
+		right: 5,
+		width: 42,
+		height: 42,
+		padding: 10
 	}
 });

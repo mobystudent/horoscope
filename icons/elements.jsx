@@ -86,3 +86,8 @@ export function borderIcon(color, opacity) {
 		</Svg>
 	]
 };
+export function closeIcon(color) {
+	return <Svg viewBox="0 0 10 9" fill="none">
+		<Path d="M9.08366 1.23949L8.26116 0.416992L5.00033 3.67783L1.73949 0.416992L0.916992 1.23949L4.17783 4.50033L0.916992 7.76116L1.73949 8.58366L5.00033 5.32283L8.26116 8.58366L9.08366 7.76116L5.82283 4.50033L9.08366 1.23949Z" fill={ color }/>
+	</Svg>
+};
