@@ -4,6 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import PersonTemplate from '../../components/PersonTemplate';
 import { SettingsContext } from '../../contexts/settings';
 
+import { closeIcon } from '../../icons/elements';
+
 export default function PlaceScreen({ navigation }) {
 	const {
 		settings: {
@@ -15,89 +17,107 @@ export default function PlaceScreen({ navigation }) {
 		settings,
 		setSettings
 	} = useContext(SettingsContext);
-	const [ place, setPlace ] = useState(personPlace || { id: 0, value: '' });
-	const [ availableCities, setAvailableCities ] = useState([]);
+	const [ place, setPlace ] = useState(personPlace);
+	const [ country, setCountry ] = useState({});
+	const [ availableItems, setAvailableItems ] = useState([]);
 	const [ pointer, setPointer ] = useState(0);
 	const [ suggestion, setSuggestion ] = useState([]);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
 	const [ focusedInput, setFocusedInput ] = useState(false);
-	const selectItem = ({ id, city_ru: value, lat, lng }) => {
+	const [ editableInput, setEditableInput ] = useState(true);
+	const selectItem = (item) => {
+		const setStateField = !('id' in country) ? setCountry : setPlace;
+
 		Keyboard.dismiss();
-		setPlace({ id, value, lat, lng });
+		setStateField(item);
 		setSuggestion([]);
-		setDisabledBtn(false);
 	};
-	const emptyFilter = ({ nativeEvent: { key } }) => {
-		if (!place.value) return;
+	const checkPress = ({ nativeEvent: { key } }) => {
+		const field = !('id' in country) ? country : place;
+		if (!field.value) return;
 
 		const regex = new RegExp('[а-яА-Я\-Backspace ]');
 		const check = regex.test(key);
-		const placeChars = key === 'Backspace'
-			? place.value.slice(0, pointer - 1) + place.value.slice(pointer)
-			: place.value.slice(0, pointer) + key + place.value.slice(pointer);
+		const fieldChars = key === 'Backspace'
+			? field.value.slice(0, pointer - 1) + field.value.slice(pointer)
+			: field.value.slice(0, pointer) + key + field.value.slice(pointer);
 		const exceptionLetters = ['k', 'e', 'p', 'c', 'a', 's'];
 
 		if(!check || exceptionLetters.includes(key)) {
-			Alert.alert('Не корректный символ', 'Город должен содержать только буквенные символы кириллицы или дефис!', [{
+			const text = !('id' in country) ? 'Страна должна' : 'Город должен';
+			const setStateField = !('id' in country) ? setCountry : setPlace;
+
+			Alert.alert('Не корректный символ', `${ text } содержать только буквенные символы кириллицы или дефис!`, [{
 					text: 'OK',
-					onPress: () => setPlace(place),
+					onPress: () => setStateField(field),
 					style: 'cancel',
 				}]
 			);
-		} else {
-			if (placeChars.length > 2) {
-				const newSugges = availableCities.filter((obj) => obj.city_ru.startsWith(placeChars));
-				const filteredPlace = availableCities.find((obj) => obj.city_ru.toLowerCase() === placeChars.toLowerCase());
+		}
 
-				if (key !== 'Backspace' && filteredPlace) {
-					Keyboard.dismiss();
-					selectItem(filteredPlace);
-				} else {
-					setDisabledBtn(true);
-				}
+		if (fieldChars.length > 2) {
+			const newSugges = availableItems.filter((obj) => obj.value.startsWith(fieldChars));
+			const filteredItem = newSugges.find((obj) => obj.value.toLowerCase() === fieldChars.toLowerCase());
 
-				filteredPlace || setSuggestion(newSugges);
-			} else if (placeChars.length < 3 && key === 'Backspace') {
-				setSuggestion([]);
+			if (filteredItem) {
+				Keyboard.dismiss();
+				setSelectItem(filteredItem);
+			} else {
+				setDisabledBtn(true);
 			}
+
+			filteredItem || setSuggestion(newSugges);
+		} else if (fieldChars.length < 3 && key === 'Backspace') {
+			setSuggestion([]);
 		}
 	};
 	const checkPastedText = (name) => {
 		if (pointer + 2 <= name.length) {
 			const lastChar = name[name.length - 1];
 			const nameWithoutSpace = lastChar === ' ' ? name.slice(0, name.length - 1) : name;
-			const filteredPlace = availableCities.find((obj) => obj.city_ru.toLowerCase() === nameWithoutSpace.toLowerCase());
+			const filteredItem = availableItems.find((obj) => obj.value.toLowerCase() === nameWithoutSpace.toLowerCase());
 
-			if (filteredPlace) {
-				setPlace({ ...place, value: nameWithoutSpace });
-				selectItem(filteredPlace);
-			}
+			if (!filteredItem) return;
+
+			setSelectItem({ ...filteredItem, value: nameWithoutSpace });
 		} else {
-			setPlace({ ...place, value: name });
+			if (('id' in country && editableInput) || ('id' in place && !disabledBtn)) return;
+
+			const setStateField = !('id' in country) ? setCountry : setPlace;
+
+			setStateField({ value: name });
 		}
 
 	};
 	const changeSelection = ({ nativeEvent: { selection: { start } } }) => {
 		setPointer(start);
 	};
+	const setSelectItem = (item) => {
+		selectItem(item);
+		!('id' in country) && getCities(item);
+	};
 	const getCountries = async () => {
 		try {
-			const countryCode = 19;
-
-			fetch(`https://api-moon.digitalynx.org/api/city/${ countryCode }`)
+			fetch(`https://api-moon.digitalynx.org/api/country/`)
 				.then((response) => {
 					if (!response.ok) {
-						throw new Error('Не удалось получить список городов от сервера');
+						throw new Error('Не удалось получить список стран от сервера');
 					}
 
 					return response.json();
 				})
-				.then((citiesData) => {
-					if (!Object.keys(citiesData).length) {
-						throw new Error(`Данных о городах на сервере не обнаружено`);
+				.then((countriesData) => {
+					if (!Object.keys(countriesData).length) {
+						throw new Error(`Данных о странах на сервере не обнаружено`);
 					}
 
-					setAvailableCities(citiesData);
+					const updatedCountriesData = countriesData.map((item) => {
+						const { country_ru, ...rest } = item;
+
+						return { ...rest, value: country_ru };
+					});
+
+					setAvailableItems(updatedCountriesData);
 				})
 				.catch((error) => {
 					setSettings({
@@ -124,15 +144,68 @@ export default function PlaceScreen({ navigation }) {
 			return;
 		}
 	};
-	const renderItem = (({ item }) => {
-		const { city_ru: value } = item;
+	const getCities = async (item) => {
+		try {
+			fetch(`https://api-moon.digitalynx.org/api/city/${ item.id }`)
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error('Не удалось получить список городов от сервера');
+					}
 
+					return response.json();
+				})
+				.then((citiesData) => {
+					if (!Object.keys(citiesData).length) {
+						throw new Error(`Данных о городах на сервере не обнаружено`);
+					}
+
+					const updatedCitiesData = citiesData.map((item) => {
+						const { city_ru, ...rest } = item;
+
+						return { ...rest, value: city_ru };
+					});
+
+					setEditableInput(false);
+					setAvailableItems([ ...updatedCitiesData ]);
+				})
+				.catch((error) => {
+					setSettings({
+						...settings,
+						modal: {
+							visible: true,
+							status: 'error',
+							title: 'Ошибка загрузки данных',
+							message: `Проблема с ответом от сети. ${ error }, попробуйте перезагрузить приложение`
+						}
+					});
+				});
+		} catch (error) {
+			setSettings({
+				...settings,
+				modal: {
+					visible: true,
+					status: 'error',
+					title: 'Ошибка подключения к сети',
+					message: `Не удалось подключиться к сети. ${ error }, попробуйте перезагрузить приложение`
+				}
+			});
+
+			return;
+		}
+	};
+	const renderItem = ({ item }) => {
 		return (
-			<Pressable onPress={ () => selectItem(item) }>
-				<Text style={ styles.item }>{ value }</Text>
+			<Pressable onPress={ () => setSelectItem(item) }>
+				<Text style={ styles.item }>{ item.value }</Text>
 			</Pressable>
 		);
-	});
+	};
+	const clearCountry = () => {
+		setEditableInput(true);
+		setCountry({});
+		setPlace({});
+		getCountries();
+	};
 	const nextStep = async () => {
 		if (disabledBtn) return;
 
@@ -180,6 +253,13 @@ export default function PlaceScreen({ navigation }) {
 		getCountries();
 	}, []);
 
+	useEffect(() => {
+		if (!place.id) return;
+
+		setPlace(place);
+		setDisabledBtn(false);
+	}, [place.id]);
+
 	return (
 		<PersonTemplate
 			navigation={ navigation }
@@ -191,18 +271,46 @@ export default function PlaceScreen({ navigation }) {
 			focusedInput={ focusedInput }
 		>
 			<KeyboardAvoidingView style={ styles.content } behavior={ Platform.OS === 'ios' ? 'padding' : 'height' } >
-				<View style={ styles.inputWrap }>
-					<TextInput
-						style={ styles.input }
-						placeholder="Ввести город..."
-						placeholderTextColor="rgba(255, 255, 255, 0.5)"
-						value={ place.value }
-						onChangeText={ (name) => checkPastedText(name) }
-						onKeyPress={ (press) => emptyFilter(press) }
-						onSelectionChange={ changeSelection }
-						onFocus={ () => setFocusedInput(true) }
-						onBlur={ () => setFocusedInput(false) }
-					/>
+				<View style={ styles.wrap }>
+					<View style={ styles.inputWrap }>
+						<TextInput
+							style={[ styles.input, editableInput || styles.inputDisabled ]}
+							placeholder="Ввести страну..."
+							placeholderTextColor="rgba(255, 255, 255, .5)"
+							value={ country.value }
+							onChangeText={ (name) => checkPastedText(name) }
+							onKeyPress={ (press) => checkPress(press) }
+							onSelectionChange={ changeSelection }
+							onFocus={ () => setFocusedInput(true) }
+							onBlur={ () => setFocusedInput(false) }
+							editable={ editableInput }
+						/>
+						{ !editableInput &&
+							<Pressable
+								style={ styles.button }
+								onPress={ () => clearCountry() }
+							>
+								<View style={ styles.closeIcon }>
+									{ closeIcon('#f00') }
+								</View>
+							</Pressable>
+						}
+					</View>
+					{ !editableInput &&
+						<View style={ styles.inputWrap }>
+							<TextInput
+								style={ styles.input }
+								placeholder="Ввести город..."
+								placeholderTextColor="rgba(255, 255, 255, .5)"
+								value={ place.value }
+								onChangeText={ (name) => checkPastedText(name) }
+								onKeyPress={ (press) => checkPress(press) }
+								onSelectionChange={ changeSelection }
+								onFocus={ () => setFocusedInput(true) }
+								onBlur={ () => setFocusedInput(false) }
+							/>
+						</View>
+					}
 				</View>
 				<FlatList
 					data={ suggestion }
@@ -221,8 +329,12 @@ const styles = StyleSheet.create({
 		flexBasis: 'auto',
 		rowGap: 25
 	},
+	wrap: {
+		rowGap: 10
+	},
 	inputWrap: {
-		flexShrink: 0,
+		position: 'relative',
+		flexShrink: 0
 	},
 	input: {
 		borderRadius: 17,
@@ -235,6 +347,10 @@ const styles = StyleSheet.create({
 		textAlignVertical: 'center',
 		backgroundColor: 'rgba(255, 255, 255, .12)'
 	},
+	inputDisabled: {
+		paddingRight: 45,
+		backgroundColor: 'rgba(255, 255, 255, .5)'
+	},
 	item: {
 		borderRadius: 17,
 		paddingHorizontal: 16,
@@ -245,5 +361,13 @@ const styles = StyleSheet.create({
 		lineHeight: 20,
 		marginVertical: 3,
 		backgroundColor: 'rgba(255, 255, 255, .12)'
+	},
+	button: {
+		position: 'absolute',
+		top: 5,
+		right: 5,
+		width: 42,
+		height: 42,
+		padding: 10
 	}
 });

@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
 	},
 	inputWrap: {
 		position: 'relative',
-		flexShrink: 0,
+		flexShrink: 0
 	},
 	input: {
 		borderRadius: 17,
