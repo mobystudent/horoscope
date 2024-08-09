@@ -111,121 +111,138 @@ export default function StartScreen({ navigation }) {
 			return;
 		}
 	};
+	const loadMoonMonthsData = async () => {
+		try {
+			const currentDate = moment().format('YYYY-MM-DD');
+
+			fetch(`https://api-moon.digitalynx.org/api/moon/special/year?date=${ currentDate }`)
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error('Не удалось получить данные о текущем лунном месяце');
+					}
+
+					return response.json();
+				})
+				.then((monthsData) => {
+					if (!Object.keys(monthsData).length) {
+						throw new Error(`Данных о текущем лунном месяце на сервере не обнаружено`);
+					}
+
+					setMonths(monthsData);
+					storageBasicData();
+				})
+				.catch((error) => {
+					setSettings({
+						...settings,
+						modal: {
+							visible: true,
+							status: 'error',
+							title: 'Ошибка загрузки данных',
+							message: `Проблема с ответом от сети. ${ error }, попробуйте перезагрузить приложение`
+						}
+					});
+				});
+		} catch (error) {
+			setSettings({
+				...settings,
+				modal: {
+					visible: true,
+					status: 'error',
+					title: 'Ошибка подключения к сети',
+					message: `Не удалось подключиться к сети. ${ error }, попробуйте перезагрузить приложение`
+				}
+			});
+
+			return;
+		}
+	};
+	const loadMoonDayData = async ({ currentLat, currentLng, selectedTimezone }) => {
+		try {
+			const currentDate = moment().format('YYYY-MM-DD');
+			const currentTime = moment().format('HH:mm');
+
+			fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ currentDate }&time=${ currentTime }&lat=${ currentLat }&lng=${ currentLng }&tz=${ selectedTimezone }`)
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error('Не удалось получить данные о текущем лунном дне');
+					}
+
+					return response.json();
+				})
+				.then((moonData) => {
+					if (!Object.keys(moonData).length) {
+						throw new Error(`Данных о текущем лунном дне на сервере не обнаружено`);
+					}
+
+					setMoon(moonData);
+					storagePersonData();
+					storageNotesListData();
+					storageBirthdayMoonData();
+				})
+				.catch((error) => {
+					setSettings({
+						...settings,
+						modal: {
+							visible: true,
+							status: 'error',
+							title: 'Ошибка загрузки данных',
+							message: `Проблема с ответом от сети. ${ error }, попробуйте перезагрузить приложение`
+						}
+					});
+				});
+		} catch (error) {
+			setSettings({
+				...settings,
+				modal: {
+					visible: true,
+					status: 'error',
+					title: 'Ошибка подключения к сети',
+					message: `Не удалось подключиться к сети. ${ error }, попробуйте перезагрузить приложение`
+				}
+			});
+
+			return;
+		}
+	};
 	const settingsStatus = useMemo(() => {
 		return [storagePerson, storageNotesList, storageBirthdayMoon].every((object) => Object.keys(object).length);
 	}, [storagePerson, storageNotesList, storageBirthdayMoon]);
 
 	useEffect(() => {
-		const loadServerData = async () => {
-			try {
-				const currentDate = moment().format('YYYY-MM-DD');
-
-				fetch(`https://api-moon.digitalynx.org/api/moon/special/year?date=${ currentDate }`)
-					.then((response) => {
-						if (!response.ok) {
-							throw new Error('Не удалось получить данные о текущем лунном месяце');
-						}
-
-						return response.json();
-					})
-					.then((monthsData) => {
-						if (!Object.keys(monthsData).length) {
-							throw new Error(`Данных о текущем лунном месяце на сервере не обнаружено`);
-						}
-
-						setMonths(monthsData);
-						storageBasicData();
-					})
-					.catch((error) => {
-						setSettings({
-							...settings,
-							modal: {
-								visible: true,
-								status: 'error',
-								title: 'Ошибка загрузки данных',
-								message: `Проблема с ответом от сети. ${ error }, попробуйте перезагрузить приложение`
-							}
-						});
-					});
-			} catch (error) {
-				setSettings({
-					...settings,
-					modal: {
-						visible: true,
-						status: 'error',
-						title: 'Ошибка подключения к сети',
-						message: `Не удалось подключиться к сети. ${ error }, попробуйте перезагрузить приложение`
-					}
-				});
-
-				return;
-			}
-		};
-
-		loadServerData();
+		loadMoonMonthsData();
 	}, []);
 
 	useEffect(() => {
 		if (!Object.keys(storageBasic).length) return;
 
-		const loadServerData = async () => {
-			try {
-				const currentDate = moment().format('YYYY-MM-DD');
-				const currentTime = moment().format('HH:mm');
-				const {
-					city: {
-						lat: currentLat,
-						lng: currentLng,
-						timezone: currentTimezone
-					} = {}
-				} = storageBasic;
+		const {
+			city: {
+				lat: currentLat,
+				lng: currentLng,
+				timezone: currentTimezone
+			} = {}
+		} = storageBasic;
 
+		if (currentTimezone !== timezone) {
+			setSettings({
+				...settings,
+				modal: {
+					visible: true,
+					status: 'info',
+					title: 'Изменена таймзона',
+					message: `Ваша текущая таймзона "${ timezone }" отличается от "${ currentTimezone }" которая соответствует вашему городу проживания. Хотите применить новую таймзону "${ timezone }" для рассчета данных о текущем лунном дне?`,
+					handler: (status) => {
+						const selectedData = {
+							currentLat,
+							currentLng,
+							selectedTimezone: status === 'ok' ? timezone : currentTimezone
+						} ;
 
-				fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ currentDate }&time=${ currentTime }&lat=${ currentLat }&lng=${ currentLng }&tz=${ currentTimezone }`)
-					.then((response) => {
-						if (!response.ok) {
-							throw new Error('Не удалось получить данные о текущем лунном дне');
-						}
-
-						return response.json();
-					})
-					.then((moonData) => {
-						if (!Object.keys(moonData).length) {
-							throw new Error(`Данных о текущем лунном дне на сервере не обнаружено`);
-						}
-
-						setMoon(moonData);
-						storagePersonData();
-						storageNotesListData();
-						storageBirthdayMoonData();
-					})
-					.catch((error) => {
-						setSettings({
-							...settings,
-							modal: {
-								visible: true,
-								status: 'error',
-								title: 'Ошибка загрузки данных',
-								message: `Проблема с ответом от сети. ${ error }, попробуйте перезагрузить приложение`
-							}
-						});
-					});
-			} catch (error) {
-				setSettings({
-					...settings,
-					modal: {
-						visible: true,
-						status: 'error',
-						title: 'Ошибка подключения к сети',
-						message: `Не удалось подключиться к сети. ${ error }, попробуйте перезагрузить приложение`
+						loadMoonDayData(selectedData);
 					}
-				});
-
-				return;
-			}
-		};
-
-		loadServerData();
+				}
+			});
+		}
 	}, [storageBasic]);
 
 	useEffect(() => {
@@ -236,6 +253,7 @@ export default function StartScreen({ navigation }) {
 			person: storagePerson,
 			notesList: storageNotesList,
 			birthdayMoon: storageBirthdayMoon,
+			basic: storageBasic,
 			currentMoonDay: moon,
 			monthsRange: months,
 			registered: true

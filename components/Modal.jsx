@@ -72,6 +72,10 @@ export default function ModalComponent() {
 			}
 		]
 	};
+	const selectTimezone = (status) => {
+		handler(status);
+		hideModal();
+	};
 	const filterButtons = status === 'filter' && typeBtns[type].map((button, i) => {
 		const style = !i ? styles.buttonFilter : [ styles.buttonFilter, styles.buttonLine ];
 
@@ -87,18 +91,28 @@ export default function ModalComponent() {
 			isVisible={ visible }
 			avoidKeyboard={ true }
 			onBackdropPress={ () => hideModal() }
-			style={ status === 'error' ? styles.componentError : styles.componentFilter }
+			style={ status === 'filter' ? styles.componentFilter : styles.componentError }
 		>
-			{ status === 'error'
-				? <View style={ styles.modal }>
+			{ status === 'filter'
+				? <View style={ styles.filter }>
+					{ filterButtons }
+				</View>
+				: <View style={ styles.modal }>
 					<Text style={ styles.title }>{ title }</Text>
 					<Text style={ styles.message }>{ message }</Text>
-					<Pressable style={ styles.button } onPress={ () => hideModal() }>
-						<Text style={[ styles.text, { color: '#000' } ]}>OK</Text>
-					</Pressable>
-				</View>
-				: <View style={ styles.filter }>
-					{ filterButtons }
+					{ status === 'error' ?
+						<Pressable style={ styles.button } onPress={ () => hideModal() }>
+							<Text style={[ styles.text, { color: '#000' } ]}>OK</Text>
+						</Pressable>
+						: <>
+							<Pressable style={ styles.button } onPress={ () => selectTimezone('ok') }>
+								<Text style={[ styles.text, { color: '#000' } ]}>Применить</Text>
+							</Pressable>
+							<Pressable style={ styles.button } onPress={ () => selectTimezone('cancel') }>
+								<Text style={[ styles.text, { color: '#000' } ]}>Отмена</Text>
+							</Pressable>
+						</>
+					}
 				</View>
 			}
 		</Modal>
@@ -149,7 +163,7 @@ const styles = StyleSheet.create({
 	},
 	button: {
 		justifyContent: 'center',
-		paddingVertical: 5,
+		paddingVertical: 10,
 		paddingHorizontal: 10,
 		width: 180,
 		borderRadius: 20,

@@ -168,54 +168,7 @@ export default function Processing({ navigation }) {
 			return;
 		}
 	};
-	const settingsStatus = useMemo(() => {
-		if (!notesList.length && !Object.keys(birthdayMoon).length) return;
-
-		return [notesList, birthdayMoon].every((object) => Object.keys(object).length);
-	}, [notesList, birthdayMoon]);
-
-	useEffect(() => {
-		if (!Object.keys(birthdayMoon).length) return;
-
-		storagePersonData();
-		storageNotesListData();
-		storageBirthdayMoonData();
-		storageBasicData();
-	}, [birthdayMoon]);
-
-	useEffect(() => {
-		const progressId = setInterval(() => {
-			setProgress((prevProgress) => {
-				const counter = prevProgress < 100 ? prevProgress + 1 : 100;
-
-				if (counter === 100) {
-					clearInterval(progressId);
-				}
-
-				return counter;
-			});
-		}, time);
-
-		return () => clearInterval(progressId);
-	}, [readyData]);
-
-	useEffect(() => {
-		setSteps(steps.map((step) => {
-			if (progress === step.level) {
-				step.active = true;
-			}
-
-			return step;
-		}));
-	}, [progress]);
-
-	useEffect(() => {
-		if (progress === 100 && readyData) {
-			navigation.navigate('moon');
-		}
-	}, [progress, readyData]);
-
-	useEffect(() => {
+	const loadMoonData = async () => {
 		try {
 			const currentDate = moment().format('YYYY-MM-DD');
 			const currentTime = moment().format('HH:mm');
@@ -292,7 +245,57 @@ export default function Processing({ navigation }) {
 
 			return;
 		}
+	};
+	const settingsStatus = useMemo(() => {
+		if (!notesList.length && !Object.keys(birthdayMoon).length) return;
+
+		return [notesList, birthdayMoon].every((object) => Object.keys(object).length);
+	}, [notesList, birthdayMoon]);
+
+	useEffect(() => {
+		loadMoonData();
 	}, []);
+
+	useEffect(() => {
+		if (!Object.keys(birthdayMoon).length) return;
+
+		storagePersonData();
+		storageNotesListData();
+		storageBirthdayMoonData();
+		storageBasicData();
+	}, [birthdayMoon]);
+
+	useEffect(() => {
+		const progressId = setInterval(() => {
+			setProgress((prevProgress) => {
+				const counter = prevProgress < 100 ? prevProgress + 1 : 100;
+
+				if (counter === 100) {
+					clearInterval(progressId);
+				}
+
+				return counter;
+			});
+		}, time);
+
+		return () => clearInterval(progressId);
+	}, [readyData]);
+
+	useEffect(() => {
+		setSteps(steps.map((step) => {
+			if (progress === step.level) {
+				step.active = true;
+			}
+
+			return step;
+		}));
+	}, [progress]);
+
+	useEffect(() => {
+		if (progress === 100 && readyData) {
+			navigation.navigate('moon');
+		}
+	}, [progress, readyData]);
 
 	useEffect(() => {
 		if (!settingsStatus) return;
