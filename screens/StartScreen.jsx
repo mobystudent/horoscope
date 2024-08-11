@@ -111,6 +111,39 @@ export default function StartScreen({ navigation }) {
 			return;
 		}
 	};
+	const updateStorageBasicData = async (updateTimezone) => {
+		const updateStorageBasic = {
+			...storageBasic,
+			city: {
+				...storageBasic.city,
+				timezone: updateTimezone
+			}
+		};
+
+		setStorageBasic(updateStorageBasic);
+
+		try {
+			const basicString = JSON.stringify(updateStorageBasic);
+
+			if (!Object.keys(storageBasic).length) {
+				throw new Error('Данных об основных настройках приложения нет');
+			}
+
+			await AsyncStorage.setItem('basic', basicString);
+		} catch(error) {
+			setSettings({
+				...settings,
+				modal: {
+					visible: true,
+					status: 'error',
+					title: 'Ошибка сохранения данных об основных настройках приложения',
+					message: `Проблема с записью в хранилище. ${ error }, попробуйте перезагрузить приложение`
+				}
+			});
+
+			return;
+		}
+	};
 	const loadMoonMonthsData = async () => {
 		try {
 			const currentDate = moment().format('YYYY-MM-DD');
@@ -156,12 +189,19 @@ export default function StartScreen({ navigation }) {
 			return;
 		}
 	};
-	const loadMoonDayData = async ({ currentLat, currentLng, selectedTimezone }) => {
+	const loadMoonDayData = async () => {
 		try {
 			const currentDate = moment().format('YYYY-MM-DD');
 			const currentTime = moment().format('HH:mm');
+			const {
+				city: {
+					lat: currentLat = '',
+					lng: currentLng = '',
+					timezone: currentTimezone = ''
+				} = {}
+			} = storageBasic;
 
-			fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ currentDate }&time=${ currentTime }&lat=${ currentLat }&lng=${ currentLng }&tz=${ selectedTimezone }`)
+			fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ currentDate }&time=${ currentTime }&lat=${ currentLat }&lng=${ currentLng }&tz=${ currentTimezone }`)
 				.then((response) => {
 					if (!response.ok) {
 						throw new Error('Не удалось получить данные о текущем лунном дне');
@@ -217,8 +257,6 @@ export default function StartScreen({ navigation }) {
 
 		const {
 			city: {
-				lat: currentLat,
-				lng: currentLng,
 				timezone: currentTimezone
 			} = {}
 		} = storageBasic;
@@ -232,16 +270,14 @@ export default function StartScreen({ navigation }) {
 					title: 'Изменена таймзона',
 					message: `Ваша текущая таймзона "${ timezone }" отличается от "${ currentTimezone }" которая соответствует вашему городу проживания. Хотите применить новую таймзону "${ timezone }" для рассчета данных о текущем лунном дне?`,
 					handler: (status) => {
-						const selectedData = {
-							currentLat,
-							currentLng,
-							selectedTimezone: status === 'ok' ? timezone : currentTimezone
-						} ;
-
-						loadMoonDayData(selectedData);
+						status === 'ok' ? updateStorageBasicData(timezone) : loadMoonDayData();
 					}
 				}
 			});
+
+			return;
+		} else {
+			loadMoonDayData();
 		}
 	}, [storageBasic]);
 
