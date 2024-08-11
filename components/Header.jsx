@@ -103,6 +103,7 @@ export default function Header(props) {
 			if (btnActionRight === 'add') {
 				setSettings({
 					...settings,
+					noteMode: notesList[day - 1].date ? 'view' : 'new',
 					currentNote: notesList[day - 1],
 					background: 'main'
 				});

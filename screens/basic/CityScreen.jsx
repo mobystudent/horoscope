@@ -338,7 +338,7 @@ export default function CityScreen({ navigation }) {
 								onPress={ () => clearCountry() }
 							>
 								<View style={ styles.closeIcon }>
-									{ closeIcon('#f00') }
+									{ closeIcon('rgba(255, 255, 255, .5)') }
 								</View>
 							</Pressable>
 						}

@@ -18,6 +18,9 @@ export default function CreateNote (props) {
 	const {
 		settings: {
 			noteMode = '',
+			currentMoonDay: {
+				phase = ''
+			} = {},
 			currentNote = {},
 			notesList = [],
 			modal: {
@@ -28,10 +31,6 @@ export default function CreateNote (props) {
 		setSettings
 	} = useContext(SettingsContext);
 	const [ description, setDescription ] = useState('');
-	console.log('settings -----------------------------');
-	console.log(currentNote);
-	console.log(notesList);
-	console.log('settings -----------------------------');
 	const [ pointer, setPointer ] = useState(0);
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
 	const [ contentActive, setContentActive ] = useState('');
@@ -46,25 +45,11 @@ export default function CreateNote (props) {
 		type: 'more'
 	};
 	const checkText = ({ nativeEvent: { key } }) => {
-		const regex = new RegExp('[а-яА-Я\-Backspace ]');
-		const check = regex.test(key);
 		const nameChars = key === 'Backspace'
 			? description.slice(0, pointer - 1) + description.slice(pointer)
 			: description.slice(0, pointer) + key + description.slice(pointer);
-		const exceptionLetters = ['k', 'e', 'p', 'c', 'a', 's'];
 
-		if(!check || exceptionLetters.includes(key)) {
-			// Alert.alert('Не корректный символ', 'Заголовок должен содержать только буквенные символы кириллицы или дефис!', [{
-			// 	text: 'OK',
-			// 	onPress: () => setNoteElem({
-			// 		...noteElem,
-			// 		[field]: noteElem[field]
-			// 	}),
-			// 	style: 'cancel',
-			// }]);
-		} else {
-			setDisabledBtn(nameChars.length > 1 ? false : true);
-		}
+		setDisabledBtn(nameChars.length <= 1);
 	};
 	const changeSelection = ({ nativeEvent: { selection: { start } } }) => {
 		setPointer(start);
@@ -88,6 +73,7 @@ export default function CreateNote (props) {
 			navigation.navigate(page);
 			setSettings({
 				...settings,
+				background: page === 'moon' ? phase : 'main',
 				notesList: updatedNotesList,
 				currentNote: {}
 			});
@@ -106,7 +92,7 @@ export default function CreateNote (props) {
 			return;
 		}
 	};
-	const header = noteMode === 'new' ? 'Новая заметка' : `Заметка от ${ currentNote.date }`;
+	const header = noteMode === 'new' || noteMode === 'clear' ? 'Новая заметка' : `Заметка от ${ currentNote.date }`;
 	const btnText = 'Сохранить';
 	const changeNote = (type) => {
 		setSettings({
