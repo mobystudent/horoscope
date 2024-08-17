@@ -1,5 +1,5 @@
-import { useState, useContext } from 'react';
-import { StyleSheet, Text, View, Pressable, FlatList } from 'react-native';
+import { useState, useEffect, useMemo, useContext } from 'react';
+import { StyleSheet, Text, View, Pressable, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PersonTemplate from '../../components/PersonTemplate';
 import { SettingsContext } from '../../contexts/settings';
@@ -18,42 +18,13 @@ export default function TimeScreen({ navigation }) {
 		setSettings
 	} = useContext(SettingsContext);
 	const [ time, setTime ] = useState(personTime || '12:00');
+	const [ minutes, setMinutes ] = useState([]);
+	const [ hours, setHours ] = useState([]);
+	const [ halfDay, setHalfDay ] = useState([]);
 	// const date = new Date();
 	// const noon = date.setHours(12, 0, 0, 0);
 	// const [value, setValue] = useState(dayjs());
 	const [ disabledBtn, setDisabledBtn ] = useState(true);
-	const hours = Array.from({ length: 12 }, (_, i) => {
-		i++;
-
-		return {
-			id: `h${i}`,
-			type: 'hours',
-			title: i,
-			value: `${i < 10 ? '0' : ''}${i}`
-		};
-	});
-	const minutes = Array.from({ length: 12 }, (_, i) => {
-		return {
-			id: `m${i}`,
-			type: 'minutes',
-			title: `${i * 5 < 10 ? '0' : ''}${i * 5}`,
-			value: `${i * 5 < 10 ? '0' : ''}${i * 5}`
-		};
-	});
-	const midday = [
-		{
-			id: 'am',
-			type: 'midday',
-			title: 'am',
-			value: 'am'
-		},
-		{
-			id: 'pm',
-			type: 'midday',
-			title: 'pm',
-			value: 'pm'
-		}
-	];
 	const selectItem = ((value, type) => {
 		let timeLine = '';
 
@@ -82,11 +53,51 @@ export default function TimeScreen({ navigation }) {
 		setTime(timeLine);
 		setDisabledBtn(false);
 	});
-	const renderItem = (({ item }) => (
-		<Pressable onPress={ () => selectItem(item.value, item.type) }>
-			<Text style={ styles.num }>{ item.title }</Text>
-		</Pressable>
-	));
+	const heightItem = 32;
+	const handleScrollStart = ((type) => {
+		const listName = type === 'hours' ? hours : minutes;
+		const listState = type === 'hours' ? setHours : setMinutes;
+		const updatedList = listName.map((item) => {
+			item.style = '';
+
+			return item;
+		});
+
+		listState([ ...updatedList ]);
+	});
+	const handleScrollEnd = (({ nativeEvent: { contentOffset } }, type) => {
+		const listName = type === 'hours' ? hours : minutes;
+		const listState = type === 'hours' ? setHours : setMinutes;
+		const activePosition = Math.floor(contentOffset.y / heightItem);
+		const updatedList = listName.map((item) => {
+			if (item.id === activePosition + 1) {
+				item.style = 'prev1';
+			}
+			if (item.id === activePosition) {
+				item.style = 'prev2';
+			}
+			if (item.id === activePosition + 2) {
+				item.style = 'active';
+			}
+			if (item.id === activePosition + 3) {
+				item.style = 'next1';
+			}
+			if (item.id === activePosition + 4) {
+				item.style = 'next2';
+			}
+
+			return item;
+		});
+
+		console.log(' $$$$$$$$$$$$$$$$$$$$$$$$$');
+		console.log(updatedList);
+		console.log(activePosition);
+		console.log(' $$$$$$$$$$$$$$$$$$$$$$$$$');
+
+		listState([ ...updatedList ]);
+	});
+	const snapOffsetsHours = hours.map((_, i) => i * heightItem);
+	const snapOffsetsMinutes = minutes.map((_, i) => i * heightItem);
 	const nextStep = async () => {
 		if (disabledBtn) return;
 
@@ -129,6 +140,61 @@ export default function TimeScreen({ navigation }) {
 	const title = 'Во сколько вы родились?';
 	const description = 'Введите время своего рождения, чтобы получить более точные прогнозы лунного влияния на различные сферы вашей жизни';
 	const btnText = registered ? 'Сохранить' : 'Далее';
+	const allHours = useMemo(() => {
+		return hours.map((item) => (
+			<Pressable onPress={ () => selectItem(item.value, item.type) } key={ item.id }>
+			<Text style={[ styles.num, styles[item.style] ]}>{ item.title }</Text>
+			</Pressable>
+		));
+	}, [hours]);
+	const allMinutes = useMemo(() => {
+		return minutes.map((item) => (
+				<Pressable onPress={ () => selectItem(item.value, item.type) } key={ item.id }>
+					<Text style={[ styles.num, styles[item.style] ]}>{ item.title }</Text>
+				</Pressable>
+			));
+	}, [minutes]);
+	const allHalfDay = useMemo(() => {
+		return halfDay.map((item) => (
+				<Pressable onPress={ () => selectItem(item.value, item.type) } key={ item.id }>
+					<Text style={[ styles.num, styles[item.style] ]}>{ item.title }</Text>
+				</Pressable>
+			));
+	}, [halfDay]);
+
+	useEffect(() => {
+		const initHours = Array.from({ length: 12 }, (_, i) => {
+			return {
+				id: i,
+				type: 'hours',
+				title: ++i,
+				value: `${i < 10 ? '0' : ''}${i}`,
+				style: ''
+			};
+		});
+		const initMinutes = Array.from({ length: 12 }, (_, i) => {
+			return {
+				id: i,
+				type: 'minutes',
+				title: `${i * 5 < 10 ? '0' : ''}${i * 5}`,
+				value: `${i * 5 < 10 ? '0' : ''}${i * 5}`,
+				style: ''
+			};
+		});
+		const initHalfDay = [ 'am', 'pm' ].map((item, i) => {
+			return {
+				id: i,
+				type: 'midday',
+				title: item,
+				value: item,
+				style: ''
+			}
+		});
+
+		setHours(initHours);
+		setMinutes(initMinutes);
+		setHalfDay(initHalfDay);
+	}, []);
 
 	return (
 		<PersonTemplate
@@ -141,24 +207,39 @@ export default function TimeScreen({ navigation }) {
 		>
 			<View style={ styles.content }>
 				<View style={ styles.wrap }>
-					<FlatList
-						data={ hours }
-						renderItem={ renderItem }
-						keyExtractor={ item => item.id }
+					<ScrollView
 						style={ styles.list }
-					/>
-					<FlatList
-						data={ minutes }
-						renderItem={ renderItem }
-						keyExtractor={ item => item.id }
+						showsVerticalScrollIndicator={ false }
+						pagingEnabled="true"
+						snapToOffsets={ snapOffsetsHours }
+						decelerationRate="fast"
+						onMomentumScrollBegin={ () => handleScrollStart('hours') }
+						onMomentumScrollEnd={ (event) => handleScrollEnd(event, 'hours') }
+					>
+						{ allHours }
+					</ScrollView>
+					<ScrollView
 						style={ styles.list }
-					/>
-					<FlatList
-						data={ midday }
-						renderItem={ renderItem }
-						keyExtractor={ item => item.id }
+						showsVerticalScrollIndicator={ false }
+						pagingEnabled="true"
+						snapToOffsets={ snapOffsetsMinutes }
+						decelerationRate="fast"
+						onMomentumScrollBegin={ () => handleScrollStart('minutes') }
+						onMomentumScrollEnd={ (event) => handleScrollEnd(event, 'minutes')  }
+					>
+						{ allMinutes }
+					</ScrollView>
+					<ScrollView
 						style={ styles.list }
-					/>
+						showsVerticalScrollIndicator={ false }
+						pagingEnabled="true"
+						snapToOffsets={[ 0, 32 ]}
+						decelerationRate="fast"
+						// onMomentumScrollBegin={ () => handleScrollStart('minutes') }
+						// onMomentumScrollEnd={ (event) => handleScrollEnd(event, 'minutes')  }
+					>
+						{ allHalfDay }
+					</ScrollView>
 					<View style={ styles.activeLine }></View>
 				</View>
 			</View>
@@ -181,7 +262,6 @@ const styles = StyleSheet.create({
 	},
 	wrap: {
 		position: 'relative',
-		// flex: 1,
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'center',
@@ -198,16 +278,37 @@ const styles = StyleSheet.create({
 	},
 	num: {
 		fontWeight: '400',
-		fontSize: 16,
-		lineHeight: 20,
-		color: '#fff',
+		fontSize: 20,
+		lineHeight: 24,
+		color: 'rgba(255, 255, 255, .35)',
+		height: 32, // del
+		textAlign: 'center',
 		paddingHorizontal: 5,
-		paddingVertical: 4
+		paddingVertical: 4,
+		borderTopWidth: 1, // del
+		borderBottomWidth: 1, // del
+	},
+	active: {
+		color: '#fff'
+	},
+	prev1: {
+		color: '#256'
+	},
+	prev2: {
+		color: '#873'
+	},
+	next1: {
+		color: '#b2c'
+	},
+	next2: {
+		color: '#a31'
 	},
 	list: {
-		textAlign: 'center',
-		maxWidth: 65,
-		paddingHorizontal: 15
+		flexGrow: 0,
+		height: 160,
+		width: 50,
+		paddingHorizontal: 5,
+		marginHorizontal: 10
 	},
 	activeLine: {
 		position: 'absolute',
@@ -215,7 +316,7 @@ const styles = StyleSheet.create({
 		width: '100%',
 		height: 32,
 		borderRadius: 7,
-		backgroundColor: 'rgba(255, 255, 255, .08)',
+		backgroundColor: 'rgba(255, 255, 255, .8)',
 		zIndex: -1
 	}
 });
