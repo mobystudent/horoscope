@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useContext } from 'react';
+import { useState, useEffect, useMemo, useRef, useContext } from 'react';
 import { StyleSheet, Text, View, Pressable, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PersonTemplate from '../../components/PersonTemplate';
@@ -18,9 +18,11 @@ export default function TimeScreen({ navigation }) {
 		setSettings
 	} = useContext(SettingsContext);
 	const [ time, setTime ] = useState(personTime || '12:00');
-	const [ minutes, setMinutes ] = useState([]);
-	const [ hours, setHours ] = useState([]);
+	const [ hours, setHours ] = useState({});
+	const [ minutes, setMinutes ] = useState({});
 	const [ halfDay, setHalfDay ] = useState([]);
+	const hourRef = useRef();
+	const minuteRef = useRef();
 	// const date = new Date();
 	// const noon = date.setHours(12, 0, 0, 0);
 	// const [value, setValue] = useState(dayjs());
@@ -57,10 +59,16 @@ export default function TimeScreen({ navigation }) {
 	const handleScrollStart = ((type) => {
 		const listName = type === 'hours' ? hours : minutes;
 		const listState = type === 'hours' ? setHours : setMinutes;
-		const updatedList = listName.map((item) => {
-			item.style = '';
+		const updatedList = listName.map((list) => {
+			for (key in list) {
+				return {
+						[key]: list[key].map((item) => {
+							item.style = '';
 
-			return item;
+							return item;
+						})
+				}
+			}
 		});
 
 		listState([ ...updatedList ]);
@@ -68,36 +76,90 @@ export default function TimeScreen({ navigation }) {
 	const handleScrollEnd = (({ nativeEvent: { contentOffset } }, type) => {
 		const listName = type === 'hours' ? hours : minutes;
 		const listState = type === 'hours' ? setHours : setMinutes;
+		const listRef = type === 'hours' ? hourRef : minuteRef;
 		const activePosition = Math.floor(contentOffset.y / heightItem);
-		const updatedList = listName.map((item) => {
-			if (item.id === activePosition + 1) {
-				item.style = 'prev1';
-			}
-			if (item.id === activePosition) {
-				item.style = 'prev2';
-			}
-			if (item.id === activePosition + 2) {
-				item.style = 'active';
-			}
-			if (item.id === activePosition + 3) {
-				item.style = 'next1';
-			}
-			if (item.id === activePosition + 4) {
-				item.style = 'next2';
-			}
+		const updatedList = listName.map((list, index) => {
+			for (key in list) {
+				return {
+						[key]: list[key].map((item, i) => {
+							const itemPosition = index * 12 + i;
 
-			return item;
+							if (itemPosition === activePosition) {
+								item.style = 'prev2';
+							}
+							if (itemPosition === activePosition + 1) {
+								item.style = 'prev1';
+							}
+							if (itemPosition === activePosition + 2) {
+								item.style = 'active';
+							}
+							if (itemPosition === activePosition + 3) {
+								item.style = 'next1';
+							}
+							if (itemPosition === activePosition + 4) {
+								item.style = 'next2';
+							}
+
+							return item;
+						})
+				}
+			}
 		});
 
-		console.log(' $$$$$$$$$$$$$$$$$$$$$$$$$');
-		console.log(updatedList);
+		console.log('valuesList ^^^^^^^^^^^^^^^^^^^');
+		// console.log(JSON.stringify(updatedList));
+		console.log(contentOffset.y);
 		console.log(activePosition);
-		console.log(' $$$$$$$$$$$$$$$$$$$$$$$$$');
+		console.log('valuesList ^^^^^^^^^^^^^^^^^^^');
 
-		listState([ ...updatedList ]);
+		if (activePosition <=  7) {
+			const lastList = updatedList.slice(2, 3);
+			const residualList = updatedList.slice(0, 2);
+
+			listState([ ...lastList, ...residualList ]);
+
+			listRef.current.scrollTo({ y: heightItem * (activePosition + 12), animated: false });
+		} else if (activePosition >=  28) {
+			const firstList = updatedList.slice(0, 1);
+			const residualList = updatedList.slice(1, 3);
+
+			listState([ ...residualList, ...firstList ]);
+
+			listRef.current.scrollTo({ y: heightItem * 5, animated: false });
+		} else {
+			listState([ ...updatedList ]);
+		}
+
 	});
-	const snapOffsetsHours = hours.map((_, i) => i * heightItem);
-	const snapOffsetsMinutes = minutes.map((_, i) => i * heightItem);
+	const generateList = ((type) => {
+		const numberOfLists = Array.from({ length: 3 }, (_, i) => i);
+
+		return numberOfLists.reduce((acc, current) => {
+			const createdList = {
+				[current]: Array.from({ length: 12 }, (_, i) => {
+					return type === 'hours'
+						? {
+							id: `${ current }h${ i }`,
+							type: 'hours',
+							title: ++i,
+							value: `${i < 10 ? '0' : ''}${i}`,
+							style: ''
+						}
+						: {
+							id: `${ current }m${ i }`,
+							type: 'minutes',
+							title: `${i * 5 < 10 ? '0' : ''}${i * 5}`,
+							value: `${i * 5 < 10 ? '0' : ''}${i * 5}`,
+							style: ''
+						};
+				})
+			}
+
+			acc.push(createdList);
+
+			return acc;
+		}, []);
+	});
 	const nextStep = async () => {
 		if (disabledBtn) return;
 
@@ -141,14 +203,34 @@ export default function TimeScreen({ navigation }) {
 	const description = 'Введите время своего рождения, чтобы получить более точные прогнозы лунного влияния на различные сферы вашей жизни';
 	const btnText = registered ? 'Сохранить' : 'Далее';
 	const allHours = useMemo(() => {
-		return hours.map((item) => (
+		if (!hours.length) return;
+
+		const valuesList = hours.reduce((acc, list) => {
+			for (key in list) {
+				acc.push(...list[key]);
+			}
+
+			return acc;
+		}, []);
+
+		return valuesList.map((item) => (
 			<Pressable onPress={ () => selectItem(item.value, item.type) } key={ item.id }>
 			<Text style={[ styles.num, styles[item.style] ]}>{ item.title }</Text>
 			</Pressable>
 		));
 	}, [hours]);
 	const allMinutes = useMemo(() => {
-		return minutes.map((item) => (
+		if (!minutes.length) return;
+
+		const valuesList = minutes.reduce((acc, list) => {
+			for (key in list) {
+				acc.push(...list[key]);
+			}
+
+			return acc;
+		}, []);
+
+		return valuesList.map((item) => (
 				<Pressable onPress={ () => selectItem(item.value, item.type) } key={ item.id }>
 					<Text style={[ styles.num, styles[item.style] ]}>{ item.title }</Text>
 				</Pressable>
@@ -163,24 +245,8 @@ export default function TimeScreen({ navigation }) {
 	}, [halfDay]);
 
 	useEffect(() => {
-		const initHours = Array.from({ length: 12 }, (_, i) => {
-			return {
-				id: i,
-				type: 'hours',
-				title: ++i,
-				value: `${i < 10 ? '0' : ''}${i}`,
-				style: ''
-			};
-		});
-		const initMinutes = Array.from({ length: 12 }, (_, i) => {
-			return {
-				id: i,
-				type: 'minutes',
-				title: `${i * 5 < 10 ? '0' : ''}${i * 5}`,
-				value: `${i * 5 < 10 ? '0' : ''}${i * 5}`,
-				style: ''
-			};
-		});
+		const initHours = generateList('hours');
+		const initMinutes = generateList('minutes');
 		const initHalfDay = [ 'am', 'pm' ].map((item, i) => {
 			return {
 				id: i,
@@ -190,6 +256,11 @@ export default function TimeScreen({ navigation }) {
 				style: ''
 			}
 		});
+
+		// console.log('Object.values(hours) >>>>>>>>>>>>>>>>>>>>>>>');
+		// console.log(initHours);
+		// console.log('Object.values(hours) >>>>>>>>>>>>>>>>>>>>>>>');
+		// return;
 
 		setHours(initHours);
 		setMinutes(initMinutes);
@@ -209,23 +280,27 @@ export default function TimeScreen({ navigation }) {
 				<View style={ styles.wrap }>
 					<ScrollView
 						style={ styles.list }
+						contentOffset={{ y: heightItem * 10 }}
 						showsVerticalScrollIndicator={ false }
 						pagingEnabled="true"
-						snapToOffsets={ snapOffsetsHours }
+						snapToInterval={ heightItem }
 						decelerationRate="fast"
 						onMomentumScrollBegin={ () => handleScrollStart('hours') }
 						onMomentumScrollEnd={ (event) => handleScrollEnd(event, 'hours') }
+						ref={ hourRef }
 					>
 						{ allHours }
 					</ScrollView>
 					<ScrollView
 						style={ styles.list }
+						contentOffset={{ y: heightItem * 10 }}
 						showsVerticalScrollIndicator={ false }
 						pagingEnabled="true"
-						snapToOffsets={ snapOffsetsMinutes }
+						snapToInterval={ heightItem }
 						decelerationRate="fast"
 						onMomentumScrollBegin={ () => handleScrollStart('minutes') }
 						onMomentumScrollEnd={ (event) => handleScrollEnd(event, 'minutes')  }
+						ref={ minuteRef }
 					>
 						{ allMinutes }
 					</ScrollView>
@@ -316,7 +391,7 @@ const styles = StyleSheet.create({
 		width: '100%',
 		height: 32,
 		borderRadius: 7,
-		backgroundColor: 'rgba(255, 255, 255, .8)',
+		backgroundColor: 'rgba(255, 255, 255, .08)',
 		zIndex: -1
 	}
 });
