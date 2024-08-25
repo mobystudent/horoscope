@@ -21,6 +21,7 @@ export default function TimeScreen({ navigation }) {
 	const [ hours, setHours ] = useState({});
 	const [ minutes, setMinutes ] = useState({});
 	const [ halfDay, setHalfDay ] = useState([]);
+	const [ scrolling, setScrolling ] = useState(false);
 	const hourRef = useRef();
 	const minuteRef = useRef();
 	// const date = new Date();
@@ -31,26 +32,31 @@ export default function TimeScreen({ navigation }) {
 		let timeLine = '';
 
 		if (type === 'hours') {
-			timeLine = time ? `${ value }${ time.slice(2) }` : `${ value }:00`;
+			timeLine = `${ value }${ time.slice(2) }`;
 		} else if (type === 'minutes') {
-			timeLine = time ? `${ time.slice(0, 3) }${ value }` : `12:${ value }`;
-		} else if (type === 'midday') {
-			const hoursValue = +time.slice(0, 2);
-
-			if (value === 'pm') {
-				if (hoursValue > 12 || hoursValue < 1) return;
-
-				timeLine = `${ hoursValue === 12 ? '00' : hoursValue + 12 }${ time.slice(2) }`;
-			} else {
-				if (hoursValue < 13 && hoursValue > 0) return;
-
-				if (hoursValue === 0) {
-					timeLine = `12${ time.slice(2) }`;
-				} else {
-					timeLine = `${ hoursValue - 12 < 10 ? '0' : '' }${ hoursValue - 12 }${ time.slice(2) }`;
-				}
-			}
+			timeLine = `${ time.slice(0, 3) }${ value }`;
+		// } else if (type === 'midday') {
+		// 	const hoursValue = +time.slice(0, 2);
+		//
+		// 	if (value === 'pm') {
+		// 		if (hoursValue > 12 || hoursValue < 1) return;
+		//
+		// 		timeLine = `${ hoursValue === 12 ? '00' : hoursValue + 12 }${ time.slice(2) }`;
+		// 	} else {
+		// 		if (hoursValue < 13 && hoursValue > 0) return;
+		//
+		// 		if (hoursValue === 0) {
+		// 			timeLine = `12${ time.slice(2) }`;
+		// 		} else {
+		// 			timeLine = `${ hoursValue - 12 < 10 ? '0' : '' }${ hoursValue - 12 }${ time.slice(2) }`;
+		// 		}
+		// 	}
 		}
+		console.log('selectItem $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
+		console.log(time);
+		console.log(timeLine);
+		console.log('selectItem $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
+		// return;
 
 		setTime(timeLine);
 		setDisabledBtn(false);
@@ -60,7 +66,6 @@ export default function TimeScreen({ navigation }) {
 	const handleScrollStart = ((type) => {
 		const listName = type === 'hours' ? hours : minutes;
 		const listState = type === 'hours' ? setHours : setMinutes;
-		const listRef = type === 'hours' ? hourRef : minuteRef;
 		const updatedList = listName.map((list) => {
 			for (key in list) {
 				return {
@@ -74,17 +79,15 @@ export default function TimeScreen({ navigation }) {
 		});
 
 		listState([ ...updatedList ]);
-
-		listRef.current.value = false;
+		setScrolling(true);
 	});
 	const handleScrollEnd = (({ nativeEvent: { contentOffset } }, type) => {
+		if (!scrolling) return;
+
 		const listName = type === 'hours' ? hours : minutes;
 		const listState = type === 'hours' ? setHours : setMinutes;
 		const listRef = type === 'hours' ? hourRef : minuteRef;
 		const activePosition = Math.floor(contentOffset.y / heightItem);
-
-		if (listRef.current.value) return;
-
 		const updatedList = listName.map((list, index) => {
 			for (key in list) {
 				return {
@@ -99,6 +102,8 @@ export default function TimeScreen({ navigation }) {
 							}
 							if (itemPosition === activePosition + 2) {
 								item.style = 'active';
+
+								selectItem(item.value, item.type);
 							}
 							if (itemPosition === activePosition + 3) {
 								item.style = 'next1';
@@ -124,7 +129,6 @@ export default function TimeScreen({ navigation }) {
 
 			listState(modifiedList);
 
-			listRef.current.value = true;
 			listRef.current.scrollTo({ y: heightItem * (activePosition + 36), animated: false });
 		} else if (activePosition >= (updatedList.length * 12 - 33)) {
 			const firstList = updatedList.slice(0, 3);
@@ -133,11 +137,12 @@ export default function TimeScreen({ navigation }) {
 
 			listState(modifiedList);
 
-			listRef.current.value = true;
 			listRef.current.scrollTo({ y: heightItem * 39, animated: false });
 		} else {
 			listState([ ...updatedList ]);
 		}
+
+		setScrolling(false);
 	});
 	const generateList = ((type) => {
 		const numberOfLists = Array.from({ length: wheelListsLength }, (_, i) => i);
@@ -222,9 +227,7 @@ export default function TimeScreen({ navigation }) {
 		}, []);
 
 		return valuesList.map((item) => (
-			<Pressable onPress={ () => selectItem(item.value, item.type) } key={ item.id }>
-			<Text style={[ styles.num, styles[item.style] ]}>{ item.title }</Text>
-			</Pressable>
+			<Text style={[ styles.num, styles[item.style] ]} key={ item.id }>{ item.title }</Text>
 		));
 	}, [hours]);
 	const allMinutes = useMemo(() => {
@@ -239,17 +242,13 @@ export default function TimeScreen({ navigation }) {
 		}, []);
 
 		return valuesList.map((item) => (
-				<Pressable onPress={ () => selectItem(item.value, item.type) } key={ item.id }>
-					<Text style={[ styles.num, styles[item.style] ]}>{ item.title }</Text>
-				</Pressable>
-			));
+			<Text style={[ styles.num, styles[item.style] ]} key={ item.id }>{ item.title }</Text>
+		));
 	}, [minutes]);
 	const allHalfDay = useMemo(() => {
 		return halfDay.map((item) => (
-				<Pressable onPress={ () => selectItem(item.value, item.type) } key={ item.id }>
-					<Text style={[ styles.num, styles[item.style] ]}>{ item.title }</Text>
-				</Pressable>
-			));
+			<Text style={[ styles.num, styles[item.style] ]} key={ item.id }>{ item.title }</Text>
+		));
 	}, [halfDay]);
 
 	useEffect(() => {

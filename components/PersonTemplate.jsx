@@ -27,6 +27,32 @@ export default function PersonTemplate(props) {
 		type: 'back'
 	};
 	const screenName = useRoute().name;
+	const inputPages = ['name', 'place', 'city'];
+	const pageBody = () => (
+		<>
+			<Text style={[ styles.title, focusedInput && styles.titleFocused ]}>{ title }</Text>
+			{ screenName === 'date'
+				? (
+					<ScrollView showsVerticalScrollIndicator={ false }>
+						{ !focusedInput && <Text style={ styles.description }>{ description }</Text> }
+						{ children }
+					</ScrollView>
+				) : (
+					<View style={ styles.wrap }>
+						{ !focusedInput && <Text style={ styles.description }>{ description }</Text> }
+						{ children }
+					</View>
+				)
+			}
+			<Pressable
+				style={[ styles.button, disabledBtn && styles.disabledButton ]}
+				onPress={ () => nextStep() }
+				disabled={ disabledBtn }
+			>
+				<Text style={[ styles.buttonText, disabledBtn && styles.disabledText ]}>{ btnText }</Text>
+			</Pressable>
+		</>
+	);
 
 	return (
 		<Container>
@@ -34,32 +60,19 @@ export default function PersonTemplate(props) {
 				navigation={ registered && navigation }
 				leftButton={ registered && leftButton }
 			/>
-			<Pressable
-				style={[ styles.body, focusedInput && styles.bodyFocused ]}
-				onPress={ () => Keyboard.dismiss() }
-			>
-				<Text style={[ styles.title, focusedInput && styles.titleFocused ]}>{ title }</Text>
-				{ screenName === 'date'
-					? (
-						<ScrollView showsVerticalScrollIndicator={ false }>
-							{ !focusedInput && <Text style={ styles.description }>{ description }</Text> }
-							{ children }
-						</ScrollView>
-					) : (
-						<View style={ styles.wrap }>
-							{ !focusedInput && <Text style={ styles.description }>{ description }</Text> }
-							{ children }
-						</View>
-					)
-				}
-				<Pressable
-					style={[ styles.button, disabledBtn && styles.disabledButton ]}
-					onPress={ () => nextStep() }
-					disabled={ disabledBtn }
-				>
-					<Text style={[ styles.buttonText, disabledBtn && styles.disabledText ]}>{ btnText }</Text>
-				</Pressable>
-			</Pressable>
+			{ !!inputPages.includes(screenName)
+				?
+					<Pressable
+						style={[ styles.body, focusedInput && styles.bodyFocused ]}
+						onPress={ () => Keyboard.dismiss() }
+					>
+						{ pageBody() }
+					</Pressable>
+				:
+					<View style={[ styles.body, focusedInput && styles.bodyFocused ]}>
+						{ pageBody() }
+					</View>
+			}
 		</Container>
 	);
 }
