@@ -56,9 +56,11 @@ export default function TimeScreen({ navigation }) {
 		setDisabledBtn(false);
 	});
 	const heightItem = 32;
+	const wheelListsLength = 9;
 	const handleScrollStart = ((type) => {
 		const listName = type === 'hours' ? hours : minutes;
 		const listState = type === 'hours' ? setHours : setMinutes;
+		const listRef = type === 'hours' ? hourRef : minuteRef;
 		const updatedList = listName.map((list) => {
 			for (key in list) {
 				return {
@@ -72,12 +74,17 @@ export default function TimeScreen({ navigation }) {
 		});
 
 		listState([ ...updatedList ]);
+
+		listRef.current.value = false;
 	});
 	const handleScrollEnd = (({ nativeEvent: { contentOffset } }, type) => {
 		const listName = type === 'hours' ? hours : minutes;
 		const listState = type === 'hours' ? setHours : setMinutes;
 		const listRef = type === 'hours' ? hourRef : minuteRef;
 		const activePosition = Math.floor(contentOffset.y / heightItem);
+
+		if (listRef.current.value) return;
+
 		const updatedList = listName.map((list, index) => {
 			for (key in list) {
 				return {
@@ -107,41 +114,42 @@ export default function TimeScreen({ navigation }) {
 		});
 
 		console.log('valuesList ^^^^^^^^^^^^^^^^^^^');
-		// console.log(JSON.stringify(updatedList));
-		console.log(contentOffset.y);
 		console.log(activePosition);
 		console.log('valuesList ^^^^^^^^^^^^^^^^^^^');
 
-		if (activePosition <=  7) {
-			const lastList = updatedList.slice(2, 3);
-			const residualList = updatedList.slice(0, 2);
+		if (activePosition <= 28) {
+			const lastList = updatedList.slice(wheelListsLength - 3, wheelListsLength);
+			const residualList = updatedList.slice(0, wheelListsLength - 3);
+			const modifiedList = [ ...lastList, ...residualList ];
 
-			listState([ ...lastList, ...residualList ]);
+			listState(modifiedList);
 
-			listRef.current.scrollTo({ y: heightItem * (activePosition + 12), animated: false });
-		} else if (activePosition >=  28) {
-			const firstList = updatedList.slice(0, 1);
-			const residualList = updatedList.slice(1, 3);
+			listRef.current.value = true;
+			listRef.current.scrollTo({ y: heightItem * (activePosition + 36), animated: false });
+		} else if (activePosition >= (updatedList.length * 12 - 33)) {
+			const firstList = updatedList.slice(0, 3);
+			const residualList = updatedList.slice(3, wheelListsLength);
+			const modifiedList = [ ...residualList, ...firstList ];
 
-			listState([ ...residualList, ...firstList ]);
+			listState(modifiedList);
 
-			listRef.current.scrollTo({ y: heightItem * 5, animated: false });
+			listRef.current.value = true;
+			listRef.current.scrollTo({ y: heightItem * 39, animated: false });
 		} else {
 			listState([ ...updatedList ]);
 		}
-
 	});
 	const generateList = ((type) => {
-		const numberOfLists = Array.from({ length: 3 }, (_, i) => i);
+		const numberOfLists = Array.from({ length: wheelListsLength }, (_, i) => i);
 
 		return numberOfLists.reduce((acc, current) => {
 			const createdList = {
 				[current]: Array.from({ length: 12 }, (_, i) => {
 					return type === 'hours'
 						? {
-							id: `${ current }h${ i }`,
+							id: `${ current }h${ ++i }`,
 							type: 'hours',
-							title: ++i,
+							title: i,
 							value: `${i < 10 ? '0' : ''}${i}`,
 							style: ''
 						}
@@ -280,7 +288,7 @@ export default function TimeScreen({ navigation }) {
 				<View style={ styles.wrap }>
 					<ScrollView
 						style={ styles.list }
-						contentOffset={{ y: heightItem * 10 }}
+						contentOffset={{ y: heightItem * 46 }}
 						showsVerticalScrollIndicator={ false }
 						pagingEnabled="true"
 						snapToInterval={ heightItem }
@@ -293,7 +301,7 @@ export default function TimeScreen({ navigation }) {
 					</ScrollView>
 					<ScrollView
 						style={ styles.list }
-						contentOffset={{ y: heightItem * 10 }}
+						contentOffset={{ y: heightItem * 46 }}
 						showsVerticalScrollIndicator={ false }
 						pagingEnabled="true"
 						snapToInterval={ heightItem }
