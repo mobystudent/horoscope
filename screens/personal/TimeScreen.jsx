@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef, useContext } from 'react';
-import { StyleSheet, Text, View, Pressable, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PersonTemplate from '../../components/PersonTemplate';
 import { SettingsContext } from '../../contexts/settings';
@@ -18,65 +18,46 @@ export default function TimeScreen({ navigation }) {
 		setSettings
 	} = useContext(SettingsContext);
 	const [ time, setTime ] = useState(personTime || '12:00');
-	const [ hours, setHours ] = useState({});
-	const [ minutes, setMinutes ] = useState({});
+	const [ hour, setHour ] = useState({});
+	const [ minute, setMinute ] = useState({});
 	const [ halfDay, setHalfDay ] = useState([]);
 	const [ scrolling, setScrolling ] = useState(false);
+	const [ currentTime, setCurrentTime ] = useState({
+		hour: +time.slice(0, 2) > 12 ? +time.slice(0, 2) % 12 : +time.slice(0, 2),
+		minute: +time.slice(3),
+		halfDay: +time.slice(0, 2) > 12 ? 'pm' : 'am'
+	});
+	const [ disabledBtn, setDisabledBtn ] = useState(true);
 	const hourRef = useRef();
 	const minuteRef = useRef();
-	// const date = new Date();
-	// const noon = date.setHours(12, 0, 0, 0);
-	// const [value, setValue] = useState(dayjs());
-	const [ disabledBtn, setDisabledBtn ] = useState(true);
-	const selectItem = ((value, type) => {
-		let timeLine = '';
-
-		if (type === 'hours') {
-			timeLine = `${ value }${ time.slice(2) }`;
-		} else if (type === 'minutes') {
-			timeLine = `${ time.slice(0, 3) }${ value }`;
-		// } else if (type === 'midday') {
-		// 	const hoursValue = +time.slice(0, 2);
-		//
-		// 	if (value === 'pm') {
-		// 		if (hoursValue > 12 || hoursValue < 1) return;
-		//
-		// 		timeLine = `${ hoursValue === 12 ? '00' : hoursValue + 12 }${ time.slice(2) }`;
-		// 	} else {
-		// 		if (hoursValue < 13 && hoursValue > 0) return;
-		//
-		// 		if (hoursValue === 0) {
-		// 			timeLine = `12${ time.slice(2) }`;
-		// 		} else {
-		// 			timeLine = `${ hoursValue - 12 < 10 ? '0' : '' }${ hoursValue - 12 }${ time.slice(2) }`;
-		// 		}
-		// 	}
-		}
-		console.log('selectItem $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
-		console.log(time);
-		console.log(timeLine);
-		console.log('selectItem $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
-		// return;
-
-		setTime(timeLine);
-		setDisabledBtn(false);
-	});
 	const heightItem = 32;
 	const wheelListsLength = 9;
 	const handleScrollStart = ((type) => {
-		const listName = type === 'hours' ? hours : minutes;
-		const listState = type === 'hours' ? setHours : setMinutes;
-		const updatedList = listName.map((list) => {
-			for (key in list) {
-				return {
-						[key]: list[key].map((item) => {
-							item.style = '';
+		let listState = null;
+		let updatedList = [];
 
-							return item;
-						})
+		if (type !== 'halfDay') {
+			const listName = type === 'hour' ? hour : minute;
+			listState = type === 'hour' ? setHour : setMinute;
+			updatedList = listName.map((list) => {
+				for (key in list) {
+					return {
+							[key]: list[key].map((item) => {
+								item.style = '';
+
+								return item;
+							})
+					}
 				}
-			}
-		});
+			});
+		} else {
+			listState = setHalfDay;
+			updatedList = halfDay.map((item) => {
+				item.style = '';
+
+				return item;
+			});
+		}
 
 		listState([ ...updatedList ]);
 		setScrolling(true);
@@ -84,43 +65,71 @@ export default function TimeScreen({ navigation }) {
 	const handleScrollEnd = (({ nativeEvent: { contentOffset } }, type) => {
 		if (!scrolling) return;
 
-		const listName = type === 'hours' ? hours : minutes;
-		const listState = type === 'hours' ? setHours : setMinutes;
-		const listRef = type === 'hours' ? hourRef : minuteRef;
+		let updatedList = [];
 		const activePosition = Math.floor(contentOffset.y / heightItem);
-		const updatedList = listName.map((list, index) => {
-			for (key in list) {
-				return {
-						[key]: list[key].map((item, i) => {
-							const itemPosition = index * 12 + i;
 
-							if (itemPosition === activePosition) {
-								item.style = 'prev2';
-							}
-							if (itemPosition === activePosition + 1) {
-								item.style = 'prev1';
-							}
-							if (itemPosition === activePosition + 2) {
-								item.style = 'active';
+		if (type !== 'halfDay') {
+			const listName = type === 'hour' ? hour : minute;
+			updatedList = listName.map((list, index) => {
+				for (key in list) {
+					return {
+							[key]: list[key].map((item, i) => {
+								const itemPosition = index * 12 + i;
 
-								selectItem(item.value, item.type);
-							}
-							if (itemPosition === activePosition + 3) {
-								item.style = 'next1';
-							}
-							if (itemPosition === activePosition + 4) {
-								item.style = 'next2';
-							}
+								if (itemPosition === activePosition) {
+									item.style = 'prev2';
+								}
+								if (itemPosition === activePosition + 1) {
+									item.style = 'prev1';
+								}
+								if (itemPosition === activePosition + 2) {
+									item.style = 'active';
 
-							return item;
-						})
+									setCurrentTime({
+										...currentTime,
+										[type]: item.value
+									});
+								}
+								if (itemPosition === activePosition + 3) {
+									item.style = 'next1';
+								}
+								if (itemPosition === activePosition + 4) {
+									item.style = 'next2';
+								}
+
+								return item;
+							})
+					}
 				}
-			}
-		});
+			});
 
-		console.log('valuesList ^^^^^^^^^^^^^^^^^^^');
-		console.log(activePosition);
-		console.log('valuesList ^^^^^^^^^^^^^^^^^^^');
+			setInfiniteList(activePosition, updatedList, type);
+		} else {
+			updatedList = halfDay.map((item) => {
+				if (item.id === activePosition + 1) {
+					item.style = 'prev1';
+				}
+				if (item.id === activePosition + 2) {
+					item.style = 'active';
+
+					setCurrentTime({
+						...currentTime,
+						[type]: item.value
+					});
+				}
+				if (item.id === activePosition + 3) {
+					item.style = 'next1';
+				}
+
+				return item;
+			});
+
+			setHalfDay([ ...updatedList ]);
+		}
+	});
+	const setInfiniteList = (activePosition, updatedList, type) => {
+		const listState = type === 'hour' ? setHour : setMinute;
+		const listRef = type === 'hour' ? hourRef : minuteRef;
 
 		if (activePosition <= 28) {
 			const lastList = updatedList.slice(wheelListsLength - 3, wheelListsLength);
@@ -143,26 +152,24 @@ export default function TimeScreen({ navigation }) {
 		}
 
 		setScrolling(false);
-	});
+	};
 	const generateList = ((type) => {
 		const numberOfLists = Array.from({ length: wheelListsLength }, (_, i) => i);
 
 		return numberOfLists.reduce((acc, current) => {
 			const createdList = {
 				[current]: Array.from({ length: 12 }, (_, i) => {
-					return type === 'hours'
+					return type === 'hour'
 						? {
 							id: `${ current }h${ ++i }`,
-							type: 'hours',
-							title: i,
-							value: `${i < 10 ? '0' : ''}${i}`,
+							type: 'hour',
+							value: i,
 							style: ''
 						}
 						: {
 							id: `${ current }m${ i }`,
-							type: 'minutes',
-							title: `${i * 5 < 10 ? '0' : ''}${i * 5}`,
-							value: `${i * 5 < 10 ? '0' : ''}${i * 5}`,
+							type: 'minute',
+							value: `${ i * 5 < 10 ? '0' : '' }${ i * 5 }`,
 							style: ''
 						};
 				})
@@ -216,9 +223,9 @@ export default function TimeScreen({ navigation }) {
 	const description = 'Введите время своего рождения, чтобы получить более точные прогнозы лунного влияния на различные сферы вашей жизни';
 	const btnText = registered ? 'Сохранить' : 'Далее';
 	const allHours = useMemo(() => {
-		if (!hours.length) return;
+		if (!hour.length) return;
 
-		const valuesList = hours.reduce((acc, list) => {
+		const valuesList = hour.reduce((acc, list) => {
 			for (key in list) {
 				acc.push(...list[key]);
 			}
@@ -227,13 +234,13 @@ export default function TimeScreen({ navigation }) {
 		}, []);
 
 		return valuesList.map((item) => (
-			<Text style={[ styles.num, styles[item.style] ]} key={ item.id }>{ item.title }</Text>
+			<Text style={[ styles.num, styles[item.style] ]} key={ item.id }>{ item.value }</Text>
 		));
-	}, [hours]);
+	}, [hour]);
 	const allMinutes = useMemo(() => {
-		if (!minutes.length) return;
+		if (!minute.length) return;
 
-		const valuesList = minutes.reduce((acc, list) => {
+		const valuesList = minute.reduce((acc, list) => {
 			for (key in list) {
 				acc.push(...list[key]);
 			}
@@ -242,37 +249,45 @@ export default function TimeScreen({ navigation }) {
 		}, []);
 
 		return valuesList.map((item) => (
-			<Text style={[ styles.num, styles[item.style] ]} key={ item.id }>{ item.title }</Text>
+			<Text style={[ styles.num, styles[item.style] ]} key={ item.id }>{ item.value }</Text>
 		));
-	}, [minutes]);
+	}, [minute]);
 	const allHalfDay = useMemo(() => {
 		return halfDay.map((item) => (
-			<Text style={[ styles.num, styles[item.style] ]} key={ item.id }>{ item.title }</Text>
+			<Text style={[ styles.num, styles[item.style] ]} key={ item.id }>{ item.value }</Text>
 		));
 	}, [halfDay]);
 
 	useEffect(() => {
-		const initHours = generateList('hours');
-		const initMinutes = generateList('minutes');
-		const initHalfDay = [ 'am', 'pm' ].map((item, i) => {
+		const initHours = generateList('hour');
+		const initMinutes = generateList('minute');
+		const initHalfDay = [ '', '', 'am', 'pm', '', '' ].map((item, i) => {
 			return {
 				id: i,
-				type: 'midday',
-				title: item,
+				type: 'halfDay',
 				value: item,
 				style: ''
 			}
 		});
 
-		// console.log('Object.values(hours) >>>>>>>>>>>>>>>>>>>>>>>');
-		// console.log(initHours);
-		// console.log('Object.values(hours) >>>>>>>>>>>>>>>>>>>>>>>');
-		// return;
-
-		setHours(initHours);
-		setMinutes(initMinutes);
+		setHour(initHours);
+		setMinute(initMinutes);
 		setHalfDay(initHalfDay);
 	}, []);
+
+	useEffect(() => {
+		const hourFormat = () => {
+			if (currentTime.halfDay === 'pm') {
+				return currentTime.hour + 12 === 24 ? '00' : currentTime.hour + 12;
+			} else {
+				return `${ currentTime.hour < 10 ? '0' : '' }${ currentTime.hour }`;
+			}
+		};
+		const timeFormat = `${ hourFormat() }:${ currentTime.minute }`;
+
+		setTime(timeFormat);
+		setDisabledBtn(false);
+	}, [currentTime]);
 
 	return (
 		<PersonTemplate
@@ -292,8 +307,8 @@ export default function TimeScreen({ navigation }) {
 						pagingEnabled="true"
 						snapToInterval={ heightItem }
 						decelerationRate="fast"
-						onMomentumScrollBegin={ () => handleScrollStart('hours') }
-						onMomentumScrollEnd={ (event) => handleScrollEnd(event, 'hours') }
+						onMomentumScrollBegin={ () => handleScrollStart('hour') }
+						onMomentumScrollEnd={ (event) => handleScrollEnd(event, 'hour') }
 						ref={ hourRef }
 					>
 						{ allHours }
@@ -305,20 +320,21 @@ export default function TimeScreen({ navigation }) {
 						pagingEnabled="true"
 						snapToInterval={ heightItem }
 						decelerationRate="fast"
-						onMomentumScrollBegin={ () => handleScrollStart('minutes') }
-						onMomentumScrollEnd={ (event) => handleScrollEnd(event, 'minutes')  }
+						onMomentumScrollBegin={ () => handleScrollStart('minute') }
+						onMomentumScrollEnd={ (event) => handleScrollEnd(event, 'minute') }
 						ref={ minuteRef }
 					>
 						{ allMinutes }
 					</ScrollView>
 					<ScrollView
 						style={ styles.list }
+						contentOffset={{ y: 0 }}
 						showsVerticalScrollIndicator={ false }
 						pagingEnabled="true"
-						snapToOffsets={[ 0, 32 ]}
+						snapToInterval={ heightItem }
 						decelerationRate="fast"
-						// onMomentumScrollBegin={ () => handleScrollStart('minutes') }
-						// onMomentumScrollEnd={ (event) => handleScrollEnd(event, 'minutes')  }
+						onMomentumScrollBegin={ () => handleScrollStart('halfDay') }
+						onMomentumScrollEnd={ (event) => handleScrollEnd(event, 'halfDay') }
 					>
 						{ allHalfDay }
 					</ScrollView>
@@ -367,19 +383,23 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		paddingHorizontal: 5,
 		paddingVertical: 4,
+		transform: [{ scale: (.7) }],
 		borderTopWidth: 1, // del
 		borderBottomWidth: 1, // del
 	},
 	active: {
+		transform: [{ scale: (1) }],
 		color: '#fff'
 	},
 	prev1: {
+		transform: [{ scale: (.85) }],
 		color: '#256'
 	},
 	prev2: {
 		color: '#873'
 	},
 	next1: {
+		transform: [{ scale: (.85) }],
 		color: '#b2c'
 	},
 	next2: {
