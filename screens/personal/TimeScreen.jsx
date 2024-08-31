@@ -18,8 +18,8 @@ export default function TimeScreen({ navigation }) {
 		setSettings
 	} = useContext(SettingsContext);
 	const [ time, setTime ] = useState(personTime || '12:00');
-	const [ hour, setHour ] = useState({});
-	const [ minute, setMinute ] = useState({});
+	const [ hour, setHour ] = useState([]);
+	const [ minute, setMinute ] = useState([]);
 	const [ halfDay, setHalfDay ] = useState([]);
 	const [ scrolling, setScrolling ] = useState(false);
 	const [ currentTime, setCurrentTime ] = useState({
@@ -65,8 +65,12 @@ export default function TimeScreen({ navigation }) {
 	const handleScrollEnd = (({ nativeEvent: { contentOffset } }, type) => {
 		if (!scrolling) return;
 
-		let updatedList = [];
 		const activePosition = Math.floor(contentOffset.y / heightItem);
+
+		setActiveItems(activePosition, type);
+	});
+	const setActiveItems = (activePosition, type) => {
+		let updatedList = [];
 
 		if (type !== 'halfDay') {
 			const listName = type === 'hour' ? hour : minute;
@@ -126,7 +130,7 @@ export default function TimeScreen({ navigation }) {
 
 			setHalfDay([ ...updatedList ]);
 		}
-	});
+	};
 	const setInfiniteList = (activePosition, updatedList, type) => {
 		const listState = type === 'hour' ? setHour : setMinute;
 		const listRef = type === 'hour' ? hourRef : minuteRef;
@@ -257,6 +261,9 @@ export default function TimeScreen({ navigation }) {
 			<Text style={[ styles.num, styles[item.style] ]} key={ item.id }>{ item.value }</Text>
 		));
 	}, [halfDay]);
+	const filledWheelsStatus = useMemo(() => {
+		return [hour, minute, halfDay].every((array) => array.length);
+	}, [hour, minute, halfDay]);
 
 	useEffect(() => {
 		const initHours = generateList('hour');
@@ -274,6 +281,14 @@ export default function TimeScreen({ navigation }) {
 		setMinute(initMinutes);
 		setHalfDay(initHalfDay);
 	}, []);
+
+	useEffect(() => {
+		if (!filledWheelsStatus) return;
+
+		setActiveItems(45, 'hour');
+		setActiveItems(46, 'minute');
+		setActiveItems(0, 'halfDay');
+	}, [filledWheelsStatus]);
 
 	useEffect(() => {
 		const hourFormat = () => {
@@ -302,7 +317,7 @@ export default function TimeScreen({ navigation }) {
 				<View style={ styles.wrap }>
 					<ScrollView
 						style={ styles.list }
-						contentOffset={{ y: heightItem * 46 }}
+						contentOffset={{ y: heightItem * 45 }}
 						showsVerticalScrollIndicator={ false }
 						pagingEnabled="true"
 						snapToInterval={ heightItem }
