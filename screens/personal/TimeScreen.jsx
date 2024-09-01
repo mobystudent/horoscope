@@ -3,8 +3,6 @@ import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PersonTemplate from '../../components/PersonTemplate';
 import { SettingsContext } from '../../contexts/settings';
-// import DateTimePicker from 'react-native-ui-datepicker';
-// import dayjs from 'dayjs';
 
 export default function TimeScreen({ navigation }) {
 	const {
@@ -43,7 +41,7 @@ export default function TimeScreen({ navigation }) {
 				for (key in list) {
 					return {
 							[key]: list[key].map((item) => {
-								item.style = '';
+								delete item.style;
 
 								return item;
 							})
@@ -53,7 +51,7 @@ export default function TimeScreen({ navigation }) {
 		} else {
 			listState = setHalfDay;
 			updatedList = halfDay.map((item) => {
-				item.style = '';
+				delete item.style;
 
 				return item;
 			});
@@ -81,13 +79,13 @@ export default function TimeScreen({ navigation }) {
 								const itemPosition = index * 12 + i;
 
 								if (itemPosition === activePosition) {
-									item.style = 'prev2';
+									item.style = { transform: [{ scale: (.7) }, { rotateX: '40deg' }, { translateY: 15 }] };
 								}
 								if (itemPosition === activePosition + 1) {
-									item.style = 'prev1';
+									item.style = { transform: [{ scale: (.85) }, { rotateX: '30deg' }] };
 								}
 								if (itemPosition === activePosition + 2) {
-									item.style = 'active';
+									item.style = { transform: [{ scale: (1) }], color: '#fff' };
 
 									setCurrentTime({
 										...currentTime,
@@ -95,10 +93,10 @@ export default function TimeScreen({ navigation }) {
 									});
 								}
 								if (itemPosition === activePosition + 3) {
-									item.style = 'next1';
+									item.style = { transform: [{ scale: (.85) }, { rotateX: '30deg' }] };
 								}
 								if (itemPosition === activePosition + 4) {
-									item.style = 'next2';
+									item.style = { transform: [{ scale: (.7) }, { rotateX: '40deg' }, { translateY: -15 }] };
 								}
 
 								return item;
@@ -111,10 +109,10 @@ export default function TimeScreen({ navigation }) {
 		} else {
 			updatedList = halfDay.map((item) => {
 				if (item.id === activePosition + 1) {
-					item.style = 'prev1';
+					item.style = { transform: [{ scale: (.85) }, { rotateX: '30deg' }] };
 				}
 				if (item.id === activePosition + 2) {
-					item.style = 'active';
+					item.style = { transform: [{ scale: (1) }], color: '#fff' };
 
 					setCurrentTime({
 						...currentTime,
@@ -122,7 +120,7 @@ export default function TimeScreen({ navigation }) {
 					});
 				}
 				if (item.id === activePosition + 3) {
-					item.style = 'next1';
+					item.style = { transform: [{ scale: (.85) }, { rotateX: '30deg' }] };
 				}
 
 				return item;
@@ -167,14 +165,12 @@ export default function TimeScreen({ navigation }) {
 						? {
 							id: `${ current }h${ ++i }`,
 							type: 'hour',
-							value: i,
-							style: ''
+							value: i
 						}
 						: {
 							id: `${ current }m${ i }`,
 							type: 'minute',
-							value: `${ i * 5 < 10 ? '0' : '' }${ i * 5 }`,
-							style: ''
+							value: `${ i * 5 < 10 ? '0' : '' }${ i * 5 }`
 						};
 				})
 			}
@@ -238,7 +234,7 @@ export default function TimeScreen({ navigation }) {
 		}, []);
 
 		return valuesList.map((item) => (
-			<Text style={[ styles.num, styles[item.style] ]} key={ item.id }>{ item.value }</Text>
+			<Text style={[ styles.num, item.style ]} key={ item.id }>{ item.value }</Text>
 		));
 	}, [hour]);
 	const allMinutes = useMemo(() => {
@@ -253,12 +249,12 @@ export default function TimeScreen({ navigation }) {
 		}, []);
 
 		return valuesList.map((item) => (
-			<Text style={[ styles.num, styles[item.style] ]} key={ item.id }>{ item.value }</Text>
+			<Text style={[ styles.num, item.style ]} key={ item.id }>{ item.value }</Text>
 		));
 	}, [minute]);
 	const allHalfDay = useMemo(() => {
 		return halfDay.map((item) => (
-			<Text style={[ styles.num, styles[item.style] ]} key={ item.id }>{ item.value }</Text>
+			<Text style={[ styles.num, item.style ]} key={ item.id }>{ item.value }</Text>
 		));
 	}, [halfDay]);
 	const filledWheelsStatus = useMemo(() => {
@@ -272,8 +268,7 @@ export default function TimeScreen({ navigation }) {
 			return {
 				id: i,
 				type: 'halfDay',
-				value: item,
-				style: ''
+				value: item
 			}
 		});
 
@@ -358,12 +353,6 @@ export default function TimeScreen({ navigation }) {
 			</View>
 		</PersonTemplate>
 	);
-	// <DateTimePicker
-	// 	mode="time"
-	// 	value={value}
-	// 	onValueChange={(date) => setValue(date)}
-	// 	style={ styles.clockItem }
-	// />
 }
 
 const styles = StyleSheet.create({
@@ -390,35 +379,16 @@ const styles = StyleSheet.create({
 		position: 'static'
 	},
 	num: {
-		fontWeight: '400',
 		fontSize: 20,
 		lineHeight: 24,
 		color: 'rgba(255, 255, 255, .35)',
-		height: 32, // del
+		height: 32,
 		textAlign: 'center',
 		paddingHorizontal: 5,
 		paddingVertical: 4,
-		transform: [{ scale: (.7) }],
-		borderTopWidth: 1, // del
-		borderBottomWidth: 1, // del
-	},
-	active: {
-		transform: [{ scale: (1) }],
-		color: '#fff'
-	},
-	prev1: {
-		transform: [{ scale: (.85) }],
-		color: '#256'
-	},
-	prev2: {
-		color: '#873'
-	},
-	next1: {
-		transform: [{ scale: (.85) }],
-		color: '#b2c'
-	},
-	next2: {
-		color: '#a31'
+		transform: [{ scale: (.7) }, { rotateX: '40deg' }]
+		// borderTopWidth: 1, // del
+		// borderBottomWidth: 1, // del
 	},
 	list: {
 		flexGrow: 0,
