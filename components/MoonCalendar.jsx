@@ -9,6 +9,8 @@ import { arrowRightIcon, arrowLeftIcon } from '../icons/elements';
 import { zodiacIcons } from '../icons/zodiac';
 import { phaseIcons } from '../icons/phase';
 
+const COLUMN_GAP = 5;
+
 export default function MoonCalendar({ type }) {
 	const {
 		settings: {
@@ -41,10 +43,8 @@ export default function MoonCalendar({ type }) {
 		month: date.month() + 1,
 		year: date.year()
 	});
-	const numberFirstDay = moment(`01-${ currentDate.month }-${ currentDate.year }`, 'DD-MM-YYYY').isoWeekday();
 	const calendarWidth = ({ nativeEvent: { layout } }) => {
-		const columnGap = 5;
-		const bodyWidth = Math.floor(layout.width) - columnGap * 6;
+		const bodyWidth = Math.floor(layout.width) - COLUMN_GAP * 6;
 
 		setDayWidth(bodyWidth / 7);
 	};
@@ -88,7 +88,7 @@ export default function MoonCalendar({ type }) {
 
 				return [ ...getWeek, ...sublingMonth ];
 			} else {
-				const prevMonth = monthsRangeData[currentDate.month - 1 < 1 ? 12 : currentDate.month - 1];
+				const prevMonth = monthsRangeData[`${ currentDate.year }-${ currentDate.month - 1 < 1 ? 12 : currentDate.month - 1 }`];
 				const countDaysOfPrevMonth = Object.keys(prevMonth).length;
 				const lastDaysPrevMonth = countDaysOfPrevMonth + firstDay;
 
@@ -106,13 +106,15 @@ export default function MoonCalendar({ type }) {
 	};
 	const visibleDays = type === 'calendar' ? visibleMonth() : visibleWeek();
 	const monthArray = visibleDays.map((item) => {
+		const dayPhase = monthsRangeData[`${ item.year }-${ item.month }`][item.day].phase;
+		const daySign = monthsRangeData[`${ item.year }-${ item.month }`][item.day].sign;
+
 		return (
 			<Pressable
 				style={[
 					styles.item,
 					currentDate.day === item.day && styles.itemActive,
-					{ width: dayWidth },
-					item.day === 1 && { marginLeft: (numberFirstDay - 1) * (dayWidth + 5) }
+					{ width: dayWidth }
 				]}
 				key={ item.day }
 				onPress={ () => chooseDay(item) }
@@ -120,10 +122,10 @@ export default function MoonCalendar({ type }) {
 				<Text style={ styles.number }>{ item.day }</Text>
 				<View style={ styles.wrap }>
 					<View style={ styles.itemIcon }>
-						{ phaseIcons('#fff')[daysCurrentMonth[item.day].phase] }
+						{ phaseIcons('#fff')[dayPhase] }
 					</View>
 					<View style={ styles.itemIcon }>
-						{ zodiacIcons('#fff')[daysCurrentMonth[item.day].sign] }
+						{ zodiacIcons('#fff')[daySign] }
 					</View>
 				</View>
 			</Pressable>
@@ -319,7 +321,7 @@ const styles = StyleSheet.create({
 	},
 	period: {
 		flexDirection: 'row',
-		columnGap: 5,
+		columnGap: COLUMN_GAP,
 		marginBottom: 5
 	},
 	periodItem: {
@@ -338,7 +340,7 @@ const styles = StyleSheet.create({
 	},
 	control: {
 		flexDirection: 'row',
-		columnGap: 10
+		columnGap: COLUMN_GAP * 2
 	},
 	button: {
 		justifyContent: 'center',
@@ -356,7 +358,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		flexWrap: 'wrap',
 		rowGap: 7,
-		columnGap: 5
+		columnGap: COLUMN_GAP
 	},
 	day: {
 		fontWeight: '400',
