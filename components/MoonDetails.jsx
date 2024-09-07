@@ -1,6 +1,5 @@
-import { useState, useContext } from 'react';
-import { StyleSheet, View, Text, ScrollView } from 'react-native';
-import { SvgXml } from 'react-native-svg';
+import { useState, useMemo, useContext } from 'react';
+import { StyleSheet, View, Text, ScrollView, Image } from 'react-native';
 import { SettingsContext } from '../contexts/settings';
 import moment from 'moment';
 
@@ -8,7 +7,7 @@ import lang from '../languages/lang_ru.json';
 
 import { zodiacIcons } from '../icons/zodiac';
 import { borderIcon } from '../icons/elements';
-import { moonIcons } from '../icons/moon';
+import cloudImage from '../assets/cloud.png';
 
 export default function MoonDetails({ type }) {
 	const {
@@ -16,10 +15,11 @@ export default function MoonDetails({ type }) {
 			currentMoonDay: {
 				phase = '',
 				details = {}
-			} = {}
+			} = {},
+			moonImagesList = {}
 		} = {}
 	} = useContext(SettingsContext);
-	const [ blockSize, setBlockSize ] = useState(0);
+	const [ blockSize, setBlockSize ] = useState({});
 	const parseLang = JSON.parse(JSON.stringify(lang));
 	const blocks = {
 		sunDay: 'Сегодня',
@@ -53,7 +53,7 @@ export default function MoonDetails({ type }) {
 
 		setBlockSize({
 			width,
-			height: (134 * width) / 167
+			height: Math.floor((134 * width) / 167)
 		});
 	};
 	const detailsList = Object.keys(blocks).map((key, i) => {
@@ -109,10 +109,33 @@ export default function MoonDetails({ type }) {
 			</View>
 		);
 	});
-	const moonIconPosition = {
-		top: blockSize.height ? blockSize.height - 165 / 2 + 5 : 0,
-		left: blockSize.width ? blockSize.width - 165 / 2 + 5 : 0
-	};
+	const moonImage = useMemo(() => {
+		if (!Object.keys(blockSize).length) return;
+
+		return (
+			<View style={[
+				styles.moonWrap,
+				{
+					top: blockSize.height - ( blockSize.width + 5 ) / 2 + 5,
+					left: blockSize.width - ( blockSize.width + 5 ) / 2 + 5,
+					width: blockSize.width + 5,
+					height: blockSize.width + 5
+				}
+			]}>
+				<Image source={ moonImagesList[phase] } style={ styles.moonImage } />
+				<Image
+					source={ cloudImage }
+					style={[
+						styles.cloudImage,
+						{
+							width: blockSize.width + blockSize.width / 2 + 5,
+							height: blockSize.height + blockSize.width / 2 + 5
+						}
+					]}
+				/>
+			</View>
+		);
+	}, [blockSize, phase]);
 
 	return (
 		type === 'calendar' ? (
@@ -126,9 +149,7 @@ export default function MoonDetails({ type }) {
 				<View style={ styles.details } onLayout={ (event) => detailsSize(event) }>
 					{ detailsList }
 					{
-						type === 'day' && <View style={[ styles.moonIcon, { top: moonIconPosition.top, left: moonIconPosition.left } ]}>
-							<SvgXml xml={ moonIcons(phase) } width={ 165 } height={ 165 } />
-						</View>
+						type === 'day' && moonImage
 					}
 				</View>
 			</View>
@@ -202,7 +223,17 @@ const styles = StyleSheet.create({
 	borderIcon: {
 		position: 'absolute'
 	},
-	moonIcon: {
+	moonWrap: {
 		position: 'absolute'
+	},
+	moonImage: {
+		width: '100%',
+		height: '100%'
+	},
+	cloudImage: {
+		position: 'absolute',
+		top: -25,
+		left: -40,
+		zIndex: 4
 	}
 });

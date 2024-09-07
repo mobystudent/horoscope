@@ -1,16 +1,19 @@
 import { useState, useEffect, useContext, useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Image } from 'react-native';
 import { getCalendars } from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Container from '../components/Container';
-import { SvgXml } from 'react-native-svg';
 import { SettingsContext } from '../contexts/settings';
 import moment from 'moment';
 
-import { moonIcons } from '../icons/moon';
-
 export default function StartScreen({ navigation }) {
-	const { settings, setSettings } = useContext(SettingsContext);
+	const {
+		settings: {
+			moonImagesList = {}
+		} = {},
+		settings,
+		setSettings
+	} = useContext(SettingsContext);
 	const [ storagePerson, setStoragePerson ] = useState({});
 	const [ storageNotesList, setStorageNotesList ] = useState({});
 	const [ storageBirthdayMoon, setStorageBirthdayMoon ] = useState({});
@@ -292,7 +295,17 @@ export default function StartScreen({ navigation }) {
 			basic: storageBasic,
 			currentMoonDay: moon,
 			monthsRange: months,
-			registered: true
+			registered: true,
+			moonImagesList: {
+				newMoon: require('../assets/images/newMoon.png'),
+				fullMoon: require('../assets/images/fullMoon.png'),
+				thirdQuarter: require('../assets/images/thirdQuarter.png'),
+				waningGibbous: require('../assets/images/waningGibbous.png'),
+				waningCrescent: require('../assets/images/waningCrescent.png'),
+				waxingCrescent: require('../assets/images/waxingCrescent.png'),
+				firstQuarter: require('../assets/images/firstQuarter.png'),
+				waxingGibbous: require('../assets/images/waxingGibbous.png')
+			}
 		});
 
 		setTimeout(() => {
@@ -303,8 +316,8 @@ export default function StartScreen({ navigation }) {
 	return (
 		<Container>
 			<View style={ styles.body }>
-				<View style={ styles.moonIcon }>
-					<SvgXml xml={ moonIcons('new') } width={ 265 } height={ 265 } />
+				<View style={ styles.moonWrap }>
+					<Image source={ moonImagesList['fullMoon'] } style={ styles.moonImage } />
 				</View>
 				<Text style={ styles.title }>Загрузка данных...</Text>
 			</View>
@@ -325,8 +338,12 @@ const styles = StyleSheet.create({
 		fontSize: 24,
 		lineHeight: 28
 	},
-	moonIcon: {
+	moonWrap: {
 		alignItems: 'center',
 		marginBottom: 30
+	},
+	moonImage: {
+		width: 250,
+		height: 250
 	}
 });

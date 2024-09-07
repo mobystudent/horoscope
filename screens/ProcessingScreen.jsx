@@ -306,7 +306,17 @@ export default function Processing({ navigation }) {
 			birthdayMoon,
 			currentMoonDay: moon,
 			monthsRange: months,
-			registered: true
+			registered: true,
+			moonImagesList: {
+				newMoon: require('../assets/images/newMoon.png'),
+				fullMoon: require('../assets/images/fullMoon.png'),
+				thirdQuarter: require('../assets/images/thirdQuarter.png'),
+				waningGibbous: require('../assets/images/waningGibbous.png'),
+				waningCrescent: require('../assets/images/waningCrescent.png'),
+				waxingCrescent: require('../assets/images/waxingCrescent.png'),
+				firstQuarter: require('../assets/images/firstQuarter.png'),
+				waxingGibbous: require('../assets/images/waxingGibbous.png')
+			}
 		});
 
 		setReadyData(true);
