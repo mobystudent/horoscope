@@ -1,5 +1,5 @@
-import { useContext } from 'react';
-import { StyleSheet, Text, Pressable, View, Keyboard, ScrollView } from 'react-native';
+import { useEffect, useContext } from 'react';
+import { StyleSheet, Text, Pressable, View, Keyboard, ScrollView, BackHandler } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import Container from './Container';
 import Header from './Header';
@@ -53,6 +53,12 @@ export default function PersonTemplate(props) {
 			</Pressable>
 		</>
 	);
+
+	useEffect(() => {
+		const backHandler = BackHandler.addEventListener("hardwareBackPress", () => true);
+
+		return () => backHandler.remove();
+	}, []);
 
 	return (
 		<Container>
