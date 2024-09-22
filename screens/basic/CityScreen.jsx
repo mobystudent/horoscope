@@ -4,7 +4,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Config from '../../config';
 import PersonTemplate from '../../components/PersonTemplate';
 import { SettingsContext } from '../../contexts/settings';
-import axios from 'axios';
 
 import { closeIcon } from '../../icons/elements';
 
@@ -197,23 +196,21 @@ export default function CityScreen({ navigation }) {
 		}
 	};
 	const getTimezone = async ({ lat, lng }) => {
-		const timestamp = Math.floor(Date.now() / 1000);
-
 		try {
-			axios.get(`https://maps.googleapis.com/maps/api/timezone/json?location=${ lat },${ lng }&timestamp=${ timestamp }&key=${ Config.GOOGLE_MAPS_API_KEY }`)
+			fetch(`http://api.timezonedb.com/v2.1/get-time-zone?key=${ Config.TIME_ZONE_DB_KEY }&format=json&by=position&lat=${ lat }&lng=${ lng }`)
 				.then((response) => {
-					if (!response.data.status === 'OK') {
+					if (!response.ok) {
 						throw new Error('Не удалось получить таймзону введенного города от сервера');
 					}
 
-					return response.data.timeZoneId;
+					return response.json();
 				})
 				.then((timezoneData) => {
 					if (!timezoneData) {
 						throw new Error(`Данных о таймзоне на сервере не обнаружено`);
 					}
 
-					setTimezone(timezoneData);
+					setTimezone(timezoneData.zoneName);
 				})
 				.catch((error) => {
 					setSettings({
