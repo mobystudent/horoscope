@@ -18,6 +18,17 @@ import PremiumScreen from './screens/PremiumScreen';
 import StartScreen from './screens/StartScreen';
 
 const Stack = createStackNavigator();
+const config = {
+	animation: 'spring',
+	config: {
+		stiffness: 100,
+		damping: 100,
+		mass: 1,
+		overshootClamping: true,
+		restDisplacementThreshold: 0.01,
+		restSpeedThreshold: 0.01
+	},
+};
 
 export default function Navigation({ screen }) {
 	if (!screen) return;
@@ -30,21 +41,156 @@ export default function Navigation({ screen }) {
 					headerShown: false
 				}}
 			>
-				<Stack.Screen name="name" component={ NameScreen } />
-				<Stack.Screen name="city" component={ CityScreen } />
-				<Stack.Screen name="date" component={ DateScreen } />
-				<Stack.Screen name="time" component={ TimeScreen } />
-				<Stack.Screen name="place" component={ PlaceScreen } />
-				<Stack.Screen name="gender" component={ GenderScreen } />
-				<Stack.Screen name="processing" component={ ProcessingScreen } />
-				<Stack.Screen name="moon" component={ MoonScreen } />
-				<Stack.Screen name="account" component={ AccountScreen } />
-				<Stack.Screen name="content" component={ ContentScreen } />
-				<Stack.Screen name="createNote" component={ CreateNoteScreen } />
-				<Stack.Screen name="notes" component={ NotesScreen } />
-				<Stack.Screen name="image" component={ ImageScreen } />
-				<Stack.Screen name="premium" component={ PremiumScreen } />
-				<Stack.Screen name="start" component={ StartScreen } />
+				<Stack.Screen
+					name="name"
+					component={ NameScreen }
+					options={{
+						transitionSpec: {
+							open: config,
+							close: config
+						},
+					}}
+				/>
+				<Stack.Screen
+					name="city"
+					component={ CityScreen }
+					options={{
+						transitionSpec: {
+							open: config,
+							close: config
+						},
+					}}
+				/>
+				<Stack.Screen
+					name="date"
+					component={ DateScreen }
+					options={{
+						transitionSpec: {
+							open: config,
+							close: config
+						},
+					}}
+				/>
+				<Stack.Screen
+					name="time"
+					component={ TimeScreen }
+					options={{
+						transitionSpec: {
+							open: config,
+							close: config
+						},
+					}}
+				/>
+				<Stack.Screen
+					name="place"
+					component={ PlaceScreen }
+					options={{
+						transitionSpec: {
+							open: config,
+							close: config
+						},
+					}}
+				/>
+				<Stack.Screen
+					name="gender"
+					component={ GenderScreen }
+					options={{
+						transitionSpec: {
+							open: config,
+							close: config
+						},
+					}}
+				/>
+				<Stack.Screen
+					name="processing"
+					component={ ProcessingScreen }
+					options={{
+						transitionSpec: {
+							open: config,
+							close: config
+						},
+					}}
+				/>
+				<Stack.Screen
+					name="moon"
+					component={ MoonScreen }
+					options={{
+						transitionSpec: {
+							open: config,
+							close: config
+						},
+					}}
+				/>
+				<Stack.Screen
+					name="account"
+					component={ AccountScreen }
+					options={{
+						transitionSpec: {
+							open: config,
+							close: config
+						},
+					}}
+				/>
+				<Stack.Screen
+					name="content"
+					component={ ContentScreen }
+					options={{
+						transitionSpec: {
+							open: config,
+							close: config
+						},
+					}}
+				/>
+				<Stack.Screen
+					name="createNote"
+					component={ CreateNoteScreen }
+					options={{
+						transitionSpec: {
+							open: config,
+							close: config
+						},
+					}}
+				/>
+				<Stack.Screen
+					name="notes"
+					component={ NotesScreen }
+					options={{
+						transitionSpec: {
+							open: config,
+							close: config
+						},
+					}}
+				/>
+				<Stack.Screen
+					name="image"
+					component={ ImageScreen }
+					options={{
+						transitionSpec: {
+							open: config,
+							close: config
+						},
+					}}
+				/>
+				<Stack.Screen
+					name="premium"
+					component={ PremiumScreen }
+					options={{
+						transitionSpec: {
+							open: config,
+							close: config
+						},
+					}}
+				/>
+				<Stack.Screen
+					name="start"
+					component={ StartScreen }
+					options={{
+						transitionSpec: {
+							open: config,
+							close: config
+						},
+					}}
+				/>
 			</Stack.Navigator>
 		</NavigationContainer>
 	);
