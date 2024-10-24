@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Pressable, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PersonTemplate from '../../components/PersonTemplate';
 import { SettingsContext } from '../../contexts/settings';
+import Config from '../../config';
 import moment from 'moment';
 
 import lang from '../../languages/lang_ru.json';
@@ -230,7 +231,7 @@ export default function DateScreen({ navigation }) {
 			try {
 				const birthDate = moment(date.data, 'DD-MM-YYYY').format('YYYY-MM-DD');
 
-				fetch(`https://api-moon.digitalynx.org/api/moon/register?date=${ birthDate }&time=${ personTime }&lat=${ birthLat }&lng=${ birthLng }`)
+				fetch(`${ Config.DATABASE_BIRTH_DAY_URL }?date=${ birthDate }&time=${ personTime }&lat=${ birthLat }&lng=${ birthLng }`)
 					.then((response) => {
 						if (!response.ok) {
 							throw new Error('Не удалось получить данные о лунном дне при рождении');

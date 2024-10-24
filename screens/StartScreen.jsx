@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Image } from 'react-native';
 import { getCalendars } from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Container from '../components/Container';
+import Config from '../config';
 import { SettingsContext } from '../contexts/settings';
 import moment from 'moment';
 
@@ -151,7 +152,7 @@ export default function StartScreen({ navigation }) {
 		try {
 			const currentDate = moment().format('YYYY-MM-DD');
 
-			fetch(`https://api-moon.digitalynx.org/api/moon/special/year?date=${ currentDate }`)
+			fetch(`${ Config.DATABASE_MOON_MONTH_URL }?date=${ currentDate }`)
 				.then((response) => {
 					if (!response.ok) {
 						throw new Error('Не удалось получить данные о текущем лунном месяце');
@@ -204,7 +205,7 @@ export default function StartScreen({ navigation }) {
 				} = {}
 			} = storageBasic;
 
-			fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ currentDate }&time=${ currentTime }&lat=${ currentLat }&lng=${ currentLng }&tz=${ currentTimezone }`)
+			fetch(`${ Config.DATABASE_MOON_DAY_URL }?date=${ currentDate }&time=${ currentTime }&lat=${ currentLat }&lng=${ currentLng }&tz=${ currentTimezone }`)
 				.then((response) => {
 					if (!response.ok) {
 						throw new Error('Не удалось получить данные о текущем лунном дне');

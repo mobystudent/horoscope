@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Svg, { Circle } from 'react-native-svg';
 import Container from '../components/Container';
 import Header from '../components/Header';
+import Config from '../config';
 import { SettingsContext } from '../contexts/settings';
 import moment from 'moment';
 
@@ -174,7 +175,7 @@ export default function Processing({ navigation }) {
 			const currentTime = moment().format('HH:mm');
 			const birthDate = moment(personDate.data, 'DD-MM-YYYY').format('YYYY-MM-DD');
 
-			fetch(`https://api-moon.digitalynx.org/api/moon/special/year?date=${ currentDate }`)
+			fetch(`${ Config.DATABASE_MOON_MONTH_URL }?date=${ currentDate }`)
 				.then((response) => {
 					if (!response.ok) {
 						throw new Error('Не удалось получить данные о текущем лунном месяце');
@@ -189,7 +190,7 @@ export default function Processing({ navigation }) {
 
 					setMonths(monthsData);
 
-					return fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ currentDate }&time=${ currentTime }&lat=${ currentLat }&lng=${ currentLng }&tz=${ currentTimezone }`);
+					return fetch(`${ Config.DATABASE_MOON_DAY_URL }?date=${ currentDate }&time=${ currentTime }&lat=${ currentLat }&lng=${ currentLng }&tz=${ currentTimezone }`);
 				})
 				.then((response) => {
 					if (!response.ok) {
@@ -205,7 +206,7 @@ export default function Processing({ navigation }) {
 
 					setMoon(moonData);
 
-					return fetch(`https://api-moon.digitalynx.org/api/moon/register?date=${ birthDate }&time=${ personTime }&lat=${ birthLat }&lng=${ birthLng }`);
+					return fetch(`${ Config.DATABASE_BIRTH_DAY_URL }?date=${ birthDate }&time=${ personTime }&lat=${ birthLat }&lng=${ birthLng }`);
 				})
 				.then((response) => {
 					if (!response.ok) {

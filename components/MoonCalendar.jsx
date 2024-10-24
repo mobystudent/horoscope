@@ -1,6 +1,7 @@
 import { useState, useContext } from 'react';
 import { StyleSheet, View, Text, Pressable } from 'react-native';
 import { SettingsContext } from '../contexts/settings';
+import Config from '../config';
 import moment from 'moment';
 
 import lang from '../languages/lang_ru.json';
@@ -140,7 +141,7 @@ export default function MoonCalendar({ type }) {
 		setCurrentDate(item);
 
 		try {
-			fetch(`https://api-moon.digitalynx.org/api/moon/special/day?date=${ dateFormat }&time=${ currentTime }&lat=${ currentLat }&lng=${ currentLng }&tz=${ currentTimezone }`)
+			fetch(`${ Config.DATABASE_MOON_DAY_URL }?date=${ dateFormat }&time=${ currentTime }&lat=${ currentLat }&lng=${ currentLng }&tz=${ currentTimezone }`)
 				.then((response) => {
 					if (!response.ok) {
 						throw new Error('Не удалось получить данные о текущем лунном дне');
@@ -189,7 +190,7 @@ export default function MoonCalendar({ type }) {
 		const dateFormat = `${ item.year }-${ monthFormat }`;
 
 		try {
-			fetch(`https://api-moon.digitalynx.org/api/moon/special/six-month?date=${ dateFormat }&direction=${ direction }`)
+			fetch(`${ Config.DATABASE_MOON_HALF_YEAR_URL }?date=${ dateFormat }&direction=${ direction }`)
 				.then((response) => {
 					if (!response.ok) {
 						throw new Error('Не удалось получить данные о полугодии лунных дней');

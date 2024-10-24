@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { StyleSheet, FlatList, TextInput, View, Pressable, Text, KeyboardAvoidingView, Keyboard, Alert, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PersonTemplate from '../../components/PersonTemplate';
+import Config from '../../config';
 import { SettingsContext } from '../../contexts/settings';
 
 import { closeIcon } from '../../icons/elements';
@@ -98,7 +99,7 @@ export default function PlaceScreen({ navigation }) {
 	};
 	const getCountries = async () => {
 		try {
-			fetch(`https://api-moon.digitalynx.org/api/country/`)
+			fetch(`${ Config.DATABASE_COUNTRIES_URL }`)
 				.then((response) => {
 					if (!response.ok) {
 						throw new Error('Не удалось получить список стран от сервера');
@@ -146,7 +147,7 @@ export default function PlaceScreen({ navigation }) {
 	};
 	const getCities = async (item) => {
 		try {
-			fetch(`https://api-moon.digitalynx.org/api/city/${ item.id }`)
+			fetch(`${ Config.DATABASE_CITIES_URL }${ item.id }`)
 				.then((response) => {
 					if (!response.ok) {
 						throw new Error('Не удалось получить список городов от сервера');
