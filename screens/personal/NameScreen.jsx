@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { StyleSheet, Text, TextInput, View, KeyboardAvoidingView, Alert } from 'react-native';
+import { StyleSheet, Text, TextInput, View, KeyboardAvoidingView, Alert, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PersonTemplate from '../../components/PersonTemplate';
 import { SettingsContext } from '../../contexts/settings';
